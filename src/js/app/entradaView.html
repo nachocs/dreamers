@@ -1,0 +1,10 @@
+    <%var indicedospuntos = obj.indice.replace(/\//ig, '::');%>
+
+    <div class="content"><span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span></div>
+    <div class="background" style="background-image: url(<%= obj.IMAGEN1_URL %>)"></div>
+    <div class="comentarios"><span><% if (typeof obj.encabezamiento !== 'undefined' && obj.encabezamiento !== null) { %> <%= obj.encabezamiento %> <%}%></span>
+      <div class="vermas" >Ver M&aacute;s</div>
+    </div>
+    <div class="titular" data-indice="<%= indicedospuntos %>"><%= obj.nombreindice %></div>
+    <div class='expand'></div>
+    

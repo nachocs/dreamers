@@ -1,0 +1,70 @@
+    <div class="basico-background" style="background-image:url(<%=obj.IMAGEN1_URL%>)"></div>
+    <div class="content"><span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span></div>
+    <div class="basico-container">
+        <%if(obj.encabezamiento){%>
+          <div class="encabezamiento"><%=obj.encabezamiento%></div>
+        <%}%>
+
+      <div class="main-image"><img src="<%= obj.IMAGEN1_URL %>"></div>
+      <div class="ficha clearfix">
+        <%if(obj.titulo_original){%>
+          <span class="titulo_original"><%=obj.titulo_original%>,</span>
+        <%}%>
+        <%if(obj.nacionalidad){%>
+        <span><%=obj.nacionalidad%>, </span>
+        <%}%>
+        <%if(obj.ano){%>
+        <span><%=obj.ano%>.</span>
+        <%}%>
+        <%if(obj.genero){%>
+        <span><%=obj.genero%>.</span>
+        <%}%>
+        <%if(obj.formato && (obj.indice !== 'tienda/productos')){%>
+        <span><%=obj.formato%>,</span>
+        <%}%>
+        <%if(obj.duracion){%>
+        <span><%=obj.duracion%> min</span>
+        <%}%>
+        <%if(obj.director){%>
+        <div class="ficha-detalle">Director: <%=obj.director%></div>
+        <%}%>
+        <%if(obj.guion){%>
+        <div class="ficha-detalle">Gui&oacute;n: <%=obj.guion%></div>
+        <%}%>
+        <%if(obj.fotografia){%>
+        <div class="ficha-detalle">Fotograf&iacute;a: <%=obj.fotografia%></div>
+        <%}%>
+        <%if(obj.musica){%>
+        <div class="ficha-detalle">M&uacute;sica: <%=obj.musica%></div>
+        <%}%>
+        <%if(obj.produccion){%>
+        <div class="ficha-detalle">Producci&oacute;n: <%=obj.produccion%></div>
+        <%}%>
+        <%if(obj.distribuidora){%>
+        <div class="ficha-detalle">Distribuidora: <%=obj.distribuidora%></div>
+        <%}%>
+        <%if(obj.reparto){%>
+        <div class="reparto"><%=obj.reparto%></div>
+        <%}%>
+      </div>
+        <%if(obj.sinopsis){%>
+      <div class="sinopsis blockquote"><%=obj.sinopsis%></div>
+        <%}%>
+        <%if(obj.comments){%>
+      <div class="comments"><%=obj.comments%></div>
+        <%}%>
+        <%if(obj.COMENTARIO){%>
+      <div class="comments"><%=obj.COMENTARIO%></div>
+        <%}%>
+        <%if(obj.trucos){%>
+      <div class="trucos"><%=obj.trucos%></div>
+        <%}%>
+        <%if(obj.firma){%>
+      <div class="firma"><%=obj.firma%></div>
+        <%}%>
+        <div>
+          <%for (var key in obj){ if ((/^url\d*$/).test(key)){ var url = obj[key]; var url_title = obj[key+"_title"] || "enlace"; %>
+            <a href="<%=url%>" class="url"><%=url_title%></a>
+          <% } } %>
+        </div>
+    </div>
