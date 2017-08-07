@@ -1,5 +1,5 @@
-/*global $D*/
 /*jslint browser: true*/
+import $D from './app';
 import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
@@ -265,7 +265,7 @@ export default Backbone.View.extend({
   },
   saltointerior(indice, entrada) {
     const enlace = `http://dreamers.com/${indice}/${entrada}/?ajax=1`,
-    // alto = $('#container').height(),
+      // alto = $('#container').height(),
       ancho = $('#contenido').width();
     $('#container').css({
       'overflow-y': 'scroll',
@@ -294,12 +294,6 @@ export default Backbone.View.extend({
         }, 1000);
       },
     });
-
-    /*            $('#resultado').load(enlace, function () {
-    setTimeout(function () {
-    $('#container').height($('#resultado').height());
-  }, 0);
-});*/
   },
   mostrarComentariosEv({currentTarget}) {
     const $objeto = $(currentTarget), ancho = $objeto.width();

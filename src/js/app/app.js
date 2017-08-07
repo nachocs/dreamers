@@ -10,13 +10,8 @@ import DHome from './router';
 
 import UserModel from './userModel';
 const userModel = new UserModel();
-import fbModule from './fb';
 
 $D.userModel = userModel;
-
-fbModule.init({
-  userModel,
-});
 
 // $('body').append(templates);
 

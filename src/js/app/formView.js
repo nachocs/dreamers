@@ -160,7 +160,7 @@ export default Backbone.View.extend({
   },
   afterRender() {
     const wysiwyg = new Wysiwyg();
-    wysiwyg.el.insertBefore('#comments');
+    wysiwyg.$el.insertBefore('#comments');
     this.$('.wysiwyg').hide();
 
 

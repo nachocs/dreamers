@@ -6,5 +6,5 @@ export default Backbone.Model.extend({
   defaults: {
   },
   initialize() {
-  }
+  },
 });

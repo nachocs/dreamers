@@ -64,7 +64,7 @@ const config = {
       mobileIcons: true,
       minify: false,
       appMountId: 'root',
-      title: 'Gritos.com',
+      title: 'Dreamers.com',
       unsupportedBrowser: true,
     }),
     new WebpackAssetsManifest({

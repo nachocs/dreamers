@@ -16,30 +16,31 @@ console.log(
 );
 console.log('\nStarting server...');
 
-new webpackDevServer(webpack(config), {
-  publicPath: config.output.publicPath,
-  hot: true, // With hot reloading
-  inline: true,
-  quiet: true, // lets WebpackDashboard do its thing
-  historyApiFallback: true,
-  watchOptions: {
-    poll: 1000,
-    aggregateTimeout: 1000,
-  },
-})
-.listen(PORT, HOST, err => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log('Server started ' + chalk.green('✓'));
-    console.log(
-      chalk.bold('\nAccess URLs:') +
-      chalk.gray('\n-----------------------------------') +
-      '\n   Local: ' + chalk.magenta('http://' + HOST + ':' + PORT) +
-      chalk.gray('\n-----------------------------------')
-    );
-    console.log(chalk.red('\nPress ' + chalk.italic('CTRL-C') + ' to stop'));
-  }
-});
+new webpackDevServer(webpack(config), 
+  {
+    publicPath: config.output.publicPath,
+    hot: true, // With hot reloading
+    inline: true,
+    quiet: true, // lets WebpackDashboard do its thing
+    historyApiFallback: true,
+    watchOptions: {
+      poll: 1000,
+      aggregateTimeout: 1000,
+    },
+  })
+  .listen(PORT, HOST, err => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('Server started ' + chalk.green('✓'));
+      console.log(
+        chalk.bold('\nAccess URLs:') +
+        chalk.gray('\n-----------------------------------') +
+        '\n   Local: ' + chalk.magenta('http://' + HOST + ':' + PORT) +
+        chalk.gray('\n-----------------------------------')
+      );
+      console.log(chalk.red('\nPress ' + chalk.italic('CTRL-C') + ' to stop'));
+    }
+  });
 
 module.exports = config;

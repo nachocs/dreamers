@@ -33,8 +33,7 @@
     "no-unused-vars": [2, {"vars": "all", "args": "after-used"}],
     "no-undef": 2,
     "jsx-quotes": [2, "prefer-double"],
-    "babel/object-shorthand": 2,
-    "babel/generator-star-spacing": 2
+    "babel/object-shorthand": 2
   },
   "env": {
     "es6": true,
@@ -44,29 +43,6 @@
   "globals": {
     "FB": true,
     "componentHandler": true,
-  },
-  "ecmaFeatures": {
-    "jsx": true,
-    "generators": true,
-    "arrowFunctions": true,
-    "blockBindings": true,
-    "classes": true,
-    "defaultParams": true,
-    "destructuring": true,
-    "modules": true,
-    "objectLiteralComputedProperties": true,
-    "objectLiteralShorthandMethods": true,
-    "objectLiteralShorthandProperties": true,
-    "spread": true,
-    "templateStrings": true,
-    "binaryLiterals": true,
-    "forOf": true,
-    "octalLiterals": true,
-    "regexUFlag": true,
-    "regexYFlag": true,
-    "restParams": true,
-    "superInFunctions": true,
-    "unicodeCodePointEscapes": true
   },
   "plugins": [
     "babel"
