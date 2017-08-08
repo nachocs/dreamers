@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import $ from 'jquery';
-import userModel from '../../models/userModel';
+import userModel from './userModel';
 import Cookies from 'js-cookie';
 import loadFBSDK from 'facebook-sdk-promise';
-import endpoints from '../../util/endpoints';
+import $D from './app';
 
 const faceb = () => {};
 
@@ -31,7 +31,7 @@ faceb.prototype = {
             FBuser: data,
           };
         $.ajax({
-          url: endpoints.apiUrl + 'emaillogin.cgi',
+          url: $D.emailLoginCgi,
           dataType: 'json',
           type: 'POST',
           data: payload,

@@ -8,8 +8,7 @@ import Backbone from 'backbone';
 import config from './config';
 import DHome from './router';
 
-import UserModel from './userModel';
-const userModel = new UserModel();
+import userModel from './userModel';
 
 $D.userModel = userModel;
 

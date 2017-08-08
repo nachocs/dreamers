@@ -59,7 +59,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
     font-size: 2em;
     color: white;
     text-shadow: 1px 1px 1px black;
-	padding: 0px 10px;
+	padding: 10px 10px;
 	max-width: 150px;
 	width: 100%;
 	position: absolute;
@@ -73,7 +73,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
 	position: absolute;
 	right: 0px;
 	top: 0px;
-	margin-top: 10px;
+	margin-top: 5px;
 }
 .main .head #loginPlace #loginName {
 	cursor: pointer;
@@ -656,4 +656,100 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', end
 	content: "\f03e";
 	color: darkslateblue;
 	content: "\f03e";
+}
+
+
+.login-view{
+  ul.login-menu {
+    width: 335px;
+    position: absolute;
+    top: 15px;
+    right: 0;
+    padding: 20px;
+    background: #FAFCF6;
+    z-index: 3;
+    &.short{
+      width: auto;
+      height: auto;
+      min-height: auto;
+      .logout{
+        cursor: pointer;
+        display: inline-block;
+        word-spacing: initial;
+      }
+    }
+    li{
+      list-style: none;
+    }
+    .error-login{
+      border: 1px solid red;
+      color: red;
+      display: none;
+      padding: 5px;
+      text-align: center;
+      margin-top:5px;
+      &.active{
+        display: block;
+      }
+    }
+  }
+  .mdl-menu__item{
+    line-height: initial;
+  }
+  .fb-login{
+    height: 42px;
+    color: white;
+    background-color: #3a5795;
+    border-radius: 5px;
+    padding: 0px 0 0 0;
+    margin: 20px 0 0;
+    line-height: 40px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+    cursor: pointer;
+    &:hover{
+      background-color: #435B8D;
+    }
+    .fa-facebook-official{
+      margin-left: 12px;
+      margin-top: 5px;
+    }
+    span{
+      vertical-align: top;
+      margin-left: 50px;
+    }
+  }
+}
+
+.fblogo {
+  background: #4661b0;
+  text-indent: -999em;
+  width: 33px;
+  height: 36px;
+  border-radius: 1px;
+  position: absolute;
+  overflow: hidden;
+  border: 5px solid #4661b0;
+  border-bottom: 0;
+  border-radius: 5px;
+}
+.fblogo:before {
+  content: "/20";
+  position: absolute;
+  background: #4661b0;
+  width: 13px;
+  height: 30px;
+  bottom: -10px;
+  right: -12px;
+  border: 6px solid white;
+  border-radius: 8px;
+}
+
+.fblogo:after {
+  content: "/20";
+  position: absolute;
+  width: 18px;
+  top: 17px;
+  height: 6px;
+  background: white;
+  right: 1px;
 }

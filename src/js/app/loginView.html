@@ -1,7 +1,57 @@
-<div id="loginName">
-  <%if (obj.alias_principal){%>
-    <%=obj.alias_principal%>
-  <%} else {%>
-    log in
-  <%}%>
-</div>
+<% if (obj.alias_principal){ %>
+	<span data-link="/ciudadanos/<%=obj.ID%>" class="mdl-layout--large-screen-only">
+		<% if (obj.dreamy_principal){ %>
+			<img src="<%= obj.dreamy_principal %>" style="height:48px">
+		<% } else if (obj.FB_picture){ %>
+			<img src="<%= obj.FB_picture %>" style="height:48px">
+		<% } else { %>
+	    <i class="material-icons" style="font-size:48px">face</i>
+	  <% } %>
+		<span class="mdl-layout--large-screen-only alias-principal">
+			<%= obj.alias_principal %>
+		</span>
+	</span>
+	<button class="login-menu-button mdl-button mdl-js-button mdl-button--icon desplegable">
+		<i class="material-icons">keyboard_arrow_down</i>
+	</button>
+  <ul class="login-menu hidden short mdl-card mdl-shadow--4dp">
+		<li class="mdl-layout--small-screen-only">
+			<span class="alias-principal">
+				<%= obj.alias_principal %>
+			</span>
+		</li>
+    <li>
+      <button class="js-logout logout mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">exit_to_app</i>
+      </button>
+    <span>Log Out</span>
+    </li>
+  </ul>
+
+<%} else {%>
+	<span class="mdl-layout--large-screen-only">
+		Log In
+	</span>
+	<button class="login-menu-button mdl-button mdl-js-button mdl-button--icon">
+	  <i class="material-icons">power_settings_new</i>
+	</button>
+
+	<ul class="login-menu hidden mdl-card mdl-shadow--4dp">
+		<form id='login-form'>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="text" id="loginAlias">
+				<label class="mdl-textfield__label" for="loginAlias">Alias/email</label>
+			</div>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<input class="mdl-textfield__input" type="password" id="loginPassword">
+				<label class="mdl-textfield__label" for="loginPassword">Password</label>
+			</div>
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id='loginSubmit'>
+				entrar
+			</button>
+		</form>
+		<div class="error-login"></div>
+		<div class='fb-login'><i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i><span>facebook log in/sign up</span></div>
+	</ul>
+
+<% } %>

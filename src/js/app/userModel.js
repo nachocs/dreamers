@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 
-export default Backbone.Model.extend({
+const UserModel = Backbone.Model.extend({
   url() {
   },
   defaults: {
@@ -8,3 +8,4 @@ export default Backbone.Model.extend({
   initialize() {
   },
 });
+export default new UserModel();
