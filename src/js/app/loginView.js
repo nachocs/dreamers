@@ -104,8 +104,7 @@ export default Backbone.View.extend({
     this.$('.error-login').html(error).addClass('active');
   },
   render() {
-    this.$el.html(this.template(this.model.toJSON()));
-    //	$('#loginPlace').html(this.el);
+    this.$el.html(this.template(this.serializer()));
     this.delegateEvents();
 
     if (this.afterRender && typeof this.afterRender === 'function') {
@@ -114,5 +113,8 @@ export default Backbone.View.extend({
     return this;
   },
   afterRender() {
+  },
+  serializer() {
+    return this.model.toJSON();
   },
 });

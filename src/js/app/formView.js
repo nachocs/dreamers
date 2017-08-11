@@ -12,7 +12,7 @@ export default Backbone.View.extend({
     this.formModel = new FormModel();
     this.collection = collection;
     this.model = userModel;
-    this.model.bind('change', this.render);
+    this.listenTo(this.model, 'change', this.render.bind(this));
 
   },
   events: {
@@ -151,7 +151,7 @@ export default Backbone.View.extend({
     // });
   },
   render() {
-    this.el.innerHTML = this.template(this.model.toJSON());
+    this.$el.html(this.template(this.serializer()));
 
     if (this.afterRender && typeof this.afterRender === 'function') {
       this.afterRender();
@@ -168,5 +168,8 @@ export default Backbone.View.extend({
       $(this).height(38);
       $(this).height(this.scrollHeight + parseFloat($(this).css('borderTopWidth')) + parseFloat($(this).css('borderBottomWidth')));
     });
+  },
+  serializer(){
+    return this.model.toJSON();
   },
 });

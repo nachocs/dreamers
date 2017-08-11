@@ -160,7 +160,22 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
 	box-shadow: 0px 0px 4px -1px rgb(161, 161, 221);
 	border-radius: 2px;
 /*	width: 178px;
-*/}
+*/
+  .contraer{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+    padding: 3px;
+    cursor: pointer;
+
+  }
+}
 .container.expandido{
 	background-color: white;
 }
@@ -278,20 +293,26 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
 
 
 .vermas{
-	position:absolute;
-	top:155px;
-	left:60px;
-	color:darkSlateBlue;
-	background-color:whiteSmoke;
-	z-index:7;
-	padding-top:4px;
-	padding-bottom:4px;
-	padding-left:8px;
-	padding-right:8px;
-	border:1px solid darkSlateBlue;
-	box-shadow: 0px 4px 21px -3px darkSlateBlue inset;
-	font-weight:bold;
-	cursor:pointer;
+  position: absolute;
+  top: 145px;
+  left: 70px;
+  color: darkSlateBlue;
+  background-color: whiteSmoke;
+  z-index: 7;
+  padding: 6px;
+  border: 1px solid darkSlateBlue;
+  box-shadow: 0px 4px 21px -3px darkslateblue inset;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.8rem;
+  .fa-spin{
+    padding: 0;
+    position: relative;
+    left: -4px;
+  }
 }
 
 .vermas:hover{
@@ -660,7 +681,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', end
 
 
 .login-view{
+  .dreamy{
+    height: 30px;
+    top: -4px;
+    position: relative;
+    left: 0;
+  }
   ul.login-menu {
+    color: initial;
     width: 335px;
     position: absolute;
     top: 15px;
@@ -752,4 +780,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', end
   height: 6px;
   background: white;
   right: 1px;
+}
+
+.mdl-textfield__input{
+  color: initial;
 }

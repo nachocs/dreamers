@@ -7,19 +7,17 @@ import template from './entradaView.html';
 import basicoTemplate from './basicoTemplate.html';
 export default Backbone.View.extend({
   initialize() {
-    //  this.loadPage();
     _.bindAll(this);
     this.listenTo(this.model, 'rearrange', this.rearrange.bind(this));
-    //          this.model.bind('rearrange', this.rearrange);
     this.listenTo(this.model, 'change', this.render.bind(this));
     this.listenTo(this, 'quietoparao', this.ajustarAlto.bind(this));
-
   },
   template: _.template(template),
   events: {
-    'click': 'onClick',
+    'click .expandir': 'onExpandir',
+    'click .contraer': 'contraer',
   },
-  onClick(){
+  onExpandir(){
     if (!this.model.get('expandido')) {
       return this.expandir();
     }
@@ -56,6 +54,15 @@ export default Backbone.View.extend({
   hideExpand() {
     this.$('.expand').hide();
   },
+  mostrarComentarios() {
+    const $objeto = this.$el;
+    $objeto.find('.comentarios').show().css({
+      left: '0px',
+    });
+    // $objeto.find('.comentarios').animate({
+    //   left: '0px',
+    // }, 300);
+  },
   ajustarAlto() {
     let innerHeight = this.$el.children('.content').first().height();
     const totalHeight = this.$el.height();
@@ -72,9 +79,9 @@ export default Backbone.View.extend({
         'SQalto': nuevoAlto,
       });
       this.collection.trigger('ordenar');
-      this.rearrange(true);
+      // this.rearrange(true);
     }
-
+    // this.scrollMe();
     // if (innerHeight < (1 / 3) * totalHeight) {
     //  self.model.set({
     //      'SQalto': 1
@@ -89,30 +96,42 @@ export default Backbone.View.extend({
     //  self.rearrange();
     // }
   },
-  expandir() {
+  scrollMe(){
     const self = this;
-    this.model.set('expandido', true);
-    this.template = _.template(basicoTemplate);
-    this.loadPage().always(() => {
-      if (self.model.get('SQancho') < $D.SQanchoTotal) {
-        self.model.set({
-          'SQancho': 3, //this.model.get('SQancho') + 1,
-          'SQalto': 3, //this.model.get('SQalto') + 1
-        });
-        self.collection.trigger('ordenar');
-        self.rearrange();
-      }
-    });
-    //          this.render();
     window.setTimeout(() => {
       $('body').animate({
         // scrollTop: self.$el.position().top
         scrollTop: self.model.get('top'),
       }, 'slow', () => {});
-    }, 400);
-    // window.setTimeout(function () {
-    //     self.ajustarAlto();
-    // }, 500);
+    }, 500);
+  },
+  expandir() {
+    const self = this;
+    this.model.set({'expandido': true, loading: true});
+    this.mostrarComentarios();
+    this.template = _.template(basicoTemplate);
+    this.fetch().always(() => {
+      if (self.model.get('SQancho') < $D.SQanchoTotal) {
+        self.model.set({
+          'SQancho': 3, //this.model.get('SQancho') + 1,
+          'SQalto': 3, //this.model.get('SQalto') + 1
+          loading: false,
+        });
+        self.collection.trigger('ordenar');
+        self.rearrange();
+        self.scrollMe();
+      }
+    });
+  },
+  contraer(){
+    this.model.set('expandido', false);
+    this.template = _.template(template);
+    this.model.set({
+      'SQancho': 1, //this.model.get('SQancho') + 1,
+      'SQalto': 1, //this.model.get('SQalto') + 1
+    });
+    this.collection.trigger('ordenar');
+    this.rearrange(true);
   },
   rearrange(stop) {
     const self = this;
@@ -134,14 +153,13 @@ export default Backbone.View.extend({
   },
   render() {
     this.el.innerHTML = this.template(this.model.toJSON());
-
     if (this.afterRender && typeof this.afterRender === 'function') {
       this.afterRender();
     }
     this.rendered = true;
     return this;
   },
-  loadPage() {
+  fetch() {
     return this.model.fetch();
   },
   afterRender() {

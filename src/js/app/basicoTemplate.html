@@ -1,5 +1,8 @@
     <div class="basico-background" style="background-image:url(<%=obj.IMAGEN1_URL%>)"></div>
-    <div class="content"><span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span></div>
+    <div class="content">
+      <span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span>
+      <div class="contraer"><i class="fa fa-compress fa-2x" aria-hidden="true"></i></div>
+    </div>
     <div class="basico-container">
         <%if(obj.encabezamiento){%>
           <div class="encabezamiento"><%=obj.encabezamiento%></div>
@@ -64,7 +67,7 @@
         <%}%>
         <div>
           <%for (var key in obj){ if ((/^url\d*$/).test(key)){ var url = obj[key]; var url_title = obj[key+"_title"] || "enlace"; %>
-            <a href="<%=url%>" class="url"><%=url_title%></a>
+            <a href="<%=url%>" class="url" target="_blank"><%=url_title%></a>
           <% } } %>
         </div>
     </div>
