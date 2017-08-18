@@ -33,7 +33,7 @@ export default Backbone.Model.extend({
       this.set('SQancho', 2);
       this.set('SQalto', 2);
     }
-    this.on('change', this.bindings.bind(this));
+    this.listenTo(this, 'change', this.bindings.bind(this));
   },
   bindings() {
     this.set({

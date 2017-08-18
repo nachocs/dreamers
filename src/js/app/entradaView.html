@@ -1,8 +1,15 @@
     <%var indicedospuntos = obj.indice.replace(/\//ig, '::');%>
 
     <div class="content"><span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span></div>
-    <div class="background" style="background-image: url(<%= obj.IMAGEN1_URL %>)"></div>
-    <div class="comentarios"><span><% if (typeof obj.encabezamiento !== 'undefined' && obj.encabezamiento !== null) { %> <%= obj.encabezamiento %> <%}%></span>
+    <div class="background" style="background-image: url(<%= obj.IMAGEN1_URL || 'http://dreamers.com/imagenes/logodreamersfondonegro.jpg' %>)"></div>
+    <div class="comentarios">
+      <span>
+        <% if (typeof obj.encabezamiento !== 'undefined' && obj.encabezamiento !== null) { %>
+          <%= obj.encabezamiento %>
+        <% } else if (obj.comments){ %>
+          <%= obj.comments.substring(0,240) %>
+        <% } %>
+      </span>
       <div class="vermas expandir" >
         <% if (obj.loading){ %>
           <i class="fa fa-refresh fa-spin fa-2x fa-fw"></i>

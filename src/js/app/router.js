@@ -38,12 +38,11 @@ export default Backbone.Router.extend({
 
   },
   home() {
-    $D.indice = '';
-    $D.empieza = '';
     //      $container.empty();
     this.posInicial(true);
     this.libraryView.collection.reset();
     this.libraryView.collection.fetch({
+      indice: '',
       beforeSend() {
         $D.Loading = true;
         $D.Uroboro.open();
@@ -68,14 +67,13 @@ export default Backbone.Router.extend({
     //      $container.empty();
     indice = indice.replace(/\:\:/ig, '\/');
 
-    if ((indice !== $D.indice && !entrada) || !this.inicializado) {
+    if (!entrada || !this.inicializado) {
       //  $('#contenidodinamico').empty();
 
-      $D.empieza = '';
-      $D.indice = indice;
       this.posInicial(true);
       this.libraryView.collection.reset();
       this.libraryView.collection.fetch({
+        indice,
         beforeSend() {
           $D.Loading = true;
           $D.Uroboro.open();
@@ -86,7 +84,7 @@ export default Backbone.Router.extend({
         },
       });
       this.inicializado = true;
-    } else if (indice === $D.indice && !entrada) {
+    } else if (!entrada) {
       this.posInicial(false);
     }
     //          $container.html(this.libraryView.render().el);

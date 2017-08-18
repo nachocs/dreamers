@@ -9,10 +9,8 @@ import config from './config';
 import DHome from './router';
 
 import userModel from './userModel';
-
-$D.userModel = userModel;
-
-// $('body').append(templates);
+import moment from 'moment';
+moment.locale('es');
 
 /*\
 * $D.provide
@@ -43,8 +41,6 @@ $D.provide($D, 'App');
 $D.path = config.path;
 $D.loginCgi = config.loginCgi;
 $D.init = {};
-$D.indice = '';
-$D.empieza = '';
 $D.Loading = true;
 $D.ancho = 178;
 $D.init.ancho = $D.ancho;
@@ -61,13 +57,6 @@ if ($(document).width() < (($D.ancho + 20) * 2)) {
   $D.ancho = $D.init.ancho;
   $D.alto = $D.init.alto;
 }
-
-
-// _.templateSettings = {
-//     interpolate: /\{\{(.+?)\}\}/g,
-//     evaluate: /\[\[(.+?)\]\]/g
-// };
-
 
 $D.Uroboro = ((() => {
   let UroboroCounter = 0;
@@ -91,9 +80,6 @@ $(() => {
     userModel,
   });
   Backbone.history.start();
-  // $('body').on('click', '[data-indice]', function (ev) {
-  //  $D.App.libraryView.muestraIndice(ev);
-  // });
   $('.titular').click(ev => {
     $D.App.libraryView.muestraIndice(ev);
   });

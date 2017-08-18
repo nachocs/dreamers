@@ -48,26 +48,30 @@
         <%}%>
         <%if(obj.reparto){%>
         <div class="reparto"><%=obj.reparto%></div>
-        <%}%>
+        <% } %>
       </div>
         <%if(obj.sinopsis){%>
       <div class="sinopsis blockquote"><%=obj.sinopsis%></div>
-        <%}%>
+        <% } %>
         <%if(obj.comments){%>
       <div class="comments"><%=obj.comments%></div>
-        <%}%>
+        <% } %>
         <%if(obj.COMENTARIO){%>
       <div class="comments"><%=obj.COMENTARIO%></div>
-        <%}%>
-        <%if(obj.trucos){%>
-      <div class="trucos"><%=obj.trucos%></div>
-        <%}%>
-        <%if(obj.firma){%>
-      <div class="firma"><%=obj.firma%></div>
-        <%}%>
+        <% } %>
+      <%if(obj.trucos){%>
+        <div class="trucos"><%=obj.trucos%></div>
+      <% } %>
+      <%if(obj.firma){%>
+        <div class="firma"><%=obj.firma%></div>
+      <% } %>
+      <% if(obj.date){ %>
+        <div class="date"><%= obj.date %></div>
+      <% } %>
         <div>
           <%for (var key in obj){ if ((/^url\d*$/).test(key)){ var url = obj[key]; var url_title = obj[key+"_title"] || "enlace"; %>
             <a href="<%=url%>" class="url" target="_blank"><%=url_title%></a>
           <% } } %>
         </div>
+        <div class="msg-collection-view"></div>
     </div>

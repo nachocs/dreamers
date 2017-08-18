@@ -5,12 +5,24 @@ import $ from 'jquery';
 import _ from 'lodash';
 import template from './entradaView.html';
 import basicoTemplate from './basicoTemplate.html';
+// import moment from 'moment';
+import MsgCollectionView from './msgCollectionView';
+import MsgCollection from './msgCollection';
+
 export default Backbone.View.extend({
   initialize() {
     _.bindAll(this);
     this.listenTo(this.model, 'rearrange', this.rearrange.bind(this));
     this.listenTo(this.model, 'change', this.render.bind(this));
     this.listenTo(this, 'quietoparao', this.ajustarAlto.bind(this));
+    this.msgCollection = new MsgCollection([],
+      {
+        indice: this.model.get('INDICE') + '/' + this.model.get('entrada'),
+      }
+    );
+    this.msgCollectionView = new MsgCollectionView({
+      collection: this.msgCollection,
+    });
   },
   template: _.template(template),
   events: {
@@ -48,12 +60,6 @@ export default Backbone.View.extend({
     });
     return obj;
   },
-  showExpand() {
-    this.$('.expand').show();
-  },
-  hideExpand() {
-    this.$('.expand').hide();
-  },
   mostrarComentarios() {
     const $objeto = this.$el;
     $objeto.find('.comentarios').show().css({
@@ -64,6 +70,8 @@ export default Backbone.View.extend({
     // }, 300);
   },
   ajustarAlto() {
+    if (this.ajustado){return;}
+    if (!this.model.get('expandido')){return;}
     let innerHeight = this.$el.children('.content').first().height();
     const totalHeight = this.$el.height();
     let nuevoAlto;
@@ -79,22 +87,9 @@ export default Backbone.View.extend({
         'SQalto': nuevoAlto,
       });
       this.collection.trigger('ordenar');
-      // this.rearrange(true);
+      this.rearrange(true);
+      this.ajustado = true;
     }
-    // this.scrollMe();
-    // if (innerHeight < (1 / 3) * totalHeight) {
-    //  self.model.set({
-    //      'SQalto': 1
-    //  });
-    //  self.collection.trigger('ordenar');
-    //  self.rearrange();
-    // } else if (innerHeight < (2 / 3) * totalHeight) {
-    //  self.model.set({
-    //  'SQalto': 2
-    //  });
-    //  self.collection.trigger('ordenar');
-    //  self.rearrange();
-    // }
   },
   scrollMe(){
     const self = this;
@@ -110,25 +105,38 @@ export default Backbone.View.extend({
     this.model.set({'expandido': true, loading: true});
     this.mostrarComentarios();
     this.template = _.template(basicoTemplate);
-    this.fetch().always(() => {
-      if (self.model.get('SQancho') < $D.SQanchoTotal) {
-        self.model.set({
-          'SQancho': 3, //this.model.get('SQancho') + 1,
-          'SQalto': 3, //this.model.get('SQalto') + 1
-          loading: false,
-        });
-        self.collection.trigger('ordenar');
-        self.rearrange();
-        self.scrollMe();
-      }
-    });
+    if (!this.basicLoaded){
+      this.fetch().always(() => {
+        this.basicLoaded = true;
+        self.expande();
+      });
+    } else {
+      this.expande();
+    }
+  },
+  expande(){
+    if (this.model.get('SQancho') < $D.SQanchoTotal) {
+      this.model.set({
+        'SQancho': 3,
+        'SQalto': 3,
+        loading: false,
+      });
+      this.rearrange();
+      this.collection.trigger('ordenar');
+      // this.ajustarAlto();
+
+      this.scrollMe();
+    }
+    // this.$el.find('.msg-collection-view').first().replaceWith(this.msgCollectionView.render().el);
+    this.msgCollection.fetch();
   },
   contraer(){
-    this.model.set('expandido', false);
+    this.ajustado = false;
     this.template = _.template(template);
     this.model.set({
-      'SQancho': 1, //this.model.get('SQancho') + 1,
-      'SQalto': 1, //this.model.get('SQalto') + 1
+      expandido: false,
+      SQancho: 1, //this.model.get('SQancho') + 1,
+      SQalto: 1, //this.model.get('SQalto') + 1
     });
     this.collection.trigger('ordenar');
     this.rearrange(true);
@@ -152,7 +160,11 @@ export default Backbone.View.extend({
     }
   },
   render() {
-    this.el.innerHTML = this.template(this.model.toJSON());
+    // console.log('render' + this.cid);
+    this.el.innerHTML = this.template(this.serializer(this.model.toJSON()));
+    if (this.model.get('expandido')){
+      this.$el.find('.msg-collection-view').first().replaceWith(this.msgCollectionView.render().el);
+    }
     if (this.afterRender && typeof this.afterRender === 'function') {
       this.afterRender();
     }
@@ -167,5 +179,10 @@ export default Backbone.View.extend({
     this.$(() => {
       self.$el.slideDown(1000);
     });
+  },
+  serializer(){
+    const model = this.model.toJSON();
+    // model.date = moment.unix(this.model.get('FECHA')).fromNow();
+    return model;
   },
 });

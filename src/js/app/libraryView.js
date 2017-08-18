@@ -12,7 +12,6 @@ export default Backbone.View.extend({
   template: _.template(template),
   initialize() {
     const self = this;
-    $D.empieza = '';
     _.bindAll(this, 'render');
     this.listenTo(this.collection, 'reset', this.render.bind(this));
 
@@ -194,8 +193,6 @@ export default Backbone.View.extend({
       model,
       collection: col,
     });
-    $D.empieza = model.id;
-    //                $(this.el).append(view.render().el);
     this.$el.append(view.render().el);
 
   },
@@ -208,30 +205,28 @@ export default Backbone.View.extend({
       return;
     }
     $D.Loading = true;
-    if ($D.empieza > 3) {
-      this.collection.fetch({
-        remove: false,
-        beforeSend() {
-          $D.Loading = true;
-          $D.Uroboro.open();
-        },
-        complete() {
-          $D.Loading = false;
-          $D.Uroboro.close();
-        },
-        // success: function () {
-        //    $D.Loading = false;
-        //    if ($('#container').width() < 600) {
-        //        $('#container').find('.destacado').removeClass('destacado');
-        //    }
-        // }
-      }).always(() => {
+    this.collection.fetch({
+      remove: false,
+      beforeSend() {
+        $D.Loading = true;
+        $D.Uroboro.open();
+      },
+      complete() {
         $D.Loading = false;
-        if ($('#container').width() < 600) {
-          $('#container').find('.destacado').removeClass('destacado');
-        }
-      });
-    }
+        $D.Uroboro.close();
+      },
+      // success: function () {
+      //    $D.Loading = false;
+      //    if ($('#container').width() < 600) {
+      //        $('#container').find('.destacado').removeClass('destacado');
+      //    }
+      // }
+    }).always(() => {
+      $D.Loading = false;
+      if ($('#container').width() < 600) {
+        $('#container').find('.destacado').removeClass('destacado');
+      }
+    });
     return this;
   },
   muestraIndice(ev) {
@@ -265,7 +260,7 @@ export default Backbone.View.extend({
   },
   saltointerior(indice, entrada) {
     const enlace = `http://dreamers.com/${indice}/${entrada}/?ajax=1`,
-      // alto = $('#container').height(),
+    // alto = $('#container').height(),
       ancho = $('#contenido').width();
     $('#container').css({
       'overflow-y': 'scroll',

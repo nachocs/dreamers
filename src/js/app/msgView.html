@@ -1,0 +1,53 @@
+<% if (obj.emocion) { %>
+	<img class="emocion" src="<%= obj.emocion %>">
+<% } %>
+<div class="mdl-card mdl-shadow--4dp">
+  <div class="action-icons">
+  <% if (userModel.ID){ %>
+    <div class="show-admin" title="admin"><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
+      <div class="admin-menu">
+        <ul>
+          <li><i class="fa fa-ban fa-lg js-ban" aria-hidden="true" title="spam!"></i></li>
+          <% if (userModel.ID === obj.ciudadano || userModel.nivel > 7 || (headModel.Userid && headModel.Userid.split(/\|/).includes(userModel.ID))){%>
+            <li><i class="fa fa-trash-o fa-lg js-delete" aria-hidden="true" title="delete"></i></li>
+          <% } %>
+          <% if (userModel.ID === obj.ciudadano){%>
+            <li><i class="fa fa-pencil fa-lg js-edit" aria-hidden="true" title="edit"></i></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+    <% } %>
+  </div>
+	<div class="mdl-card__title">
+		<div class="mdl-card__title-text"><% if (obj.ciudadano){ %><span data-link="/ciudadanos/<%= obj.ciudadano %>"><%}%><%= name %><% if (obj.ciudadano){ %></span><%}%></div>
+		<div class="mdl-card__subtitle-text"><%= date %></div>
+		<% if (obj.showForm){ %>
+		<div class="rabito"></div>
+		<% } %>
+	</div>
+	<div class="mdl-card__supporting-text">
+    <% if (images.length>0 ){%>
+		<div class="images-place">
+			<% images.forEach(function(image){ %>
+        <%= image %>
+      <% }); %>
+		</div>
+    <% } else {%>
+      <% images.forEach(function(image){ %>
+        <%= image %>
+      <% }); %>
+    <% } %>
+		<%= obj.comments %>
+	</div>
+	<div class="foot">
+    <% if (obj.showForm && obj.tagsShown && obj.tagsShown.length > 0){ %>
+			<div class="tags">
+				<% obj.tagsShown.forEach(function(tag){ %>
+				<span data-link="/<%= tag.value %>"><%= tag.value.match(/^ciudadanos/) ? '@' : '#' %><%= tag.name %></span>
+				<% }) %>
+			</div>
+    <% } %>
+		<div class="mola-view"></div>
+	</div>
+</div>
