@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 import Model from './entradaModel';
-import $D from './app.js';
+import $D from '../app.js';
 import _ from 'lodash';
 
 export default Backbone.Collection.extend({

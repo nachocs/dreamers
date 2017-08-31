@@ -1,8 +1,8 @@
 import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
-import FormModel from './formModel';
-import Wysiwyg from './Wysiwyg';
+import FormModel from '../models/formModel';
+import Wysiwyg from '../util/Wysiwyg';
 import template from './formView.html';
 export default Backbone.View.extend({
   id: 'formPlace',

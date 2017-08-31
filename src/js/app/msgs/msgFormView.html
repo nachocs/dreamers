@@ -1,0 +1,21 @@
+<div class="mdl-card mdl-shadow--4dp">
+  <div class="wysiwyg-view"></div>
+  <% if (obj.dreamy_principal ){ %>
+    <div class="dreamy" style="background-image:url('<%= obj.dreamy_principal %>')"></div>
+  <% } else { %>
+    <div class="dreamy"><i class="material-icons" style="font-size:48px">face</i></div>
+  <% } %>
+  <div contenteditable=true placeholder="<%= obj.isHead ? 'Introduccion' : !obj.parentModel ? (obj.titulo_head ? obj.titulo_head : 'Sueltalo!') : 'hmmm...' %>" class='formularioTextArea <%= active && 'on' %>' name="comments"><%= obj.formModel.comments || obj.formModel.INTRODUCCION %></div>
+  <div class="thumbs-place"></div>
+  <div class="file-submit">
+    <label for="file-submit<%= obj.parentModel ? "-" + obj.parentModel.INDICE + "-" + obj.parentModel.ID : '' %>" class="custom-file-upload"><i class="material-icons">photo_camera</i></label>
+    <input type="file" id="file-submit<%= obj.parentModel ? "-" + obj.parentModel.INDICE + "-" + obj.parentModel.ID : '' %>" title="choose a file to upload" name="FICHERO_IMAGEN1" <%= obj.isHead?'':'multiple'%>>
+  </div>
+  <div class="emojis"><%= obj.emojis %></div>
+  <div class="form-submit">
+    <button class="form-submit-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+      Grita
+    </button>
+  </div>
+  <div class="emojis-modal-place"></div>
+</div>

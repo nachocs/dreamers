@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import $ from 'jquery';
-import userModel from './userModel';
+import userModel from '../models/userModel';
 import Cookies from 'js-cookie';
 import loadFBSDK from 'facebook-sdk-promise';
-import $D from './app';
+import $D from '../app';
 
 const faceb = () => {};
 

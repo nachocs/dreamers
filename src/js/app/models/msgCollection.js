@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import $D from './app.js';
+import $D from '../app.js';
 import _ from 'lodash';
 
 export default Backbone.Collection.extend({
@@ -15,7 +15,7 @@ export default Backbone.Collection.extend({
   },
   parse(resp) {
     if (resp.length > 0){
-      // this.firstEntry = Math.min.apply(null, _.map(resp, 'num'));
+      this.firstEntry = Math.min.apply(null, _.map(resp, 'num'));
     }
     return resp;
   },

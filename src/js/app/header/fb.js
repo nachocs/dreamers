@@ -1,6 +1,6 @@
 
 // import FB from 'facebook';
-import config from './config';
+import config from '../config';
 import $ from 'jquery';
 
 export default {

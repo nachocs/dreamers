@@ -1,8 +1,9 @@
 import Backbone from 'backbone';
 import _ from 'lodash';
 import template from './msgView.html';
-import UserModel from './userModel';
-import Util from './util/util';
+import UserModel from '../models/userModel';
+import Util from '../util/util';
+import moment from 'moment';
 
 export default Backbone.View.extend({
   template: _.template(template),
@@ -23,6 +24,7 @@ export default Backbone.View.extend({
       {
         images,
         userModel: UserModel.toJSON(),
+        date: moment.unix(this.model.get('FECHA')).fromNow(),
       }
     );
   },

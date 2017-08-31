@@ -8,7 +8,7 @@ import Backbone from 'backbone';
 import config from './config';
 import DHome from './router';
 
-import userModel from './userModel';
+import userModel from './models/userModel';
 import moment from 'moment';
 moment.locale('es');
 

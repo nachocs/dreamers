@@ -2,12 +2,12 @@
 import $D from './app';
 import Backbone from 'backbone';
 import $ from 'jquery';
-import LibraryView from './libraryView';
-import Collection from './entradaCollection';
+import LibraryView from './entradas/libraryView';
+import Collection from './models/entradaCollection';
 const library = new Collection();
-import LogoView from './logoView';
-import LoginView from './loginView';
-import FormView from './formView';
+import LogoView from './header/logoView';
+import LoginView from './header/loginView';
+import FormView from './entradas/formView';
 
 export default Backbone.Router.extend({
   routes: {

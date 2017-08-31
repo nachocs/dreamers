@@ -40,9 +40,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes">
 
-  <% for (var css in htmlWebpackPlugin.files.css) { %>
-  <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
-  <% } %>
+
 
   <% if (htmlWebpackPlugin.options.baseHref) { %>
   <base href="<%= htmlWebpackPlugin.options.baseHref %>" />
@@ -63,7 +61,9 @@
   <!-- Add the slick-theme.css if you want default styling -->
   <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
   <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans" rel="stylesheet">
-
+  <% for (var css in htmlWebpackPlugin.files.css) { %>
+  <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+  <% } %>
 </head>
 <body>
   <% if (htmlWebpackPlugin.options.appMountId) { %>

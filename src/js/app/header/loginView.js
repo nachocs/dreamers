@@ -4,7 +4,7 @@ import $ from 'jquery';
 import template from './loginView.html';
 import FbView from './fbView';
 import Cookies from 'js-cookie';
-import $D from './app';
+import $D from '../app';
 
 export default Backbone.View.extend({
   id: 'loginPlace',

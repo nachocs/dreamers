@@ -1,6 +1,5 @@
 import Backbone from 'backbone';
 import MsgView from './msgView';
-import $ from 'jquery';
 
 export default Backbone.View.extend({
   initialize(){

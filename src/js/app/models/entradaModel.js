@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import $D from './app';
+import $D from '../app';
 
 export default Backbone.Model.extend({
   url() {

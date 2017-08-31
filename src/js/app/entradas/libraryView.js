@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-import $D from './app';
+import $D from '../app';
 import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';

@@ -1,13 +1,15 @@
 /*jslint browser: true*/
-import $D from './app';
+import $D from '../app';
 import Backbone from 'backbone';
 import $ from 'jquery';
 import _ from 'lodash';
 import template from './entradaView.html';
 import basicoTemplate from './basicoTemplate.html';
 // import moment from 'moment';
-import MsgCollectionView from './msgCollectionView';
-import MsgCollection from './msgCollection';
+import MsgCollectionView from '../msgs/msgCollectionView';
+import MsgCollection from '../models/msgCollection';
+import userModel from '../models/userModel';
+import MsgFormView from '../msgs/msgFormView';
 
 export default Backbone.View.extend({
   initialize() {
@@ -23,6 +25,7 @@ export default Backbone.View.extend({
     this.msgCollectionView = new MsgCollectionView({
       collection: this.msgCollection,
     });
+    this.listenTo(userModel, 'change', this.render.bind(this));
   },
   template: _.template(template),
   events: {
@@ -163,7 +166,14 @@ export default Backbone.View.extend({
     // console.log('render' + this.cid);
     this.el.innerHTML = this.template(this.serializer(this.model.toJSON()));
     if (this.model.get('expandido')){
-      this.$el.find('.msg-collection-view').first().replaceWith(this.msgCollectionView.render().el);
+      this.$('.msg-collection-view').replaceWith(this.msgCollectionView.render().el);
+      if (userModel.get('ID')){
+        this.msgFormView = new MsgFormView({
+          parentModel: this.model,
+          collection: this.msgCollection,
+        });
+        this.$('.msg-form-view').replaceWith(this.msgFormView.render().el);
+      }
     }
     if (this.afterRender && typeof this.afterRender === 'function') {
       this.afterRender();
