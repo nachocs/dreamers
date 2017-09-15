@@ -10,6 +10,7 @@ import MsgCollectionView from '../msgs/msgCollectionView';
 import MsgCollection from '../models/msgCollection';
 import userModel from '../models/userModel';
 import MsgFormView from '../msgs/msgFormView';
+import PreviousMsgView from './previousMsgView';
 
 export default Backbone.View.extend({
   initialize() {
@@ -17,6 +18,7 @@ export default Backbone.View.extend({
     this.listenTo(this.model, 'rearrange', this.rearrange.bind(this));
     this.listenTo(this.model, 'change', this.render.bind(this));
     this.listenTo(this, 'quietoparao', this.ajustarAlto.bind(this));
+    this.msgCollectionLoaded = false;
     this.msgCollection = new MsgCollection([],
       {
         indice: this.model.get('INDICE') + '/' + this.model.get('entrada'),
@@ -24,16 +26,21 @@ export default Backbone.View.extend({
     );
     this.msgCollectionView = new MsgCollectionView({
       collection: this.msgCollection,
+      parentModel: this.model,
     });
-    this.listenTo(userModel, 'change', this.render.bind(this));
+    this.previousMsgView = new PreviousMsgView({collection:this.msgCollection});
+
+    this.listenTo(userModel, 'change', this.renderIfExpanded.bind(this));
   },
   template: _.template(template),
   events: {
     'click .expandir': 'onExpandir',
     'click .contraer': 'contraer',
+    'click .expandirmas': 'expandeMas',
   },
   onExpandir(){
     if (!this.model.get('expandido')) {
+      this.expandidoMas = false;
       return this.expandir();
     }
   },
@@ -76,14 +83,17 @@ export default Backbone.View.extend({
     if (this.ajustado){return;}
     if (!this.model.get('expandido')){return;}
     let innerHeight = this.$el.children('.content').first().height();
-    const totalHeight = this.$el.height();
+    // const totalHeight = this.$el.height();
     let nuevoAlto;
-    this.$el.children('div.basico-container').first().children('div').each(function () {
-      innerHeight += $(this).height();
+    this.$('div.basico-container').children('div').each(function() {
+      innerHeight += $(this).outerHeight();
     });
-    nuevoAlto = Math.ceil((innerHeight / totalHeight) * 3);
-    if (nuevoAlto > 6) {
-      nuevoAlto = 6;
+    // innerHeight += this.$('div.basico-container').outerHeight();
+
+    nuevoAlto = Math.ceil(((innerHeight)/$D.alto) + (this.expandidoMas ? 0 : 0));
+    // nuevoAlto = Math.ceil((innerHeight / totalHeight) * 3);
+    if (nuevoAlto > 3 && !this.expandidoMas) {
+      nuevoAlto = 3;
     }
     if (this.model.get('SQalto') !== nuevoAlto) {
       this.model.set({
@@ -117,10 +127,11 @@ export default Backbone.View.extend({
       this.expande();
     }
   },
-  expande(){
-    if (this.model.get('SQancho') < $D.SQanchoTotal) {
+  expande(size){
+    if (!size) {size = 3;}
+    if (this.model.get('SQancho') <= $D.SQanchoTotal) {
       this.model.set({
-        'SQancho': 3,
+        'SQancho': size,
         'SQalto': 3,
         loading: false,
       });
@@ -131,7 +142,17 @@ export default Backbone.View.extend({
       this.scrollMe();
     }
     // this.$el.find('.msg-collection-view').first().replaceWith(this.msgCollectionView.render().el);
-    this.msgCollection.fetch();
+    if (!this.msgCollectionLoaded) {
+      this.msgCollection.fetch().then(() => {
+        this.msgCollectionLoaded = true;
+      });
+    }
+    this.delegateEvents();
+  },
+  expandeMas(){
+    this.expandidoMas = true;
+    this.ajustado = false;
+    this.expande($D.SQanchoTotal);
   },
   contraer(){
     this.ajustado = false;
@@ -167,6 +188,8 @@ export default Backbone.View.extend({
     this.el.innerHTML = this.template(this.serializer(this.model.toJSON()));
     if (this.model.get('expandido')){
       this.$('.msg-collection-view').replaceWith(this.msgCollectionView.render().el);
+      this.$('.previous-msgs-view').html(this.previousMsgView.render().el);
+
       if (userModel.get('ID')){
         this.msgFormView = new MsgFormView({
           parentModel: this.model,
@@ -180,6 +203,13 @@ export default Backbone.View.extend({
     }
     this.rendered = true;
     return this;
+  },
+  renderIfExpanded(){
+    if (this.model.get('expandido')){
+      const scrollNow = this.$('.basico-container').scrollTop();
+      this.render();
+      this.$('.basico-container').scrollTop(scrollNow);
+    }
   },
   fetch() {
     return this.model.fetch();

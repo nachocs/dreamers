@@ -1,4 +1,8 @@
 @import "../../node_modules/font-awesome/less/font-awesome.less";
+@import "../../node_modules/bootstrap/less/variables.less";
+@import "../../node_modules/bootstrap/less/mixins.less";
+@import "../../node_modules/bootstrap/less/buttons.less";
+@import "../../node_modules/bootstrap/less/button-groups.less";
 
 @font-face {
   font-family: 'newdreamers';
@@ -11,8 +15,9 @@ html{
   font-size: 14px;
 }
 body{
+  font-family: 'Montserrat', 'Open Sans', sans-serif;
 	margin: 0px;
-	font-size: 16px;
+	font-size: 14px;
 	background: black;
 }
 a{
@@ -83,7 +88,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
 }
 .main .head .headlogo{
     font-family: newdreamers, Arial, Helvetica;
-    font-size: 2em;
+    font-size: 30px;
     color: white;
     text-shadow: 1px 1px 1px black;
 	padding: 10px 10px;
@@ -182,8 +187,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
 	float:left;
 	margin:10px;
 	overflow:hidden;
-	font-family:Verdana, Arial, Helvetica;
-	font-size: 10pt;
+	// font-family:Verdana, Arial, Helvetica;
+	font-size: 1rem;
 	box-shadow: 0px 0px 4px -1px rgb(161, 161, 221);
 	border-radius: 2px;
 /*	width: 178px;
@@ -192,6 +197,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
     position: absolute;
     top: 0;
     right: 0;
+    margin: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+    padding: 3px;
+    cursor: pointer;
+
+  }
+  .expandirmas{
+    position: absolute;
+    top: 0;
+    right: 30px;
     margin: 3px;
     background: rgba(255, 255, 255, 0.15);
     border-radius: 50%;
@@ -253,6 +272,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
 	position:relative;
 	margin:5px;
 	display:block;
+  font-family: 'Open Sans', Verdana;
 }
 
 .background {
@@ -363,7 +383,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
     text-align:center;
     color: white;
     font-weight: bold;
-    font-family: Verdana;
+    // font-family: Verdana;
     font-size: 12px;
     box-shadow: 1px 1px 4px 0px black;
     cursor:pointer;
@@ -527,31 +547,28 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
 	max-width: 376px;
 	position: static;
 	margin: 0px auto;
+  &.extended.on{
+    max-width: 80%;
+    margin-top: 37px;
+  }
 }
 
-#formulario{
-	/*margin: 50px 33px 33px 33px;*/
-	background-color: white;
+.formulario-inactivo{
+  background-color: white;
 	/*padding: 5px;*/
 	border: 0px solid black;
 	/*box-shadow: 0px 0px 8px 3px black;*/
 	margin-top: 4px;
-}
-#formulario.off{
-	height: 25px;
+  height: 25px;
 	overflow: hidden;
+  padding: 0 0 0 4px;
+  line-height: 25px;
 }
-#formulario.on{
-	height: auto;
-	overflow: initial;
-	padding: 10px;
-	border: 0px solid black;
-	box-shadow: 0px 0px 8px 3px black;
-}
+
 .formularioTextArea{
 	margin: 0px;
 	overflow: hidden;
-	font-family: verdana, arial, helvetica;
+	// font-family: verdana, arial, helvetica;
 	font-size: 8pt;
 	padding: 5px;
 	border: 1px solid lightblue;
@@ -586,7 +603,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
 	width: 64px;
 	font-size: 8pt;
 	color: white;
-	font-family: verdana, arial, helvetica;
+	// font-family: verdana, arial, helvetica;
 	border-radius: 5px;
 	padding: 2px;
 	position: absolute;
@@ -627,7 +644,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', end
 	height: 100%;
 	padding: 24px 20px 20px 20px;
 	box-sizing: border-box;
-	overflow: auto;
+	overflow: scroll;
   .date {
     font-size: 0.8rem;
     font-style: italic;
@@ -817,11 +834,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', end
 
 .mdl-textfield__input{
   color: initial;
+  width: auto;
 }
 
 
 .msg{
-  margin-bottom: 20px;
+  // margin-bottom: 20px;
   position: relative;
   .rabito{
     position: absolute;
@@ -933,7 +951,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', end
     }
   }
   .foot{
-    display: table;
+    display: block;
+    width: 120px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
     width: 100%;
     .mola-view{
       text-align: right;
@@ -1070,7 +1092,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', end
   width: 100%;
   margin: 0;
   overflow: auto;
-  font-family: verdana, arial, helvetica;
+  // font-family: verdana, arial, helvetica;
   font-size: 1rem;
   padding: 5px 10px;
   border: 1px solid lightblue;
@@ -1093,7 +1115,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b5bdc8', end
   text-align: right;
 }
 .msg-form-view{
-  margin: 10px 0;
+  margin: 0;
 }
 .msg-form-view.formulario{
   padding: 0;
@@ -1215,7 +1237,7 @@ div[contenteditable = true]:empty:before{
   width: auto;
   font-size: 10pt;
   color: white;
-  font-family: verdana, arial, helvetica;
+  // font-family: verdana, arial, helvetica;
   border-radius: 3px;
   padding: 2px;
   position: absolute;
@@ -1232,5 +1254,253 @@ div[contenteditable = true]:empty:before{
     &:hover{
       text-shadow: 1px 1px 1px grey;
     }
+  }
+}
+.hide{
+  display: none;
+}
+.modal-back{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, .2);
+  z-index: 10;
+  .modal-modal{
+    color: slategray;
+    position: relative;
+    width: 50%;
+    min-height: 200px;
+    margin: 100px auto;
+    background-color: white;
+    .modal-header{
+      width: 100%;
+      height: 60px;
+      h3{
+        font-weight: bold;
+        margin: 0;
+        text-align: center;
+        font-family: newdreamers;
+      }
+      .modal-close{
+        color: lightslategray;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 8px 10px;
+      }
+    }
+    .modal-body{
+      width: 100%;
+      min-height: 90px;
+      text-align: center;
+      display: block;
+      justify-content: center; /* align horizontal */
+      align-items: center;
+      span{
+        vertical-align: middle;
+      }
+      .formulario{
+        width: 100%;
+        .mdl-card{
+          box-shadow: initial;
+          margin-bottom: 0;
+          .form-submit{
+            height: 46px;
+            .form-submit-button{
+              display: none;
+            }
+          }
+        }
+      }
+    }
+    .modal-footer{
+      height: 50px;
+      width: 100%;
+      background-color: rgba(0, 0, 0, .05);
+      text-align: center;
+      padding: 8px;
+    }
+  }
+}
+.msg-collection-view{
+  // margin: 10px 0 0 0;
+}
+.previous-minimsgs {
+    background-color: white;
+    position: relative;
+    // margin: 10px 0 0 0;
+    // margin-left: 50px;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);
+    text-align: center;
+    &.load-previous{
+      cursor: pointer;
+    }
+}
+.espacioantesmensajes{
+  margin: 10px 0 0 0;
+}
+.main-form{
+	/*margin: 50px 33px 33px 33px;*/
+  position: relative;
+	background-color: white;
+	/*padding: 5px;*/
+	border: 0px solid black;
+	/*box-shadow: 0px 0px 8px 3px black;*/
+	margin-top: 4px;
+  &.off{
+  	height: 25px;
+  	overflow: hidden;
+  }
+  &.on{
+  	height: auto;
+    max-height: 500px;
+  	overflow: auto;
+  	padding: 10px;
+  	border: 0px solid black;
+  	box-shadow: 0px 3px 7px 1px black;
+  }
+  .formularioTextArea{
+    width: auto;
+  }
+  .selected-indice{
+    text-align: right;
+    padding: 2px 10px;
+    border: 1px dashed lightblue;
+    border-radius: 10px;
+    i{
+      margin-left: 5px;
+    }
+  }
+  ul.select-indice{
+    z-index: 2;
+    position: absolute;
+    right: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 5px;
+    // box-shadow: 1px 1px 1px 0px grey;
+    li{
+      padding: 0 10px;
+      text-align: right;
+      border-bottom: 1px solid #dadada;
+      cursor: pointer;
+      background-color: white;
+      min-width: 70px;
+      border-radius: 10px;
+    }
+  }
+  .form-select{
+    padding: 5px;
+    width: 100%;
+    border: 1px solid lightblue;
+    margin: 5px 0 10px;
+    border-top: 0;
+    border-left: 0;
+    color: rgba(0,0,0,.6);
+    font-size: 16px;
+    font-family: 'Montserrat', 'Open Sans', sans-serif;
+  }
+  .advanced-dropdown{
+    text-align: right;
+    border-top: 1px solid #e0e0e0;
+    // height: 0px;
+    font-size: 8px;
+    margin: 0 10px -10px;
+    cursor: pointer;
+    i{
+      font-size: 12px;
+    }
+    span{
+      z-index: 2;
+      height: 20px;
+      display: inline-block;
+      padding: 0 4px;
+      position: relative;
+    }
+  }
+  .advanced{
+    background-color: rgba(243, 242, 242, 0.61);
+  }
+  .column{
+    display: inline-block;
+    width: 45%;
+    margin-left: 10px;
+  }
+  .row{
+    width: 100%;
+    margin-left: 10px;
+    padding-right: 10px;
+    position: relative;
+  }
+  .mdl-textfield textarea.mdl-textfield__input{
+    width: 100%;
+  }
+}
+.mdl-textfield__label{
+  color: rgba(0,0,0,.6);
+}
+.mdl-textfield__label.comments{
+  color: green;
+  font-size: 12px;
+  top: 4px;
+}
+
+.blinking-cursor {
+  font-weight: 100;
+  font-size: 16px;
+  color: #2E3D48;
+  -webkit-animation: 1s blink step-end infinite;
+  -moz-animation: 1s blink step-end infinite;
+  -ms-animation: 1s blink step-end infinite;
+  -o-animation: 1s blink step-end infinite;
+  animation: 1s blink step-end infinite;
+}
+
+@keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
+}
+
+@-moz-keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
+}
+
+@-webkit-keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
+}
+
+@-ms-keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
+}
+
+@-o-keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
   }
 }

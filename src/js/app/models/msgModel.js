@@ -1,20 +1,22 @@
 import Backbone from 'backbone';
-import $D from '../app';
-
+import config from '../config';
 
 export default Backbone.Model.extend({
   initialize(){
   },
   url() {
-    return `${$D.path}cgi/json.cgi?indice=${this.attributes.indice}&entrada=${this.attributes.entrada}`;
+    if (this.get('INDICE') && this.get('ID')) {
+      return config.path + 'cgi/index.cgi?indice=' + this.get('INDICE') + '&ID=' + this.get('ID');
+    }
   },
+  idAttribute: 'ID',
   parse(resp){
     if (resp.INDICE){
       resp.indice = resp.INDICE;
     }
-    if (resp.INDICE && resp.ID){
-      resp.wId = resp.INDICE + '/' + resp.ID;
-    }
+    // if (resp.INDICE && resp.ID){
+    //   resp.wId = resp.INDICE + '/' + resp.ID;
+    // }
     return resp;
   },
 });

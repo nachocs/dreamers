@@ -1,0 +1,23 @@
+<span class="mdl-badge mdl-badge--no-background	mdl-badge--overlap" <% if (Number(obj.love)>0){ %>data-badge="<%= obj.love %>"<%}%> >
+  <% if(obj.currentLove){ %>
+    <i class="fa fa-heart love active" aria-hidden="true" title="te encanta ésto"></i>
+  <% } else { %>
+    <i class="fa fa-heart-o love" aria-hidden="true" title="¿te encanta?"></i>
+  <% } %>
+</span>
+
+<span class="mdl-badge mdl-badge--no-background	mdl-badge--overlap" <% if (Number(obj.mola)>0){ %>data-badge="<%= obj.mola %>"<%}%> >
+  <% if(obj.currentMola){ %>
+    <i class="fa fa-thumbs-up mola active" aria-hidden="true" title="te mola ésto"></i>
+  <% } else { %>
+    <i class="fa fa-thumbs-o-up mola" aria-hidden="true" title="¿a que mola?"></i>
+  <% } %>
+</span>
+
+<span class="mdl-badge mdl-badge--no-background	mdl-badge--overlap" <% if (Number(obj.nomola)>0){ %>data-badge="<%= obj.nomola %>"<%}%> >
+  <% if(obj.currentNomola){ %>
+    <i class="fa fa-thumbs-down nomola active" aria-hidden="true" title="ésto no te mola"></i>
+  <% } else { %>
+    <i class="fa fa-thumbs-o-down nomola" aria-hidden="true" title="¿ésto no mola para nada?"></i>
+  <% } %>
+</span>

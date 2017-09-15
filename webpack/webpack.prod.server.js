@@ -4,7 +4,7 @@ const webpackDevServer = require('webpack-dev-server');
 const chalk = require('chalk');
 const config = require('./webpack.prod.config');
 
-const PORT = 3001;
+const PORT = 3002;
 const HOST = '0.0.0.0';
 
 console.log(

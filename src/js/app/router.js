@@ -8,6 +8,7 @@ const library = new Collection();
 import LogoView from './header/logoView';
 import LoginView from './header/loginView';
 import FormView from './entradas/formView';
+import ModalView from './msgs/modalView';
 
 export default Backbone.Router.extend({
   routes: {
@@ -21,20 +22,18 @@ export default Backbone.Router.extend({
     this.libraryView = new LibraryView({
       collection: library,
     });
-    $('#container').append(this.libraryView.render().el);
     this.logoView = new LogoView();
-    $('#head').append(this.logoView.render().el);
-
     this.formView = new FormView({
       collection: library,
-      userModel,
     });
-    $('#head').append(this.formView.render().el);
-
     this.loginView = new LoginView({
       userModel,
     });
+    $('#container').append(this.libraryView.render().el);
+    $('#head').append(this.logoView.render().el);
+    $('#head').append(this.formView.render().el);
     $('#head').append(this.loginView.render().el);
+    $('.modal-view').html(ModalView.render().el);
 
   },
   home() {

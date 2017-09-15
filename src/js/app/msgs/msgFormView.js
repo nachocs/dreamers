@@ -45,7 +45,9 @@ export default Backbone.View.extend({
   initialize(options) {
     this.parentModel = options.parentModel;
     this.formModel = new formModel();
-
+    if(options.msg){
+      this.formModel.set(options.msg.toJSON());
+    }
     this.showEmojisModal = false;
     this.tagPlaceShown = false;
     this.capturedUrls = {};
@@ -449,8 +451,8 @@ export default Backbone.View.extend({
           self.removedCapturedUrls = {};
           self.render();
 
-          const msgModel = new MsgModel();
-          self.collection.add(msgModel.parse(data.mensaje), {merge:true, individual:true});
+          const msgModel = new MsgModel(data.mensaje);
+          self.collection.add(msgModel, {merge:true, individual:true});
 
           // self.collection.reset();
           // self.collection.fetch();
@@ -506,7 +508,9 @@ export default Backbone.View.extend({
   serializer(){
     const obj = userModel.toJSON();
     let titulo_head;
-
+    if (this.parentModel && this.parentModel.get('ID')){
+      Object.assign(obj, { parentModel: this.parentModel.toJSON() });
+    }
     Object.assign(obj, {
       emojis: emojione.toImage(':smile:'),
       formModel: this.formModel.toJSON(),
@@ -514,7 +518,6 @@ export default Backbone.View.extend({
       tagPlaceShown: this.tagPlaceShown,
       active: this.active,
       titulo_head,
-      parentModel: this.parentModel.toJSON(),
     });
     return obj;
   },

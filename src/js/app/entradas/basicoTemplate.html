@@ -2,6 +2,7 @@
     <div class="content">
       <span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span>
       <div class="contraer"><i class="fa fa-compress fa-2x" aria-hidden="true"></i></div>
+      <div class="expandirmas"><i class="fa fa-expand fa-2x" aria-hidden="true"></i></div>
     </div>
     <div class="basico-container">
         <%if(obj.encabezamiento){%>
@@ -73,6 +74,8 @@
             <a href="<%=url%>" class="url" target="_blank"><%=url_title%></a>
           <% } } %>
         </div>
-        <div class="msg-form-view"></div>
+        <div class="espacioantesmensajes"></div>
+        <div class="previous-msgs-view"></div>
         <div class="msg-collection-view"></div>
+        <div class="msg-form-view"></div>
     </div>
