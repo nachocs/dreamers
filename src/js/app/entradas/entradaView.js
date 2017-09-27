@@ -50,7 +50,7 @@ export default Backbone.View.extend({
       // className = className + ' destacado';
     }
     className = `${className} ${this.model.get('nombreindice')}`;
-    if (!this.model.get('expandido')) {
+    if (this.model.get('expandido')) {
       className = `${className} expandido`;
     }
     return className;
@@ -187,6 +187,7 @@ export default Backbone.View.extend({
     // console.log('render' + this.cid);
     this.el.innerHTML = this.template(this.serializer(this.model.toJSON()));
     if (this.model.get('expandido')){
+      this.$el.addClass('expandido');
       this.$('.msg-collection-view').replaceWith(this.msgCollectionView.render().el);
       this.$('.previous-msgs-view').html(this.previousMsgView.render().el);
 
