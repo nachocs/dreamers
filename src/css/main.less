@@ -194,6 +194,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3f00', end
   border-width: 3px 4px 3px 5px;
   border-radius: 95% 4% 92% ~"5%/4%" 95% 6% 95%;
   transform: rotate(2deg);
+  transition:all 1s ease-out;
+  &:nth-child(2n+1){
+    border-width: 3px 4px 3px 5px;
+    border-radius: 4% 95% 6% ~"95%/95%" 4% 92% 5%;
+    transform: rotate(-2deg);
+    .container-inner{
+      transform: rotate(2deg);
+    }
+  }
   .container-inner{
     transform: rotate(-2deg);
     width: 100%;
