@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import Model from './entradaModel';
-import $D from '../app.js';
+import config from '../config';
+
 import _ from 'lodash';
 
 export default Backbone.Collection.extend({
@@ -10,7 +11,7 @@ export default Backbone.Collection.extend({
     this.indice = '';
   },
   url() {
-    return $D.path + 'cgi/json.cgi?' + 'indice=' + this.indice + '&empieza=' + this.firstEntry;
+    return config.path + 'cgi/json.cgi?' + 'indice=' + this.indice + '&empieza=' + this.firstEntry;
   },
   parse(resp) {
     if (resp.length > 0){

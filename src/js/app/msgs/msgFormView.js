@@ -9,8 +9,8 @@ import EmojisModal from '../util/emojisModal';
 import Util from '../util/util';
 import MsgModel from '../models/msgModel';
 import vent from '../util/vent';
-import $D from '../app';
 import userModel from '../models/userModel';
+import config from '../config';
 
 function isOrContains(node, container) {
   while (node) {
@@ -222,7 +222,7 @@ export default Backbone.View.extend({
       data.append('FICHERO_IMAGEN' + numero, file);
     });
     $.ajax({
-      url: $D.path + 'cgi/upload.cgi?sessionId=' + userModel.get('uid'),
+      url: config.path + 'cgi/upload.cgi?sessionId=' + userModel.get('uid'),
       data,
       cache: false,
       contentType: false,

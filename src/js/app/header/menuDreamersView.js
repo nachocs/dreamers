@@ -1,7 +1,7 @@
 import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
-import $D from '../app';
+import $D from '../global';
 import template from './menuDreamersView.html';
 
 export default Backbone.View.extend({

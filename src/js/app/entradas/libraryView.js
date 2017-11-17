@@ -1,10 +1,11 @@
 /*jslint browser: true*/
-import $D from '../app';
+import $D from '../global';
 import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
 import EntradaView from './entradaView';
 import template from './libraryView.html';
+
 const LibraryEntradaView = EntradaView.extend({});
 
 export default Backbone.View.extend({

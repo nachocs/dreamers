@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-import $D from '../app';
+import $D from '../global';
 import Backbone from 'backbone';
 import $ from 'jquery';
 import _ from 'lodash';
@@ -66,7 +66,7 @@ export default Backbone.View.extend({
       'style': `top:${this.model.get('top')}px; left:${this.model.get('left')}px; width:${this.model.get('ancho')}px; height:${this.model.get('alto')}px;`,
       'data-entrada': this.model.get('entrada'),
       'data-indice': this.model.get('indice').replace(/\//ig, '::'),
-      'data-link': `http://dreamers.com/${this.model.get('indice')}/${this.model.get('entrada')}/?ajax=1`,
+      'data-link': `http://dreamers.com/${this.model.get('indice')}/${this.model.get('entrada')}`,
     });
     return obj;
   },

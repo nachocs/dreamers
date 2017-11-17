@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-import $D from './app';
+import $D from './global';
 import Backbone from 'backbone';
 import $ from 'jquery';
 import LibraryView from './entradas/libraryView';

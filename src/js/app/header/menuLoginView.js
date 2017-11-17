@@ -1,8 +1,8 @@
 import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
-import $D from '../app';
 import template from './menuLoginView.html';
+import config from '../config';
 
 export default Backbone.View.extend({
   id: 'menuLogin',
@@ -20,7 +20,7 @@ export default Backbone.View.extend({
     else{
       $.ajax({
         type: 'POST',
-        url: $D.loginCgi,
+        url: config.loginCgi,
         data: {
           alias,
           password: pass,

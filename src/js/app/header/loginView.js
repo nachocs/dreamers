@@ -4,7 +4,7 @@ import $ from 'jquery';
 import template from './loginView.html';
 import FbView from './fbView';
 import Cookies from 'js-cookie';
-import $D from '../app';
+import config from '../config';
 
 export default Backbone.View.extend({
   id: 'loginPlace',
@@ -70,7 +70,7 @@ export default Backbone.View.extend({
     const self = this;
     $.ajax({
       type: 'POST',
-      url: $D.loginCgi,
+      url: config.loginCgi,
       data,
       success(data) {
         if (data.status !== 'ok') {

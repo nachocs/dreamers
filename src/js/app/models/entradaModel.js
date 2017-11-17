@@ -1,9 +1,10 @@
 import Backbone from 'backbone';
-import $D from '../app';
+import $D from '../global';
+import config from '../config';
 
 export default Backbone.Model.extend({
   url() {
-    return `${$D.path}cgi/json.cgi?indice=${this.attributes.indice}&entrada=${this.attributes.entrada}`;
+    return `${config.path}cgi/json.cgi?indice=${this.attributes.indice}&entrada=${this.attributes.entrada}`;
   },
   defaults: {
     'subject': '',
