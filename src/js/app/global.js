@@ -1,4 +1,5 @@
 import $ from 'jquery';
+let UroboroCounter = 0;
 
 class Global {
   constructor() {
@@ -25,12 +26,13 @@ class Global {
   get Uroboro() {
     return {
       open() {
-        this.UroboroCounter++;
+        UroboroCounter++;
         $('.uroboro').show();
       },
       close() {
-        this.UroboroCounter--;
-        if (this.UroboroCounter < 1) {
+        UroboroCounter--;
+        console.log('UroboroCounter', UroboroCounter);
+        if (UroboroCounter < 1) {
           $('.uroboro').hide();
         }
       },

@@ -5,12 +5,13 @@ import template from './loginView.html';
 import FbView from './fbView';
 import Cookies from 'js-cookie';
 import config from '../config';
+import userModel from '../models/userModel';
 
 export default Backbone.View.extend({
   id: 'loginPlace',
   className: 'login-view',
   template: _.template(template),
-  initialize({userModel}) {
+  initialize() {
     _.bindAll(this);
     this.model = userModel;
     this.fbView = new FbView();

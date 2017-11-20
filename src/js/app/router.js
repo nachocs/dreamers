@@ -2,13 +2,6 @@
 import $D from './global';
 import Backbone from 'backbone';
 import $ from 'jquery';
-import LibraryView from './entradas/libraryView';
-import Collection from './models/entradaCollection';
-const library = new Collection();
-import LogoView from './header/logoView';
-import LoginView from './header/loginView';
-import FormView from './entradas/formView';
-import ModalView from './msgs/modalView';
 
 export default Backbone.Router.extend({
   routes: {
@@ -18,29 +11,14 @@ export default Backbone.Router.extend({
     'indices/': 'home',
     'indices/:indice(/:entrada)': 'indices',
   },
-  initialize({userModel}) {
-    this.libraryView = new LibraryView({
-      collection: library,
-    });
-    this.logoView = new LogoView();
-    this.formView = new FormView({
-      collection: library,
-    });
-    this.loginView = new LoginView({
-      userModel,
-    });
-    $('#container').append(this.libraryView.render().el);
-    $('#head').append(this.logoView.render().el);
-    $('#head').append(this.formView.render().el);
-    $('#head').append(this.loginView.render().el);
-    $('.modal-view').html(ModalView.render().el);
-
+  initialize(options) {
+    this.collection = options.collection;
   },
   home() {
     //      $container.empty();
     this.posInicial(true);
-    this.libraryView.collection.reset();
-    this.libraryView.collection.fetch({
+    this.collection.reset();
+    this.collection.fetch({
       indice: '',
       beforeSend() {
         $D.Loading = true;
@@ -70,8 +48,8 @@ export default Backbone.Router.extend({
       //  $('#contenidodinamico').empty();
 
       this.posInicial(true);
-      this.libraryView.collection.reset();
-      this.libraryView.collection.fetch({
+      this.collection.reset();
+      this.collection.fetch({
         indice,
         beforeSend() {
           $D.Loading = true;
@@ -87,9 +65,9 @@ export default Backbone.Router.extend({
       this.posInicial(false);
     }
     //          $container.html(this.libraryView.render().el);
-    if (entrada) {
-      $D.App.libraryView.saltointerior(indice, entrada);
-    }
+    // if (entrada) {
+    //   $D.App.libraryView.saltointerior(indice, entrada);
+    // }
   },
   posInicial(inicio) {
     // const ancho = $('#contenido').width();

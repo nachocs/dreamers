@@ -1,5 +1,5 @@
 import Backbone from 'backbone';
-import config from '../app.js';
+import config from '../config';
 import _ from 'lodash';
 import MsgModel from './msgModel';
 
