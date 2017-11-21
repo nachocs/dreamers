@@ -15,34 +15,26 @@ export default Backbone.View.extend({
     const self = this;
     _.bindAll(this, 'render');
     this.listenTo(this.collection, 'reset', this.render.bind(this));
-
-    //            this.collection.bind('add', this.render);
     this.listenTo(this.collection, 'add', this.addOne.bind(this));
     this.listenTo(this.collection, 'add', this.extenderLineas.bind(this));
     this.listenTo(this.collection, 'add', this.detect_scroll.bind(this));
     this.listenTo(this.collection, 'ordenar', this.ordenar.bind(this));
-
-    //            this.collection.bind('reset', this.ordenar);
-    //            this.collection.bind('add', this.ordenar);
-
-    //            this.collection.bind('fetch', this.render);
-
     this.currentColumns = Math.floor($('#contenidodinamico').width() / ($D.ancho + $D.espaciado));
-    //            this.collection.bind('change', this.fetch);
-    //            this.collection.fetch();
 
-    _.bindAll(this, 'detect_scroll');
-    // bind to window
-    $(window).scroll(this.detect_scroll);
     $(window).resize(() => {
       self.detect_resize();
     });
     self.detect_resize();
-
     $D.Loading = false;
   },
-  detect_resize() {
+  events: {
+    'mouseenter .container': 'mostrarComentariosEv',
+    'mouseleave .container': 'ocultarComentariosEv',
+    'click .titular': 'muestraIndice',
+    'click #mostrarmas': 'mostrarMas',
+  },
 
+  detect_resize() {
     $D.SQanchoTotal = this.calculaAncho();
     // if ($D.SQanchoTotal !== this.currentColumns){
     this.currentColumns = $D.SQanchoTotal;
@@ -172,17 +164,18 @@ export default Backbone.View.extend({
       this.extenderLineas();
     }
     this.isRendering = false;
-  },
-  events: {
-    'mouseenter .container': 'mostrarComentariosEv',
-    'mouseleave .container': 'ocultarComentariosEv',
-    'click .titular': 'muestraIndice',
-    'click #mostrarmas': 'mostrarMas',
+    $('.mdl-layout__content').scroll(this.detect_scroll.bind(this));
+
   },
   detect_scroll() {
-    if (!$D.Loading && (($(window).scrollTop() + window.innerHeight) > ($(document).height() - ($D.alto * 2)))) {
+    const e = document.getElementsByClassName('mdl-layout__content')[0];
+    // console.log('scroll', e.scrollHeight - e.scrollTop, e.clientHeight);
+    if (!$D.Loading && e.scrollHeight - e.scrollTop <= e.clientHeight + $D.alto) {
       this.anadir();
     }
+    // if (!$D.Loading && (($(e.currentTarget).scrollTop() + window.innerHeight) > ($(document).height() - ($D.alto * 2)))) {
+    //   this.anadir();
+    // }
   },
   mostrarMas(ev) {
     ev.stopPropagation();

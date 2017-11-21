@@ -1,15 +1,45 @@
 <div class='modal-view'></div>
 <div id="fb-root"></div>
 <div id="uroboro" class="uroboro" style="display: none; top: -5px;"></div>
-<div class="headband"></div>
-<div class="main">
-  <div class="head" id="head">
-  </div>
-</div>
 
-<div id="contenido">
-  <div id="container" style="float:left; width:100%">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header <%= (obj.INDICE === 'ciudadanos')?'ciudadano':'' %>"  >
+    <div class="mdl-layout-icon"></div>
+    <div class="mdl-layout__header-row">
+      <div data-link="/" class="logomask pseudo mdl-layout--large-screen-only">
+        <img src="<%= obj.imgLogo %>" alt="Dreamers.com" title="home"/>
+      </div>
+      <svg height="0" style="display: none;">
+        <!-- THE mask -->
+        <mask id="logomask-firefox">
+          <image width="50" height="50" xlink:href="<%= obj.imgLogo %>" filter="url(#logomaskfilter)" />
+        </mask>
+        <!-- the filter to make the image white -->
+        <filter id="logomaskfilter">
+          <feFlood flood-color="white" />
+          <feComposite in2="SourceAlpha" operator="in" />
+        </filter>
+      </svg>
+
+      <!-- Title -->
+      <div class="mdl-layout-title titulo mdl-layout--large-screen-only form-view">
+      </div>
+      <!-- Add spacer, to align navigation to the right -->
+      <div class="mdl-layout-spacer"></div>
+      <!-- Navigation. We hide it in small screens. -->
+      <nav class="mdl-navigation">
+        <div class="mdl-navigation__link login-view">Log in.</a></div>
+      </nav>
+    </div>
+  </header>
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title newdreamers"><%= obj.Titulo %></span>
+    <nav class="resumen-collection"></nav>
   </div>
-  <div id="resultado">
-  </div>
+  <main class="mdl-layout__content">
+  	<div id="contenido">
+      <div id="container" style="float:left; width:100%">
+      </div>
+  	</div>
+  </main>
 </div>

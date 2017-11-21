@@ -24,6 +24,7 @@ const App = Backbone.View.extend({
     this.router = new Router({collection: this.collection});
     this.mainView = new MainView({
       collection: this.collection,
+      router: this.router,
     });
     $('#root').html(this.mainView.render().el);
     Backbone.history.start();

@@ -65,7 +65,7 @@ const config = {
       minify: false,
       appMountId: 'root',
       title: 'Dreamers.com',
-      unsupportedBrowser: true,
+      unsupportedBrowser: false,
     }),
     new WebpackAssetsManifest({
       output: '/manifest.json',
