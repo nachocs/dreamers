@@ -23,7 +23,7 @@ export default Backbone.View.extend({
     const layout = document.querySelector('.mdl-layout');
     layout.MaterialLayout.toggleDrawer();
     const indice = $(ev.currentTarget).data('indice');
-    this.router.navigate('/indices/' + indice, {trigger: true});
+    this.router.navigate('/indices/' + indice, { trigger: true });
   },
   render() {
     this.el.innerHTML = this.template();

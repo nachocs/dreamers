@@ -19,16 +19,14 @@ export default Backbone.View.extend({
     this.listenTo(this.model, 'change', this.render.bind(this));
     this.listenTo(this, 'quietoparao', this.ajustarAlto.bind(this));
     this.msgCollectionLoaded = false;
-    this.msgCollection = new MsgCollection([],
-      {
-        indice: this.model.get('INDICE') + '/' + this.model.get('entrada'),
-      }
-    );
+    this.msgCollection = new MsgCollection([], {
+      indice: this.model.get('INDICE') + '/' + this.model.get('entrada'),
+    });
     this.msgCollectionView = new MsgCollectionView({
       collection: this.msgCollection,
       parentModel: this.model,
     });
-    this.previousMsgView = new PreviousMsgView({collection:this.msgCollection});
+    this.previousMsgView = new PreviousMsgView({ collection: this.msgCollection });
 
     this.listenTo(userModel, 'change', this.renderIfExpanded.bind(this));
   },
@@ -38,7 +36,7 @@ export default Backbone.View.extend({
     'click .contraer': 'contraer',
     'click .expandirmas': 'expandeMas',
   },
-  onExpandir(){
+  onExpandir() {
     if (!this.model.get('expandido')) {
       this.expandidoMas = false;
       return this.expandir();
@@ -80,17 +78,17 @@ export default Backbone.View.extend({
     // }, 300);
   },
   ajustarAlto() {
-    if (this.ajustado){return;}
-    if (!this.model.get('expandido')){return;}
+    if (this.ajustado) { return; }
+    if (!this.model.get('expandido')) { return; }
     let innerHeight = this.$('.container-inner').children('.content').first().height();
     // const totalHeight = this.$el.height();
     let nuevoAlto;
-    this.$('.container-inner div.basico-container').children('div').each(function() {
+    this.$('.container-inner div.basico-container').children('div').each(function () {
       innerHeight += $(this).outerHeight();
     });
     // innerHeight += this.$('div.basico-container').outerHeight();
 
-    nuevoAlto = Math.ceil(((innerHeight)/$D.alto) + (this.expandidoMas ? 0 : 0));
+    nuevoAlto = Math.ceil(((innerHeight) / $D.alto) + (this.expandidoMas ? 0 : 0));
     // nuevoAlto = Math.ceil((innerHeight / totalHeight) * 3);
     if (nuevoAlto > 3 && !this.expandidoMas) {
       nuevoAlto = 3;
@@ -104,10 +102,10 @@ export default Backbone.View.extend({
       this.ajustado = true;
     }
   },
-  scrollMe(){
+  scrollMe() {
     const self = this;
     window.setTimeout(() => {
-      $('body').animate({
+      $('.mdl-layout__content').animate({
         // scrollTop: self.$el.position().top
         scrollTop: self.model.get('top'),
       }, 'slow', () => {});
@@ -115,10 +113,10 @@ export default Backbone.View.extend({
   },
   expandir() {
     const self = this;
-    this.model.set({'expandido': true, loading: true});
+    this.model.set({ 'expandido': true, loading: true });
     this.mostrarComentarios();
     this.template = _.template(basicoTemplate);
-    if (!this.basicLoaded){
+    if (!this.basicLoaded) {
       this.fetch().always(() => {
         this.basicLoaded = true;
         self.expande();
@@ -127,8 +125,8 @@ export default Backbone.View.extend({
       this.expande();
     }
   },
-  expande(size){
-    if (!size) {size = 3;}
+  expande(size) {
+    if (!size) { size = 3; }
     if (this.model.get('SQancho') <= $D.SQanchoTotal) {
       this.model.set({
         'SQancho': size,
@@ -149,12 +147,12 @@ export default Backbone.View.extend({
     }
     this.delegateEvents();
   },
-  expandeMas(){
+  expandeMas() {
     this.expandidoMas = true;
     this.ajustado = false;
     this.expande($D.SQanchoTotal);
   },
-  contraer(){
+  contraer() {
     this.ajustado = false;
     this.template = _.template(template);
     this.model.set({
@@ -186,12 +184,15 @@ export default Backbone.View.extend({
   render() {
     // console.log('render' + this.cid);
     this.el.innerHTML = this.template(this.serializer(this.model.toJSON()));
-    if (this.model.get('expandido')){
+    if (this.model.get('expandido')) {
       this.$el.addClass('expandido');
+      if (this.expandidoMas) {
+        this.$el.addClass('expandidomas');
+      }
       this.$('.msg-collection-view').replaceWith(this.msgCollectionView.render().el);
       this.$('.previous-msgs-view').html(this.previousMsgView.render().el);
 
-      if (userModel.get('ID')){
+      if (userModel.get('ID')) {
         this.msgFormView = new MsgFormView({
           parentModel: this.model,
           collection: this.msgCollection,
@@ -205,8 +206,8 @@ export default Backbone.View.extend({
     this.rendered = true;
     return this;
   },
-  renderIfExpanded(){
-    if (this.model.get('expandido')){
+  renderIfExpanded() {
+    if (this.model.get('expandido')) {
       const scrollNow = this.$('.basico-container').scrollTop();
       this.render();
       this.$('.basico-container').scrollTop(scrollNow);
@@ -221,7 +222,7 @@ export default Backbone.View.extend({
       self.$el.slideDown(1000);
     });
   },
-  serializer(){
+  serializer() {
     const model = this.model.toJSON();
     // model.date = moment.unix(this.model.get('FECHA')).fromNow();
     return model;

@@ -3,7 +3,7 @@ import MsgView from './msgView';
 import $ from 'jquery';
 
 export default Backbone.View.extend({
-  initialize(options){
+  initialize(options) {
     this.parentModel = options.parentModel;
     this.views = {};
     this.listenTo(this.collection, 'add', this.renderOne.bind(this));
@@ -12,13 +12,13 @@ export default Backbone.View.extend({
   className: 'msg-collection-view',
   render() {
     this.$el.html('');
-    this.collection.each(function (model) {
+    this.collection.each((model) => {
       this.renderOne(model);
-    }, this);
+    });
     return this;
   },
   renderOne(model) {
-    if (!model.id){return;}
+    if (!model.id) { return; }
     const msgView = new MsgView({
       model,
       parentModel: this.parentModel,

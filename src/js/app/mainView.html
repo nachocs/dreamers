@@ -3,11 +3,11 @@
 <div id="uroboro" class="uroboro" style="display: none; top: -5px;"></div>
 
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-  <header class="mdl-layout__header <%= (obj.INDICE === 'ciudadanos')?'ciudadano':'' %>"  >
+  <header class="mdl-layout__header <%= (obj.INDICE === 'ciudadanos')?'ciudadano':'' %>">
     <div class="mdl-layout-icon"></div>
     <div class="mdl-layout__header-row">
       <div data-link="/" class="logomask pseudo mdl-layout--large-screen-only">
-        <img src="<%= obj.imgLogo %>" alt="Dreamers.com" title="home"/>
+        <img src="<%= obj.imgLogo %>" alt="Dreamers.com" title="home" />
       </div>
       <svg height="0" style="display: none;">
         <!-- THE mask -->
@@ -22,13 +22,14 @@
       </svg>
 
       <!-- Title -->
-      <div class="mdl-layout-title titulo mdl-layout--large-screen-only form-view">
+      <div class="titulo form-view">
       </div>
       <!-- Add spacer, to align navigation to the right -->
       <div class="mdl-layout-spacer"></div>
       <!-- Navigation. We hide it in small screens. -->
       <nav class="mdl-navigation">
-        <div class="mdl-navigation__link login-view">Log in.</a></div>
+        <div class="mdl-navigation__link login-view">Log in.</a>
+        </div>
       </nav>
     </div>
   </header>
@@ -37,9 +38,9 @@
     <nav class="resumen-collection"></nav>
   </div>
   <main class="mdl-layout__content">
-  	<div id="contenido">
+    <div id="contenido">
       <div id="container" style="float:left; width:100%">
       </div>
-  	</div>
+    </div>
   </main>
 </div>

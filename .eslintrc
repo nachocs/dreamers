@@ -3,7 +3,7 @@
   "rules": {
     "strict": 0,
     "indent": [
-        2,
+        0,
         2,
         {"SwitchCase": 1}
     ],
@@ -13,12 +13,13 @@
     ],
     "linebreak-style": [
         2,
-        "unix"
+        "windows"
     ],
     "semi": [
         2,
         "always"
     ],
+    "brace-style": [0, "stroustrup", { "allowSingleLine": true }],
     "accessor-pairs": [2, {getWithoutSet: false}],
     "no-underscore-dangle": 0,
     "no-console": 0,

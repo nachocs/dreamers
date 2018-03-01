@@ -9,7 +9,7 @@ import MenuDreamers from './header/menuDreamersView';
 
 export default Backbone.View.extend({
   template: _.template(template),
-  initialize(options){
+  initialize(options) {
     this.router = options.router;
     this.libraryView = new LibraryView({
       collection: this.collection,
@@ -18,15 +18,15 @@ export default Backbone.View.extend({
       collection: this.collection,
     });
     this.loginView = new LoginView();
-    this.menuDreamers = new MenuDreamers({router: this.router});
+    this.menuDreamers = new MenuDreamers({ router: this.router });
     this.model = new Backbone.Model();
-    this.model.set('Titulo', 'Dreamers.com');
+    this.model.set('Titulo', 'dreamers');
     // logodreamers50x50
     this.images = {
       logo: require('../../img/logodreamers50x50.jpg'),
     };
   },
-  render(){
+  render() {
     this.$el.html(this.template(this.serializer()));
     this.$('#container').html(this.libraryView.render().el);
     // this.$('#head').append(this.logoView.render().el);
@@ -38,8 +38,7 @@ export default Backbone.View.extend({
   },
   serializer() {
     return Object.assign({},
-      this.model.toJSON(),
-      {
+      this.model.toJSON(), {
         imgLogo: this.images.logo,
       });
   },
