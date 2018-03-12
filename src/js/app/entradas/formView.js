@@ -33,19 +33,19 @@ function elementContainsSelection(el) {
       }
       return true;
     }
-  } else if ( (sel = document.selection) && sel.type != 'Control') {
+  } else if ((sel = document.selection) && sel.type != 'Control') {
     return isOrContains(sel.createRange().parentElement(), el);
   }
   return false;
 }
-const getIndice = async(indice) => {
+const getIndice = async (indice) => {
   return await Service.getIndice(indice);
 };
 export default Backbone.View.extend({
   id: 'formPlace',
   className: 'form-place',
   template: _.template(template),
-  initialize({collection}) {
+  initialize({ collection }) {
     _.bindAll(this);
     this.formModel = new FormModel();
     this.collection = collection;
@@ -53,9 +53,9 @@ export default Backbone.View.extend({
     this.selectedIndice = 'Art&iacute;culo';
     this.indice = 'articulos';
     this.advanced = false;
-    this.indicesArray = {'peliculas': 'Pel&iacute;cula','articulos':'Art&iacute;culo'};
+    this.indicesArray = { 'peliculas': 'Pel&iacute;cula', 'articulos': 'Art&iacute;culo' };
     this.listenTo(userModel, 'change', this.userModelChange.bind(this));
-    this.formatos = [{Name:'Color', html:'Color'},{Name:'Blanco_y_Negro', html:'Blanco y Negro'}];
+    this.formatos = [{ Name: 'Color', html: 'Color' }, { Name: 'Blanco_y_Negro', html: 'Blanco y Negro' }];
     // $.get(config.path + 'cgi/json.cgi?indice=paises&encontrar=ID').done(function (data){
     //   console.log(data);
     // });
@@ -79,30 +79,30 @@ export default Backbone.View.extend({
     this.advanced = !this.advanced;
     this.render();
   },
-  userModelChange(){
-    if (userModel.get('uid')){
-      getIndice('paises').then((data)=>{
+  userModelChange() {
+    if (userModel.get('uid')) {
+      getIndice('paises').then((data) => {
         this.paises = data;
       });
-      getIndice('generos').then((data)=>{
+      getIndice('generos').then((data) => {
         this.generos = data;
       });
       this.render();
     }
   },
-  onSelectIndice(e){
+  onSelectIndice(e) {
     const indice = $(e.currentTarget).data('indice');
     this.indice = indice;
     this.selectedIndice = this.indicesArray[indice];
     this.indicesDropdown = false;
-    if (this.indice !== 'articulos'){
+    if (this.indice !== 'articulos') {
       this.$el.addClass('extended');
     } else {
       this.$el.removeClass('extended');
     }
     this.render();
   },
-  onIndicesDropdown(){
+  onIndicesDropdown() {
     this.indicesDropdown = !this.indicesDropdown;
     this.render();
   },
@@ -121,18 +121,18 @@ export default Backbone.View.extend({
   },
 
   upload() {
-    if (!userModel.get('uid')){ return; }
+    if (!userModel.get('uid')) { return; }
     this.clearArea();
     this.showEmojisIn(false);
     const self = this;
     const data = new FormData();
     let imagenes_jump = 0;
 
-    Object.keys(this.formModel.toJSON()).forEach((key)=> {
-      if ((/IMAGEN(\d+)_URL/).exec(key)){
+    Object.keys(this.formModel.toJSON()).forEach((key) => {
+      if ((/IMAGEN(\d+)_URL/).exec(key)) {
         const image = (/IMAGEN(\d+)_URL/).exec(key)[1];
-        if ((Number(image)+1)>imagenes_jump){
-          imagenes_jump = Number(image)+1;
+        if ((Number(image) + 1) > imagenes_jump) {
+          imagenes_jump = Number(image) + 1;
         }
       }
     });
@@ -151,7 +151,7 @@ export default Backbone.View.extend({
       success(data) {
         // console.log('UPLOAD RESPONSE: ', data);
         self.setComments();
-        if (data.response && data.response.Ficheros && self.formModel.get('Ficheros')){
+        if (data.response && data.response.Ficheros && self.formModel.get('Ficheros')) {
           data.response.Ficheros = self.formModel.get('Ficheros') + ',' + data.response.Ficheros;
         }
         self.formModel.set(data.response);
@@ -159,20 +159,20 @@ export default Backbone.View.extend({
       },
     });
   },
-  setComments(){
-    if (this.$('.formularioTextArea').length){
+  setComments() {
+    if (this.$('.formularioTextArea').length) {
       this.formModel.set('comments', this.$('.formularioTextArea').html());
     }
   },
 
   onPaste(e) {
-    function replaceStyleAttr (str) {
+    function replaceStyleAttr(str) {
       return str.replace(/(<[\w\W]*?)(style)([\w\W]*?>)/g, function (a, b, c, d) {
         return b + 'style_replace' + d;
       });
     }
 
-    function removeTagsExcludeA (str) {
+    function removeTagsExcludeA(str) {
       return str.replace(/<\/?((?!a)(\w+))\s*[\w\W]*?>/g, '');
     }
 
@@ -191,62 +191,62 @@ export default Backbone.View.extend({
     }
   },
 
-  deleteTag(e){
+  deleteTag(e) {
     const tag = this.$(e.currentTarget).data('delete-tag');
     const tags = this.formModel.get('tags').split(',');
 
     let newTags = '';
     for (let i = 0; i < tags.length; ++i) {
-      if (i != tag){
-        if (newTags.length > 0){
+      if (i != tag) {
+        if (newTags.length > 0) {
           newTags = newTags + ',';
         }
         newTags = newTags + tags[i];
       }
     }
     this.setComments();
-    this.formModel.set({tags: newTags});
+    this.formModel.set({ tags: newTags });
   },
-  inputTag(e){
+  inputTag(e) {
     e.preventDefault();
-    if (e.target.value && e.target.value.length > 10){
-      e.target.value = e.target.value.substring(0,10);
+    if (e.target.value && e.target.value.length > 10) {
+      e.target.value = e.target.value.substring(0, 10);
     }
-    if (e.keyCode === 13 || e.keyCode === 188){
-      e.target.value = e.target.value.replace(/\W/ig,'');
-      let newTag = e.target.value.replace(/\W/ig,'');
-      if (newTag && newTag.length > 2 ){
+    if (e.keyCode === 13 || e.keyCode === 188) {
+      e.target.value = e.target.value.replace(/\W/ig, '');
+      let newTag = e.target.value.replace(/\W/ig, '');
+      if (newTag && newTag.length > 2) {
         newTag = '#' + newTag;
         let tags = this.formModel.get('tags') ? this.formModel.get('tags').split(',') : [];
         tags.push(newTag);
         tags = _.uniq(tags);
         this.setComments();
-        this.formModel.set({tags:_.join(tags, ',')});
+        this.formModel.set({ tags: _.join(tags, ',') });
         this.$('.input-tag').focus();
       }
     } else {
-      e.target.value = e.target.value.replace(/\W/ig,'');
+      e.target.value = e.target.value.replace(/\W/ig, '');
     }
   },
-  toggleTags(){
+  toggleTags() {
     this.showEmojisIn(false);
     this.tagPlaceShown = !this.tagPlaceShown;
     this.toggleTagsIn(this.tagPlaceShown);
   },
-  toggleTagsIn(prev){
-    if (prev){
+  toggleTagsIn(prev) {
+    if (prev) {
       this.$el.find('.tags-place ul').show('slow');
     } else {
       this.$el.find('.tags-place ul').hide('slow');
     }
-    if (prev){
+    if (prev) {
       // this.materialDesignUpdate();
       // componentHandler.upgradeElement(this.$el.find('.mdl-js-textfield')[0]);
     }
     this.tagPlaceShown = prev;
   },
-  showEmojisIn(prev){
-    if (prev){
+  showEmojisIn(prev) {
+    if (prev) {
       this.$('.emojis-modal-place').show('slow');
       EmojisModal.setParent(this);
       this.$('.emojis-modal-place').html(EmojisModal.render().el);
@@ -255,17 +255,17 @@ export default Backbone.View.extend({
     }
     this.showEmojisModal = prev;
   },
-  showEmojis(){
+  showEmojis() {
     this.toggleTagsIn(false);
-    if (EmojisModal.parent && EmojisModal.parent.cid !== this.cid){
+    if (EmojisModal.parent && EmojisModal.parent.cid !== this.cid) {
       this.showEmojisModal = false;
     }
     this.showEmojisModal = !this.showEmojisModal;
     this.showEmojisIn(this.showEmojisModal);
   },
-  getEmoji(string){
+  getEmoji(string) {
     this.clearArea();
-    if (this.currentPosition){
+    if (this.currentPosition) {
       this.restoreSelection(this.currentPosition);
       this.insertTextAtCursor(string);
     } else {
@@ -284,10 +284,10 @@ export default Backbone.View.extend({
       res = document.selection.createRange();
     }
 
-    if (res && res.commonAncestorContainer.className && !res.commonAncestorContainer.className.match(/formularioTextArea/)){
+    if (res && res.commonAncestorContainer.className && !res.commonAncestorContainer.className.match(/formularioTextArea/)) {
       res = null;
     }
-    if (res && !res.commonAncestorContainer.className && res.commonAncestorContainer.parentNode && !res.commonAncestorContainer.parentNode.className.match(/formularioTextArea/)){
+    if (res && !res.commonAncestorContainer.className && res.commonAncestorContainer.parentNode && !res.commonAncestorContainer.parentNode.className.match(/formularioTextArea/)) {
       res = null;
     }
     return res;
@@ -295,7 +295,7 @@ export default Backbone.View.extend({
   },
   insertTextAtCursor(element) {
     let sel, range;
-    if (!elementContainsSelection(this.$('.formularioTextArea')[0])){
+    if (!elementContainsSelection(this.$('.formularioTextArea')[0])) {
       this.$('.formularioTextArea').append(element);
     } else {
       if (window.getSelection) {
@@ -311,7 +311,7 @@ export default Backbone.View.extend({
           const frag = document.createDocumentFragment();
           let node;
           let lastNode;
-          while ( (node = el.firstChild) ) {
+          while ((node = el.firstChild)) {
             lastNode = frag.appendChild(node);
           }
           range.insertNode(frag);
@@ -347,20 +347,19 @@ export default Backbone.View.extend({
   },
   getSelectedText(e) {
     let selection;
-    if (e.keyCode == 32 || e.keyCode == 13){
+    if (e.keyCode == 32 || e.keyCode == 13) {
       // this.getCaptureUrls();
     }
     // console.log(e.keyCode);
     //Get the selected stuff
     this.currentPosition = this.saveSelection();
 
-    if(window.getSelection){
+    if (window.getSelection) {
       selection = window.getSelection();
-    }
-    else if(typeof document.selection != 'undefined'){
+    } else if (typeof document.selection != 'undefined') {
       selection = document.selection;
     }
-    if ((typeof selection === 'undefined') || (selection.toString().length < 1) ){
+    if ((typeof selection === 'undefined') || (selection.toString().length < 1)) {
       this.$('.wysiwyg').hide();
       return;
     }
@@ -369,21 +368,20 @@ export default Backbone.View.extend({
     const range = selection.getRangeAt(0);
 
     //If the range spans some text, and inside a tag, set its css class.
-    if(range && !selection.isCollapsed)
-    { // range da la posicion sin contar el scroll
-      this.$('.wysiwyg').show().css({top: (range.getBoundingClientRect().top+$(window).scrollTop()-this.$('.formularioTextArea').first().offset().top)+'px', left: (range.getBoundingClientRect().left-this.$('.formularioTextArea').first().offset().left)+'px'});
-    } else if (selection.isCollapsed){
+    if (range && !selection.isCollapsed) { // range da la posicion sin contar el scroll
+      this.$('.wysiwyg').show().css({ top: (range.getBoundingClientRect().top + $(window).scrollTop() - this.$('.formularioTextArea').first().offset().top) + 'px', left: (range.getBoundingClientRect().left - this.$('.formularioTextArea').first().offset().left) + 'px' });
+    } else if (selection.isCollapsed) {
       this.$('.wysiwyg').hide();
     }
   },
-  submitPost(){
+  submitPost() {
     let wait = 0;
     let countWait = 0;
     const runPost = _.throttle(this.submitPostThrottle.bind(this), 1000);
     const waiting = (callback, wait) => {
       setTimeout(() => {
         console.log('countWait', countWait, wait);
-        if (!this.capturingUrls || (countWait > 4)){
+        if (!this.capturingUrls || (countWait > 4)) {
           callback();
         } else {
           waiting(callback, wait);
@@ -391,14 +389,14 @@ export default Backbone.View.extend({
         countWait++;
       }, wait);
     };
-    if (this.capturingUrls){
+    if (this.capturingUrls) {
       wait = 1000;
     }
     waiting(runPost, wait);
   },
   submitPostThrottle() {
-    if (!userModel.get('uid')){ return; }
-    if (this.isSaving){ return; }
+    if (!userModel.get('uid')) { return; }
+    if (this.isSaving) { return; }
     this.showEmojisIn(false);
     this.toggleTagsIn(false);
     const self = this;
@@ -412,10 +410,10 @@ export default Backbone.View.extend({
     comments = comments.replace(/\&nbsp\;/ig, ' ');
     comments = comments.replace(/\&amp\;/ig, '&');
 
-    if (comments.length < 1 ){
+    if (comments.length < 1) {
       return;
     }
-    if (!this.parentModel.get('INDICE') || !this.parentModel.get('ID') || ! userModel.get('uid')){
+    if (!this.parentModel.get('INDICE') || !this.parentModel.get('ID') || !userModel.get('uid')) {
       return;
     }
     const saveObj = {
@@ -428,8 +426,7 @@ export default Backbone.View.extend({
 
     this.isSaving = true;
     this.formModel.save(
-      saveObj,
-      {
+      saveObj, {
         success(model, data) {
           self.isSaving = false;
           self.formModel.clear();
@@ -439,7 +436,7 @@ export default Backbone.View.extend({
           self.render();
 
           const msgModel = new EntradaModel(data.mensaje);
-          self.collection.add(msgModel, {merge:true, individual:true});
+          self.collection.add(msgModel, { merge: true, individual: true });
 
           // self.collection.reset();
           // self.collection.fetch();
@@ -457,24 +454,23 @@ export default Backbone.View.extend({
       return;
     }
     this.active = true;
-    $(document).on('click.showFormView', ({target}) => {
+    $(document).on('click.showFormView', ({ target }) => {
       // e.stopPropagation();
       // e.preventDefault();
       const container = $('.main-form').first();
       let check = false;
-      $(target).parents().each(function(){
-        if ($(this).hasClass('main-form')){
+      $(target).parents().each(function () {
+        if ($(this).hasClass('main-form')) {
           check = true;
           return false;
         }
       });
 
       if (check || !target || !container || container.is(target) ||
-      $.contains(container[0], target ) ||
-      container.has(target).length !== 0 ||
-      $(target).hasClass('formulario-inactivo') ||
-      $(target).parent().hasClass('formulario-inactivo')) {
-      } else {
+        $.contains(container[0], target) ||
+        container.has(target).length !== 0 ||
+        $(target).hasClass('formulario-inactivo') ||
+        $(target).parent().hasClass('formulario-inactivo')) {} else {
         self.active = false;
         self.$el.removeClass('extended');
         self.render();
@@ -487,16 +483,16 @@ export default Backbone.View.extend({
 
   },
   render() {
-    if (userModel.get('uid')){
+    if (userModel.get('uid')) {
       this.setComments();
       this.$el.html(this.template(this.serializer()));
       this.$el.addClass('active');
-      if (this.indice !== 'articulos'){
+      if (this.indice !== 'articulos') {
         this.$el.addClass('extended');
       } else {
         this.$el.removeClass('extended');
       }
-      if (this.active){
+      if (this.active) {
         this.$el.addClass('on');
       } else {
         this.$el.removeClass('on');
@@ -509,6 +505,7 @@ export default Backbone.View.extend({
       this.showEmojisIn(this.showEmojisModal);
       this.toggleTagsIn(this.tagPlaceShown);
     } else {
+      this.$el.html(this.template(this.serializer()));
       this.$el.removeClass('active');
     }
     this.delegateEvents();
@@ -523,20 +520,20 @@ export default Backbone.View.extend({
       $(this).height(this.scrollHeight + parseFloat($(this).css('borderTopWidth')) + parseFloat($(this).css('borderBottomWidth')));
     });
   },
-  materialDesignUpdate(){
+  materialDesignUpdate() {
     const self = this;
     _.defer(() => {
-      if (self && self.$el){
+      if (self && self.$el) {
         self.$el.find('[class*=" mdl-js"]').each(function () {
           componentHandler.upgradeElement(this);
         });
       }
     });
   },
-  serializer(){
+  serializer() {
     const obj = userModel.toJSON();
     let titulo_head;
-    if (this.parentModel && this.parentModel.get('ID')){
+    if (this.parentModel && this.parentModel.get('ID')) {
       Object.assign(obj, { parentModel: this.parentModel.toJSON() });
     }
     Object.assign(obj, {

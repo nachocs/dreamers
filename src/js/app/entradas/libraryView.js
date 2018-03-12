@@ -11,7 +11,8 @@ const LibraryEntradaView = EntradaView.extend({});
 export default Backbone.View.extend({
   id: 'contenidodinamico',
   template: _.template(template),
-  initialize() {
+  initialize(options) {
+    this.router = options.router;
     const self = this;
     _.bindAll(this, 'render');
     this.listenTo(this.collection, 'reset', this.render.bind(this));
@@ -44,7 +45,8 @@ export default Backbone.View.extend({
     this.extenderLineas();
   },
   extenderLineas() {
-    const self = this, SQaltoTotal = Math.floor((window.innerHeight + $(document).scrollTop() - $D.espaciado) / ($D.alto + $D.espaciado));
+    const self = this,
+      SQaltoTotal = Math.floor((window.innerHeight + $(document).scrollTop() - $D.espaciado) / ($D.alto + $D.espaciado));
 
     if ((this.maxLines !== 'undefined') && (this.maxLines <= SQaltoTotal)) {
       if ($D.Loading) {
@@ -143,7 +145,8 @@ export default Backbone.View.extend({
     }
     this.isRendering = true;
     this.ordenar();
-    const collection = this.collection, self = this;
+    const collection = this.collection,
+      self = this;
     this.el.innerHTML = this.template({
       'currentColumns': this.currentColumns,
       Dancho: $D.ancho,
@@ -229,11 +232,11 @@ export default Backbone.View.extend({
     const indice = $(ev.currentTarget).data('indice');
 
     if (indice) {
-      $D.App.navigate(`indices/${indice}`, {
+      this.router.navigate(`indices/${indice}`, {
         trigger: true,
       });
     } else {
-      $D.App.navigate('home', {
+      this.router.navigate('home', {
         trigger: true,
       });
     }
@@ -241,20 +244,20 @@ export default Backbone.View.extend({
     //            this.collection.fetch();
 
   },
-  saltar({currentTarget}) {
+  saltar({ currentTarget }) {
     const enlace = $(currentTarget).data('enlace');
     if (enlace) {
       window.open(enlace, '_blank');
       //                window.location = enlace;
     } else {
-      $D.App.navigate(`indices/${$(currentTarget).data('indice')}/${$(currentTarget).data('entrada')}`, {
+      this.router.navigate(`indices/${$(currentTarget).data('indice')}/${$(currentTarget).data('entrada')}`, {
         trigger: true,
       });
     }
   },
   saltointerior(indice, entrada) {
     const enlace = `http://dreamers.com/${indice}/${entrada}/?ajax=1`,
-    // alto = $('#container').height(),
+      // alto = $('#container').height(),
       ancho = $('#contenido').width();
     $('#container').css({
       'overflow-y': 'scroll',
@@ -284,8 +287,12 @@ export default Backbone.View.extend({
       },
     });
   },
-  mostrarComentariosEv({currentTarget}) {
-    const $objeto = $(currentTarget), ancho = $objeto.width();
+  mostrarComentariosEv({ currentTarget }) {
+    const $objeto = $(currentTarget),
+      ancho = $objeto.width();
+    if ($objeto.hasClass('lockedcomments')) {
+      return;
+    }
     $objeto.find('.comentarios').show().css({
       left: ancho,
     });
@@ -293,8 +300,12 @@ export default Backbone.View.extend({
       left: '0px',
     }, 300);
   },
-  ocultarComentariosEv({currentTarget}) {
-    const $objeto = $(currentTarget), ancho = $objeto.width();
+  ocultarComentariosEv({ currentTarget }) {
+    const $objeto = $(currentTarget),
+      ancho = $objeto.width();
+    if ($objeto.hasClass('lockedcomments')) {
+      return;
+    }
     $objeto.find('.comentarios').animate({
       left: ancho,
     }, 300, () => {

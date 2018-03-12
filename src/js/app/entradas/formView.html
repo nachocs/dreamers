@@ -1,108 +1,110 @@
-  <%if (obj.alias_principal){%>
-    <% if (obj.active){ %>
-      <div class="main-form on">
-        <div class="selected-indice indices-dropdown"><%= obj.selectedIndice %><i class="fa  <%= obj.indicesDropdown ? 'fa-caret-up' : 'fa-caret-down' %>" aria-hidden="true"></i></div>
-        <ul class="select-indice <%= obj.indicesDropdown ? '' : 'hide' %>">
-          <% Object.keys(obj.indicesArray).forEach(function(indice){ %>
-            <li data-indice="<%= indice %>"><%= indicesArray[indice] %></li>
-          <% }) %>
-        </ul>
-        <% if (obj.indice === 'articulos'){ %>
-          <div contenteditable=true class='formularioTextArea <%= obj.active ? 'on' : 'off' %>' name="comments"><%= obj.active ? obj.formModel.comments : 'share your thoughts' %></div>
-          <div class="wysiwyg-view"></div>
-        <% } else { %>
-          <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="subject" name="subject">
-            <label class="mdl-textfield__label" for="subject">T&iacute;tulo de la pel&iacute;cula</label>
-          </div>
-          <div class="advanced-dropdown"><span><%= obj.advanced ? 'no meter m&aacute;s info' : 'meter m&aacute;s info'%> <i class="fa  <%= obj.advanced ? 'fa-caret-up' : 'fa-caret-down' %>" aria-hidden="true"></i></span></div>
-          <div class="advanced <%= obj.advanced ? '' : 'hide' %>">
-            <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="titulo_original" name="titulo_original">
-              <label class="mdl-textfield__label" for="titulo_original">T&iacute;tulo original</label>
-            </div>
-            <div class="column">
-              <select name="nacionalidad" class="form-select" id="nacionalidad">
-                <OPTION value="">Nacionalidad</OPTION>
-                <% obj.paises.forEach(function(pais){ %>
-                  <option value="<%=pais.Name%>" ><%=pais.Name%></option>
-                <% }) %>
-              </select>
-            </div>
-            <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="ano" name="ano" pattern="-?[0-9]*(\.[0-9]+)?" size=5 maxlength=5>
-              <label class="mdl-textfield__label" for="ano">A&ntilde;o</label>
-              <span class="mdl-textfield__error">Un numero, porfa</span>
-            </div>
-            <div class="column">
-              <select name="genero" class="form-select" id="genero">
-                <OPTION value="">G&eacute;nero</OPTION>
-                <% obj.generos.forEach(function(genero){ %>
-                  <option value="<%=genero.Name%>" ><%=genero.html%></option>
-                <% }) %>
-              </select>
-            </div>
-            <div class="column">
-              <select name="formato" class="form-select" id="formato">
-                <OPTION value="">Formato</OPTION>
-                <% obj.formatos.forEach(function(formato){ %>
-                  <option value="<%=formato.Name%>" ><%=formato.html%></option>
-                <% }) %>
-              </select>
-            </div>
-            <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="duracion" name="duracion" pattern="-?[0-9]*(\.[0-9]+)?" size=5 maxlength=5>
-              <label class="mdl-textfield__label" for="ano">Duraci&oacute;n (minutos)</label>
-              <span class="mdl-textfield__error">Un numero, porfa</span>
-            </div>
-            <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="director" name="director">
-              <label class="mdl-textfield__label" for="director">Director</label>
-            </div>
-            <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="guion" name="guion">
-              <label class="mdl-textfield__label" for="guion">Gui&oacute;n</label>
-            </div>
-            <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="fotografia" name="fotografia">
-              <label class="mdl-textfield__label" for="fotografia">Fotograf&iacute;a</label>
-            </div>
-            <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="musica" name="musica">
-              <label class="mdl-textfield__label" for="musica">M&uacute;sica</label>
-            </div>
-            <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="produccion" name="produccion">
-              <label class="mdl-textfield__label" for="produccion">Productora</label>
-            </div>
-            <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-              <input class="mdl-textfield__input" type="text" id="distribuidora" name="distribuidora">
-              <label class="mdl-textfield__label" for="distribuidora">Distribuidora</label>
-            </div>
-          </div>
-          <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <textarea class="mdl-textfield__input" type="text" rows= "2" id="reparto" ></textarea>
-            <label class="mdl-textfield__label" for="reparto">Reparto -- Actor(personaje), actor2(personaje2)... --</label>
-          </div>
-          <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <textarea class="mdl-textfield__input" type="text" rows= "3" id="sinopsis" ></textarea>
-            <label class="mdl-textfield__label" for="sinopsis">Sinopsis</label>
-          </div>
-          <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty is-focused">
-            <div contenteditable=true class='mdl-textfield__input formularioTextArea <%= obj.active ? 'on' : 'off' %>' id="comments" name="comments"><%= obj.active ? obj.formModel.comments : 'TU CR&Iacute;TICA' %></div>
-            <label class="mdl-textfield__label comments" for="comments">Tu Cr&iacute;tica</label>
-            <div class="wysiwyg-view"></div>
-          </div>
-        <% } %>
-        <div class="thumbs-place"></div>
-        <div class="file-submit">
-          <input type="file" title="choose a file to upload" id="file-submit" name="FICHERO_IMAGEN1" multiple>
-          <div class="form-submit"><i class="fa fa-chevron-circle-right fa-2x faa-pulse animated-hover" aria-hidden="true"></i></div>
+<%if (obj.alias_principal){%>
+  <% if (obj.active){ %>
+    <div class="main-form on">
+      <div class="selected-indice indices-dropdown"><%= obj.selectedIndice %><i class="fa  <%= obj.indicesDropdown ? 'fa-caret-up' : 'fa-caret-down' %>" aria-hidden="true"></i></div>
+      <ul class="select-indice <%= obj.indicesDropdown ? '' : 'hide' %>">
+        <% Object.keys(obj.indicesArray).forEach(function(indice){ %>
+          <li data-indice="<%= indice %>"><%= indicesArray[indice] %></li>
+        <% }) %>
+      </ul>
+      <% if (obj.indice === 'articulos'){ %>
+        <div contenteditable=true class='formularioTextArea <%= obj.active ? 'on' : 'off' %>' name="comments"><%= obj.active ? obj.formModel.comments : 'share your thoughts' %></div>
+        <div class="wysiwyg-view"></div>
+      <% } else { %>
+        <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="subject" name="subject">
+          <label class="mdl-textfield__label" for="subject">T&iacute;tulo de la pel&iacute;cula</label>
         </div>
+        <div class="advanced-dropdown"><span><%= obj.advanced ? 'no meter m&aacute;s info' : 'meter m&aacute;s info'%> <i class="fa  <%= obj.advanced ? 'fa-caret-up' : 'fa-caret-down' %>" aria-hidden="true"></i></span></div>
+        <div class="advanced <%= obj.advanced ? '' : 'hide' %>">
+          <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="titulo_original" name="titulo_original">
+            <label class="mdl-textfield__label" for="titulo_original">T&iacute;tulo original</label>
+          </div>
+          <div class="column">
+            <select name="nacionalidad" class="form-select" id="nacionalidad">
+              <OPTION value="">Nacionalidad</OPTION>
+              <% obj.paises.forEach(function(pais){ %>
+                <option value="<%=pais.Name%>" ><%=pais.Name%></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="ano" name="ano" pattern="-?[0-9]*(\.[0-9]+)?" size=5 maxlength=5>
+            <label class="mdl-textfield__label" for="ano">A&ntilde;o</label>
+            <span class="mdl-textfield__error">Un numero, porfa</span>
+          </div>
+          <div class="column">
+            <select name="genero" class="form-select" id="genero">
+              <OPTION value="">G&eacute;nero</OPTION>
+              <% obj.generos.forEach(function(genero){ %>
+                <option value="<%=genero.Name%>" ><%=genero.html%></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="column">
+            <select name="formato" class="form-select" id="formato">
+              <OPTION value="">Formato</OPTION>
+              <% obj.formatos.forEach(function(formato){ %>
+                <option value="<%=formato.Name%>" ><%=formato.html%></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="duracion" name="duracion" pattern="-?[0-9]*(\.[0-9]+)?" size=5 maxlength=5>
+            <label class="mdl-textfield__label" for="ano">Duraci&oacute;n (minutos)</label>
+            <span class="mdl-textfield__error">Un numero, porfa</span>
+          </div>
+          <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="director" name="director">
+            <label class="mdl-textfield__label" for="director">Director</label>
+          </div>
+          <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="guion" name="guion">
+            <label class="mdl-textfield__label" for="guion">Gui&oacute;n</label>
+          </div>
+          <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="fotografia" name="fotografia">
+            <label class="mdl-textfield__label" for="fotografia">Fotograf&iacute;a</label>
+          </div>
+          <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="musica" name="musica">
+            <label class="mdl-textfield__label" for="musica">M&uacute;sica</label>
+          </div>
+          <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="produccion" name="produccion">
+            <label class="mdl-textfield__label" for="produccion">Productora</label>
+          </div>
+          <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="distribuidora" name="distribuidora">
+            <label class="mdl-textfield__label" for="distribuidora">Distribuidora</label>
+          </div>
+        </div>
+        <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <textarea class="mdl-textfield__input" type="text" rows= "2" id="reparto" ></textarea>
+          <label class="mdl-textfield__label" for="reparto">Reparto -- Actor(personaje), actor2(personaje2)... --</label>
+        </div>
+        <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <textarea class="mdl-textfield__input" type="text" rows= "3" id="sinopsis" ></textarea>
+          <label class="mdl-textfield__label" for="sinopsis">Sinopsis</label>
+        </div>
+        <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty is-focused">
+          <div contenteditable=true class='mdl-textfield__input formularioTextArea <%= obj.active ? 'on' : 'off' %>' id="comments" name="comments"><%= obj.active ? obj.formModel.comments : 'TU CR&Iacute;TICA' %></div>
+          <label class="mdl-textfield__label comments" for="comments">Tu Cr&iacute;tica</label>
+          <div class="wysiwyg-view"></div>
+        </div>
+      <% } %>
+      <div class="thumbs-place"></div>
+      <div class="file-submit">
+        <input type="file" title="choose a file to upload" id="file-submit" name="FICHERO_IMAGEN1" multiple>
+        <div class="form-submit"><i class="fa fa-chevron-circle-right fa-2x faa-pulse animated-hover" aria-hidden="true"></i></div>
       </div>
-    <% } else{ %>
-      <div class="formulario-inactivo">
-        <span class="blinking-cursor">|</span>
-      </div>
-    <% } %>
-  <%}%>
+    </div>
+  <% } else{ %>
+    <div class="formulario-inactivo">
+      <span class="blinking-cursor">|</span>
+    </div>
+  <% } %>
+<% } else { %>
+  <h1 class="newdreamers">dreamers</h1>
+<% } %>

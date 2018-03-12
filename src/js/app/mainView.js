@@ -13,6 +13,7 @@ export default Backbone.View.extend({
     this.router = options.router;
     this.libraryView = new LibraryView({
       collection: this.collection,
+      router: this.router,
     });
     this.formView = new FormView({
       collection: this.collection,

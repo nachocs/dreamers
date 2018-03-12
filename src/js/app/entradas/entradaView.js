@@ -51,6 +51,9 @@ export default Backbone.View.extend({
     if (this.model.get('expandido')) {
       className = `${className} expandido`;
     }
+    if (!this.model.get('IMAGEN1_URL')) {
+      className = `${className} lockedcomments`;
+    }
     return className;
   },
   attributes() {
@@ -220,7 +223,11 @@ export default Backbone.View.extend({
     const self = this;
     this.$(() => {
       self.$el.slideDown(1000);
+      if (!this.model.get('IMAGEN1_URL')) {
+        this.mostrarComentarios();
+      }
     });
+
   },
   serializer() {
     const model = this.model.toJSON();
