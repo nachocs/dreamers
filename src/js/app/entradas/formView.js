@@ -45,17 +45,28 @@ export default Backbone.View.extend({
   id: 'formPlace',
   className: 'form-place',
   template: _.template(template),
-  initialize({ collection }) {
+  initialize({
+    collection,
+  }) {
     _.bindAll(this);
     this.formModel = new FormModel();
     this.collection = collection;
     this.wysiwyg = new Wysiwyg();
-    this.selectedIndice = 'Art&iacute;culo';
+    this.selectedIndice = 'Comparte tus sue&ntilde;os';
     this.indice = 'articulos';
     this.advanced = false;
-    this.indicesArray = { 'peliculas': 'Pel&iacute;cula', 'articulos': 'Art&iacute;culo' };
+    this.indicesArray = {
+      'peliculas': 'Critica alguna Pel&iacute;cula',
+      'articulos': 'Comparte tus sue&ntilde;os',
+    };
     this.listenTo(userModel, 'change', this.userModelChange.bind(this));
-    this.formatos = [{ Name: 'Color', html: 'Color' }, { Name: 'Blanco_y_Negro', html: 'Blanco y Negro' }];
+    this.formatos = [{
+      Name: 'Color',
+      html: 'Color',
+    }, {
+      Name: 'Blanco_y_Negro',
+      html: 'Blanco y Negro',
+    }];
     // $.get(config.path + 'cgi/json.cgi?indice=paises&encontrar=ID').done(function (data){
     //   console.log(data);
     // });
@@ -121,7 +132,9 @@ export default Backbone.View.extend({
   },
 
   upload() {
-    if (!userModel.get('uid')) { return; }
+    if (!userModel.get('uid')) {
+      return;
+    }
     this.clearArea();
     this.showEmojisIn(false);
     const self = this;
@@ -205,7 +218,9 @@ export default Backbone.View.extend({
       }
     }
     this.setComments();
-    this.formModel.set({ tags: newTags });
+    this.formModel.set({
+      tags: newTags,
+    });
   },
   inputTag(e) {
     e.preventDefault();
@@ -221,7 +236,9 @@ export default Backbone.View.extend({
         tags.push(newTag);
         tags = _.uniq(tags);
         this.setComments();
-        this.formModel.set({ tags: _.join(tags, ',') });
+        this.formModel.set({
+          tags: _.join(tags, ','),
+        });
         this.$('.input-tag').focus();
       }
     } else {
@@ -369,7 +386,10 @@ export default Backbone.View.extend({
 
     //If the range spans some text, and inside a tag, set its css class.
     if (range && !selection.isCollapsed) { // range da la posicion sin contar el scroll
-      this.$('.wysiwyg').show().css({ top: (range.getBoundingClientRect().top + $(window).scrollTop() - this.$('.formularioTextArea').first().offset().top) + 'px', left: (range.getBoundingClientRect().left - this.$('.formularioTextArea').first().offset().left) + 'px' });
+      this.$('.wysiwyg').show().css({
+        top: (range.getBoundingClientRect().top + $(window).scrollTop() - this.$('.formularioTextArea').first().offset().top) + 'px',
+        left: (range.getBoundingClientRect().left - this.$('.formularioTextArea').first().offset().left) + 'px',
+      });
     } else if (selection.isCollapsed) {
       this.$('.wysiwyg').hide();
     }
@@ -395,8 +415,12 @@ export default Backbone.View.extend({
     waiting(runPost, wait);
   },
   submitPostThrottle() {
-    if (!userModel.get('uid')) { return; }
-    if (this.isSaving) { return; }
+    if (!userModel.get('uid')) {
+      return;
+    }
+    if (this.isSaving) {
+      return;
+    }
     this.showEmojisIn(false);
     this.toggleTagsIn(false);
     const self = this;
@@ -436,7 +460,10 @@ export default Backbone.View.extend({
           self.render();
 
           const msgModel = new EntradaModel(data.mensaje);
-          self.collection.add(msgModel, { merge: true, individual: true });
+          self.collection.add(msgModel, {
+            merge: true,
+            individual: true,
+          });
 
           // self.collection.reset();
           // self.collection.fetch();
@@ -454,7 +481,9 @@ export default Backbone.View.extend({
       return;
     }
     this.active = true;
-    $(document).on('click.showFormView', ({ target }) => {
+    $(document).on('click.showFormView', ({
+      target,
+    }) => {
       // e.stopPropagation();
       // e.preventDefault();
       const container = $('.main-form').first();
@@ -534,7 +563,9 @@ export default Backbone.View.extend({
     const obj = userModel.toJSON();
     let titulo_head;
     if (this.parentModel && this.parentModel.get('ID')) {
-      Object.assign(obj, { parentModel: this.parentModel.toJSON() });
+      Object.assign(obj, {
+        parentModel: this.parentModel.toJSON(),
+      });
     }
     Object.assign(obj, {
       emojis: emojione.toImage(':smile:'),
