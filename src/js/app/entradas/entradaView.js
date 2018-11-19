@@ -26,9 +26,16 @@ export default Backbone.View.extend({
       collection: this.msgCollection,
       parentModel: this.model,
     });
-    this.previousMsgView = new PreviousMsgView({ collection: this.msgCollection });
+    this.previousMsgView = new PreviousMsgView({
+      collection: this.msgCollection,
+    });
 
     this.listenTo(userModel, 'change', this.renderIfExpanded.bind(this));
+    if (typeof this.model.get('encabezamiento') !== 'undefined' && this.model.get('encabezamiento') !== null) {
+      this.model.set('cabeza', this.model.get('encabezamiento'));
+    } else if (this.model.get('comments')) {
+      this.model.set('cabeza', this.model.get('comments').substring(0, 240));
+    }
   },
   template: _.template(template),
   events: {
@@ -81,8 +88,12 @@ export default Backbone.View.extend({
     // }, 300);
   },
   ajustarAlto() {
-    if (this.ajustado) { return; }
-    if (!this.model.get('expandido')) { return; }
+    if (this.ajustado) {
+      return;
+    }
+    if (!this.model.get('expandido')) {
+      return;
+    }
     let innerHeight = this.$('.container-inner').children('.content').first().height();
     // const totalHeight = this.$el.height();
     let nuevoAlto;
@@ -116,7 +127,10 @@ export default Backbone.View.extend({
   },
   expandir() {
     const self = this;
-    this.model.set({ 'expandido': true, loading: true });
+    this.model.set({
+      'expandido': true,
+      loading: true,
+    });
     this.mostrarComentarios();
     this.template = _.template(basicoTemplate);
     if (!this.basicLoaded) {
@@ -129,7 +143,9 @@ export default Backbone.View.extend({
     }
   },
   expande(size) {
-    if (!size) { size = 3; }
+    if (!size) {
+      size = 3;
+    }
     if (this.model.get('SQancho') <= $D.SQanchoTotal) {
       this.model.set({
         'SQancho': size,
@@ -191,6 +207,8 @@ export default Backbone.View.extend({
       this.$el.addClass('expandido');
       if (this.expandidoMas) {
         this.$el.addClass('expandidomas');
+      } else {
+        this.$el.removeClass('expandidomas');
       }
       this.$('.msg-collection-view').replaceWith(this.msgCollectionView.render().el);
       this.$('.previous-msgs-view').html(this.previousMsgView.render().el);
@@ -202,6 +220,8 @@ export default Backbone.View.extend({
         });
         this.$('.msg-form-view').replaceWith(this.msgFormView.render().el);
       }
+    } else {
+      this.$el.removeClass('expandido');
     }
     if (this.afterRender && typeof this.afterRender === 'function') {
       this.afterRender();

@@ -1,3 +1,7 @@
+<div class="vermas boton-expandir expandir">
+  <i class="fa fa-expand fa-2x" aria-hidden="true"></i>
+</div>
+
 <div class="container-inner">
   <%var indicedospuntos = obj.indice.replace(/\//ig, '::');%>
 
@@ -5,11 +9,7 @@
     <div class="background" style="background-image: url(<%= obj.IMAGEN1_URL %>)"></div>
     <div class="comentarios">
       <span>
-      <% if (typeof obj.encabezamiento !== 'undefined' && obj.encabezamiento !== null) { %>
-        <%= obj.encabezamiento %>
-      <% } else if (obj.comments){ %>
-        <%= obj.comments.substring(0,240) %>
-      <% } %>
+        <%= obj.cabeza %>
     </span>
       <div class="vermas expandir">
         <% if (obj.loading){ %>

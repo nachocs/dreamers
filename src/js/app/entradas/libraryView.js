@@ -29,8 +29,8 @@ export default Backbone.View.extend({
     $D.Loading = false;
   },
   events: {
-    'mouseenter .container': 'mostrarComentariosEv',
-    'mouseleave .container': 'ocultarComentariosEv',
+    // 'mouseenter .container': 'mostrarComentariosEv',
+    // 'mouseleave .container': 'ocultarComentariosEv',
     'click .titular': 'muestraIndice',
     'click #mostrarmas': 'mostrarMas',
   },
