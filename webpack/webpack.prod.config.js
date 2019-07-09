@@ -43,11 +43,7 @@ const config = {
     // vendor: [
     //   'material-design-lite/material',
     // ],
-    app: [
-      __dirname + '/../src/js/app/index.js',
-      __dirname + '/../src/css/main.less',
-    ],
-
+    app: [__dirname + '/../src/js/app/index.js', __dirname + '/../src/css/main.less'],
   },
   output: {
     path: __dirname + '/../dist',
@@ -56,15 +52,14 @@ const config = {
     publicPath: CDN_BASE_URL,
   },
   module: {
-    loaders: [{
-        'loader': 'babel-loader',
-        'test': /\.js$/,
-        'exclude': /node_modules/,
-        'query': {
-          'plugins': ['lodash'],
-          'presets': [
-            ['@babel/preset-env'],
-          ],
+    loaders: [
+      {
+        loader: 'babel-loader',
+        test: /\.js$/,
+        exclude: /node_modules/,
+        query: {
+          plugins: ['lodash'],
+          presets: [['@babel/preset-env']],
         },
       },
       {
@@ -75,8 +70,14 @@ const config = {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!postcss-loader' }),
       },
-      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?(\?[0-9]*)?$/, loader: 'url-loader?limit=10000&minetype=application/font-woff&name=dist/' + BUILD_NUM + '/fonts/[name].[ext]' },
-      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?(\?[0-9]*)?$/, loader: 'file-loader?name=dist/' + BUILD_NUM + '/fonts/[name].[ext]' },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?(\?[0-9]*)?$/,
+        loader: 'url-loader?limit=10000&minetype=application/font-woff&name=dist/' + BUILD_NUM + '/fonts/[name].[ext]',
+      },
+      {
+        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?(\?[0-9]*)?$/,
+        loader: 'file-loader?name=dist/' + BUILD_NUM + '/fonts/[name].[ext]',
+      },
       { test: /\.(html)(\?v=[0-9]\.[0-9]\.[0-9])?(\?[0-9]*)?$/, loader: 'html-loader' },
       { test: /\.(png|jpg|gif)$/, loader: 'url-loader?limit=10000' },
       { test: /\.json$/, loader: 'json-loader' },
@@ -95,7 +96,8 @@ const config = {
     }),
     new webpack.optimize.OccurrenceOrderPlugin(true),
     // Merge all duplicate modules
-    new webpack.optimize.UglifyJsPlugin({ // Optimize the JavaScript...
+    new webpack.optimize.UglifyJsPlugin({
+      // Optimize the JavaScript...
       compress: {
         warnings: false, // ...but do not show warnings in the console (there is a lot of them)
         drop_console: true,
@@ -126,71 +128,72 @@ const config = {
         minifyURLs: true,
       },
       appMountId: 'root',
-      title: 'Dreamers.com',
+      title: 'Dreamers',
       unsupportedBrowser: false,
       chunksSortMode: packageSort(['vendor', 'app']),
     }),
     new WebpackAssetsManifest({
       output: 'manifest.json',
       assets: {
-        'name': 'Dreamers',
-        'short_name': 'Dreamers',
-        'start_url': 'https://dreamers.com',
-        'theme_color': 'black',
-        'display': 'standalone',
-        'background_color': 'black',
-        'description': 'La red social friki!',
-        'version': JSON.stringify(require('../package.json').version),
-        'icons': [{
-            'src': '/assets/android-icon-36x36.png',
-            'sizes': '36x36',
-            'type': 'image/png',
-            'density': '0.75',
+        name: 'Dreamers',
+        short_name: 'Dreamers',
+        start_url: 'https://dreamers.es',
+        theme_color: 'black',
+        display: 'standalone',
+        background_color: 'black',
+        description: 'La red social friki!',
+        version: JSON.stringify(require('../package.json').version),
+        icons: [
+          {
+            src: '/assets/android-icon-36x36.png',
+            sizes: '36x36',
+            type: 'image/png',
+            density: '0.75',
           },
           {
-            'src': '/assets/android-icon-48x48.png',
-            'sizes': '48x48',
-            'type': 'image/png',
-            'density': '1.0',
+            src: '/assets/android-icon-48x48.png',
+            sizes: '48x48',
+            type: 'image/png',
+            density: '1.0',
           },
           {
-            'src': '/assets/android-icon-72x72.png',
-            'sizes': '72x72',
-            'type': 'image\/png',
-            'density': '1.5',
+            src: '/assets/android-icon-72x72.png',
+            sizes: '72x72',
+            type: 'image/png',
+            density: '1.5',
           },
           {
-            'src': '/assets/android-icon-96x96.png',
-            'sizes': '96x96',
-            'type': 'image/png',
-            'density': '2.0',
+            src: '/assets/android-icon-96x96.png',
+            sizes: '96x96',
+            type: 'image/png',
+            density: '2.0',
           },
           {
-            'src': '/assets/android-icon-144x144.png',
-            'sizes': '144x144',
-            'type': 'image\/png',
-            'density': '3.0',
+            src: '/assets/android-icon-144x144.png',
+            sizes: '144x144',
+            type: 'image/png',
+            density: '3.0',
           },
           {
-            'src': '/assets/android-icon-192x192.png',
-            'sizes': '192x192',
-            'type': 'image/png',
-            'density': '4.0',
+            src: '/assets/android-icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            density: '4.0',
           },
           {
-            'src': '/assets/android-icon-256x256.png',
-            'sizes': '256x256',
-            'type': 'image/png',
+            src: '/assets/android-icon-256x256.png',
+            sizes: '256x256',
+            type: 'image/png',
           },
           {
-            'src': '/assets/android-icon-384x384.png',
-            'sizes': '384x384',
-            'type': 'image/png',
+            src: '/assets/android-icon-384x384.png',
+            sizes: '384x384',
+            type: 'image/png',
           },
           {
-            'src': '/assets/android-icon-512x512.png',
-            'sizes': '512x512',
-            'type': 'image/png',
+            src: '/assets/android-icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
           },
         ],
       },
@@ -210,10 +213,8 @@ const config = {
       },
     }),
     new OfflinePlugin({
-      externals: [
-        '/',
-      ].filter(i => i !== false),
-      rewrites: asset => asset,
+      externals: ['/'].filter((i) => i !== false),
+      rewrites: (asset) => asset,
       ServiceWorker: {
         navigateFallbackURL: '/',
         publicPath: '/sw.js',
@@ -223,12 +224,11 @@ const config = {
     }),
     new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(en|es)$/),
   ],
-  'resolve': {
-    'alias': {
-      'underscore': 'lodash',
+  resolve: {
+    alias: {
+      underscore: 'lodash',
     },
   },
-
 };
 
 module.exports = config;

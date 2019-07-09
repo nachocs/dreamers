@@ -1,7 +1,7 @@
 {
   "name": "dreamers",
   "version": "0.0.0",
-  "description": "Dreamers.com",
+  "description": "Dreamers",
   "main": "js/app/app.js",
   "scripts": {
     "lint": "eslint .",
@@ -12,13 +12,13 @@
     "tag": "ci/tag.sh",
     "bump-version": "ci/bump-version.sh $OPS_FRONTEND_KEY $CIRCLE_BUILD_NUM",
     "now-build": "npm run build && ns ./dist -n gritos --cmd \"list ./content -s\"",
-    "serve": "npm run cleanup && cross-env NODE_ENV=production ENDPOINTS_ROOT_DOMAIN=dreamers.com node ./webpack/webpack.prod.server.js"
+    "serve": "npm run cleanup && cross-env NODE_ENV=production ENDPOINTS_ROOT_DOMAIN=dreamers.es node ./webpack/webpack.prod.server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nachocs/dreamers.git"
   },
-  "author": "Dreammers.com",
+  "author": "Dreammers",
   "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/nachocs/dreamers/issues"

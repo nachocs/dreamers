@@ -256,7 +256,7 @@ export default Backbone.View.extend({
     }
   },
   saltointerior(indice, entrada) {
-    const enlace = `http://dreamers.com/${indice}/${entrada}/?ajax=1`,
+    const enlace = `https://dreamers.es/${indice}/${entrada}/?ajax=1`,
       // alto = $('#container').height(),
       ancho = $('#contenido').width();
     $('#container').css({

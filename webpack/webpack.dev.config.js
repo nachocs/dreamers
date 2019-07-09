@@ -10,7 +10,6 @@ const autoprefixer = require('autoprefixer');
 const HttpsProxyAgent = require('https-proxy-agent');
 const proxyServer = process.env.npm_config_https_proxy;
 
-
 function packageSort(packages) {
   // packages = ['polyfills', 'vendor', 'app']
   const len = packages.length - 1;
@@ -45,7 +44,6 @@ const config = {
       __dirname + '/../src/js/app/index.js',
       __dirname + '/../src/css/main.less',
     ],
-
   },
   output: {
     path: __dirname + '/../dist',
@@ -67,26 +65,25 @@ const config = {
     open: false,
     proxy: {
       '/indices': {
-        target: 'https://dreamers.com',
+        target: 'https://dreamers.es:443',
         changeOrigin: true,
         secure: false,
         // logLevel: 'debug',
-        toProxy: true,
-        agent: new HttpsProxyAgent(proxyServer),
+        // toProxy: true,
+        // agent: new HttpsProxyAgent(proxyServer),
       },
     },
     stats: 'verbose',
   },
   module: {
-    loaders: [{
-        'loader': 'babel-loader',
-        'test': /\.js$/,
-        'exclude': /node_modules/,
-        'query': {
-          'plugins': ['lodash'],
-          'presets': [
-            ['@babel/preset-env'],
-          ],
+    loaders: [
+      {
+        loader: 'babel-loader',
+        test: /\.js$/,
+        exclude: /node_modules/,
+        query: {
+          plugins: ['lodash'],
+          presets: [['@babel/preset-env']],
         },
       },
       {
@@ -122,7 +119,7 @@ const config = {
       favicon: __dirname + '/../src/img/favicon.ico',
       minify: false,
       appMountId: 'root',
-      title: 'Dreamers.com',
+      title: 'The Dreamers',
       unsupportedBrowser: false,
       chunksSortMode: packageSort(['vendor', 'app']),
     }),
@@ -132,19 +129,18 @@ const config = {
         // This allows us to overwrite the root domain endpoint that will be used during development run of the application.
         // In production this variable will be undefined, the root domain endpoint used to communication with api
         // will be inferred from the current domain name.
-        ENDPOINTS_ROOT_DOMAIN: JSON.stringify('dreamers.com'),
+        ENDPOINTS_ROOT_DOMAIN: JSON.stringify('dreamers.es'),
       },
     }),
     new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(en|es)$/),
 
     // new DashboardPlugin(dashboard.setData),
   ],
-  'resolve': {
-    'alias': {
-      'underscore': 'lodash',
+  resolve: {
+    alias: {
+      underscore: 'lodash',
     },
   },
-
 };
 
 module.exports = config;

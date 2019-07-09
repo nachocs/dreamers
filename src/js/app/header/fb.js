@@ -62,8 +62,8 @@ export default {
         'me/feed',
         'post', {
           message: 'test message',
-          picture: 'http://dreamers.com/imagenes/rotulin.gif',
-          link: 'http://dreamers.com',
+          picture: 'https://dreamers.es/imagenes/rotulin.gif',
+          link: 'https://dreamers.es',
           name: 'dreamers test post',
           privacy: {
             'value': 'SELF',

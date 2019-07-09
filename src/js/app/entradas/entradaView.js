@@ -74,7 +74,7 @@ export default Backbone.View.extend({
       'style': `top:${this.model.get('top')}px; left:${this.model.get('left')}px; width:${this.model.get('ancho')}px; height:${this.model.get('alto')}px;`,
       'data-entrada': this.model.get('entrada'),
       'data-indice': this.model.get('indice').replace(/\//ig, '::'),
-      'data-link': `http://dreamers.com/${this.model.get('indice')}/${this.model.get('entrada')}`,
+      'data-link': `https://dreamers.es/${this.model.get('indice')}/${this.model.get('entrada')}`,
     });
     return obj;
   },
