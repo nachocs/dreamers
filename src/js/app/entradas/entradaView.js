@@ -88,33 +88,38 @@ export default Backbone.View.extend({
     // }, 300);
   },
   ajustarAlto() {
-    if (this.ajustado) {
-      return;
-    }
-    if (!this.model.get('expandido')) {
-      return;
-    }
-    let innerHeight = this.$('.container-inner').children('.content').first().height();
-    // const totalHeight = this.$el.height();
-    let nuevoAlto;
-    this.$('.container-inner div.basico-container').children('div').each(function () {
-      innerHeight += $(this).outerHeight();
-    });
-    // innerHeight += this.$('div.basico-container').outerHeight();
+    setTimeout(() => {
 
-    nuevoAlto = Math.ceil(((innerHeight) / $D.alto) + (this.expandidoMas ? 0 : 0));
-    // nuevoAlto = Math.ceil((innerHeight / totalHeight) * 3);
-    if (nuevoAlto > 3 && !this.expandidoMas) {
-      nuevoAlto = 3;
-    }
-    if (this.model.get('SQalto') !== nuevoAlto) {
-      this.model.set({
-        'SQalto': nuevoAlto,
+      if (this.ajustado) {
+        return;
+      }
+      if (!this.model.get('expandido')) {
+        return;
+      }
+      let innerHeight = 100 + this.$('.container-inner').children('.content').first().height();
+      // const totalHeight = this.$el.height();
+      let nuevoAlto;
+      this.$('.container-inner div.basico-container').children('div').each(function () {
+        innerHeight += $(this).outerHeight();
       });
-      this.collection.trigger('ordenar');
-      this.rearrange(true);
-      this.ajustado = true;
-    }
+      // innerHeight += this.$('div.basico-container').outerHeight();
+
+      nuevoAlto = Math.ceil(((innerHeight) / $D.alto) + (this.expandidoMas ? 0 : 0));
+      // nuevoAlto = Math.ceil((innerHeight / totalHeight) * 3);
+      if (nuevoAlto > 3 && !this.expandidoMas) {
+        nuevoAlto = 3;
+      } else if (nuevoAlto > 11){
+        nuevoAlto = 10;
+      }
+      if (this.model.get('SQalto') !== nuevoAlto) {
+        this.model.set({
+          'SQalto': nuevoAlto,
+        });
+        this.collection.trigger('ordenar');
+        this.rearrange(true);
+        this.ajustado = true;
+      }
+    }, 1000);
   },
   scrollMe() {
     const self = this;
