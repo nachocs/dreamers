@@ -52,12 +52,17 @@ export default Backbone.View.extend({
     this.formModel = new FormModel();
     this.collection = collection;
     this.wysiwyg = new Wysiwyg();
-    this.selectedIndice = 'Comparte tus sue&ntilde;os';
+    this.selectedIndice = 'Divaga a tu gusto, comparte tus sue&ntilde;os';
     this.indice = 'articulos';
     this.advanced = false;
     this.indicesArray = {
-      'peliculas': 'Critica alguna Pel&iacute;cula',
+      'peliculas': 'Pel&iacute;cula',
       'articulos': 'Comparte tus sue&ntilde;os',
+      'series': 'Critica Series de TV',
+      'comics': 'Critica alg&uacute;n c&oacute;mic',
+      'videojuegos': 'Habla sobre Videojuegos',
+      'libros': 'Comenta alg&uacute;n libro',
+      'discos': 'tu opini&oacuten sobre un Disco',
     };
     this.listenTo(userModel, 'change', this.userModelChange.bind(this));
     this.formatos = [{
@@ -437,42 +442,38 @@ export default Backbone.View.extend({
     if (comments.length < 1) {
       return;
     }
-    if (!this.parentModel.get('INDICE') || !this.parentModel.get('ID') || !userModel.get('uid')) {
-      return;
-    }
     const saveObj = {
       comments,
       uid: userModel.get('uid'),
-      indice: this.parentModel.get('INDICE'),
-      entrada: this.parentModel.get('ID'),
+      indice: this.indice,
     };
 
 
     this.isSaving = true;
     this.formModel.save(
       saveObj, {
-        success(model, data) {
-          self.isSaving = false;
-          self.formModel.clear();
-          self.active = false;
-          self.capturedUrls = {};
-          self.removedCapturedUrls = {};
-          self.render();
+      success(model, data) {
+        self.isSaving = false;
+        self.formModel.clear();
+        self.active = false;
+        self.capturedUrls = {};
+        self.removedCapturedUrls = {};
+        self.render();
+        const newMsg = Object.assign(data.mensaje, { indice: data.mensaje.INDICE });
+        const msgModel = new EntradaModel(newMsg);
+        self.collection.add(msgModel, {
+          merge: true,
+          individual: true,
+        });
 
-          const msgModel = new EntradaModel(data.mensaje);
-          self.collection.add(msgModel, {
-            merge: true,
-            individual: true,
-          });
-
-          // self.collection.reset();
-          // self.collection.fetch();
-          // console.log('success', data);
-        },
-        error() {
-          // console.log('error', data);
-        },
-      }
+        // self.collection.reset();
+        // self.collection.fetch();
+        // console.log('success', data);
+      },
+      error() {
+        // console.log('error', data);
+      },
+    }
     );
   },
   clearArea() {
@@ -499,7 +500,7 @@ export default Backbone.View.extend({
         $.contains(container[0], target) ||
         container.has(target).length !== 0 ||
         $(target).hasClass('formulario-inactivo') ||
-        $(target).parent().hasClass('formulario-inactivo')) {} else {
+        $(target).parent().hasClass('formulario-inactivo')) { } else {
         self.active = false;
         self.$el.removeClass('extended');
         self.render();

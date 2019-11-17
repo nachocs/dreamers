@@ -9,12 +9,9 @@ const faceb = () => {};
 
 faceb.prototype = {
   initialize() {
-    // FB.getLoginStatus(function (response) {
-    //     self.statusChangeCallback(response);
+    // loadFBSDK().then(FB => {
+    //   FB.Event.subscribe('auth.authResponseChange', _.bind(this.statusChangeCallback, this));
     // });
-    loadFBSDK().then(FB => {
-      FB.Event.subscribe('auth.authResponseChange', _.bind(this.statusChangeCallback, this));
-    });
   },
   statusChangeCallback(response) {
     function dLogin(data) {
