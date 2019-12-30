@@ -470,8 +470,8 @@ export default Backbone.View.extend({
         // self.collection.fetch();
         // console.log('success', data);
       },
-      error() {
-        // console.log('error', data);
+      error(data) {
+        console.log('error', data);
       },
     }
     );

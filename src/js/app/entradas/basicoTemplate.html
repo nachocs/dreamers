@@ -1,16 +1,18 @@
 <div class="contraer">%</div>
 <div class="expandirmas">)</div>
 <div class="container-inner">
-  <div class="basico-background" style="background-image:url(<%=obj.IMAGEN1_URL%>)"></div>
+  <div class="basico-background" style="background-image:url(<%=obj.IMAGEN0_URL || obj.IMAGEN1_URL%>)"></div>
+  <% if(obj.subject){ %>
   <div class="content">
     <span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span>
   </div>
+  <% } %>
   <div class="basico-container">
       <%if(obj.encabezamiento){%>
         <div class="encabezamiento"><%=obj.encabezamiento%></div>
       <%}%>
 
-    <div class="main-image"><img src="<%= obj.IMAGEN1_URL %>"></div>
+    <div class="main-image"><img src="<%= obj.IMAGEN0_URL || obj.IMAGEN1_URL %>"></div>
     <div class="ficha clearfix">
       <%if(obj.titulo_original){%>
         <span class="titulo_original"><%=obj.titulo_original%>,</span>

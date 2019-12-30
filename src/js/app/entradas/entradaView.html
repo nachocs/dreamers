@@ -4,12 +4,13 @@
 
 <div class="container-inner">
   <%var indicedospuntos = obj.indice.replace(/\//ig, '::');%>
-
-    <div class="content expandir"><span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span></div>
-    <div class="background" style="background-image: url(<%= obj.IMAGEN1_URL %>)"></div>
+    <% if(obj.subject){ %>
+      <div class="content expandir"><span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span></div>
+    <% } %>
+    <div class="background" style="background-image: url(<%= obj.IMAGEN0_URL || obj.IMAGEN1_URL %>)"></div>
     <div class="comentarios">
       <span>
-        <%= obj.cabeza %>
+        <%= obj.cabeza || obj.comments%>
     </span>
       <div class="vermas expandir">
         <% if (obj.loading){ %>

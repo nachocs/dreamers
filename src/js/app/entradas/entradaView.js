@@ -96,7 +96,11 @@ export default Backbone.View.extend({
       if (!this.model.get('expandido')) {
         return;
       }
-      let innerHeight = 100 + this.$('.container-inner').children('.content').first().height();
+      let innerHeight = 100;
+      const headerHeight = this.$('.container-inner').children('.content').first().height();
+      if(!_.isNaN(headerHeight) && headerHeight > 0){
+        innerHeight += headerHeight;
+      }
       // const totalHeight = this.$el.height();
       let nuevoAlto;
       this.$('.container-inner div.basico-container').children('div').each(function () {
