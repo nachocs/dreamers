@@ -31,7 +31,7 @@ class Global {
       },
       close() {
         UroboroCounter--;
-        console.log('UroboroCounter', UroboroCounter);
+        // console.log('UroboroCounter', UroboroCounter);
         if (UroboroCounter < 1) {
           $('.uroboro').hide();
         }

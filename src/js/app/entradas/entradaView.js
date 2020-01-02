@@ -11,6 +11,7 @@ import MsgCollection from '../models/msgCollection';
 import userModel from '../models/userModel';
 import MsgFormView from '../msgs/msgFormView';
 import PreviousMsgView from './previousMsgView';
+import ModalView from '../msgs/modalView';
 
 export default Backbone.View.extend({
   initialize() {
@@ -18,6 +19,13 @@ export default Backbone.View.extend({
     this.listenTo(this.model, 'rearrange', this.rearrange.bind(this));
     this.listenTo(this.model, 'change', this.render.bind(this));
     this.listenTo(this, 'quietoparao', this.ajustarAlto.bind(this));
+    this.listenTo(this.model, 'destroy', this.remove.bind(this));
+    const self = this;
+    this.listenTo(this.model, 'destroy', _.bind(function () {
+      setTimeout(function (){
+        self.collection.trigger('ordenar');
+      });
+    }, this));
     this.msgCollectionLoaded = false;
     this.msgCollection = new MsgCollection([], {
       indice: this.model.get('INDICE') + '/' + this.model.get('entrada'),
@@ -42,6 +50,7 @@ export default Backbone.View.extend({
     'click .expandir': 'onExpandir',
     'click .contraer': 'contraer',
     'click .expandirmas': 'expandeMas',
+    'click .borrargordo': 'showDeleteModal',
   },
   onExpandir() {
     if (!this.model.get('expandido')) {
@@ -98,7 +107,7 @@ export default Backbone.View.extend({
       }
       let innerHeight = 100;
       const headerHeight = this.$('.container-inner').children('.content').first().height();
-      if(!_.isNaN(headerHeight) && headerHeight > 0){
+      if (!_.isNaN(headerHeight) && headerHeight > 0) {
         innerHeight += headerHeight;
       }
       // const totalHeight = this.$el.height();
@@ -112,7 +121,7 @@ export default Backbone.View.extend({
       // nuevoAlto = Math.ceil((innerHeight / totalHeight) * 3);
       if (nuevoAlto > 3 && !this.expandidoMas) {
         nuevoAlto = 3;
-      } else if (nuevoAlto > 11){
+      } else if (nuevoAlto > 11) {
         nuevoAlto = 10;
       }
       if (this.model.get('SQalto') !== nuevoAlto) {
@@ -131,7 +140,7 @@ export default Backbone.View.extend({
       $('.mdl-layout__content').animate({
         // scrollTop: self.$el.position().top
         scrollTop: self.model.get('top'),
-      }, 'slow', () => {});
+      }, 'slow', () => { });
     }, 500);
   },
   expandir() {
@@ -211,7 +220,7 @@ export default Backbone.View.extend({
   },
   render() {
     // console.log('render' + this.cid);
-    this.el.innerHTML = this.template(this.serializer(this.model.toJSON()));
+    this.el.innerHTML = this.template(this.serializer());
     if (this.model.get('expandido')) {
       this.$el.addClass('expandido');
       if (this.expandidoMas) {
@@ -260,7 +269,29 @@ export default Backbone.View.extend({
   },
   serializer() {
     const model = this.model.toJSON();
+    const usermodelId = userModel.get('ID');
     // model.date = moment.unix(this.model.get('FECHA')).fromNow();
-    return model;
+    return Object.assign(model, {
+      userModel: {
+        ID: usermodelId,
+      },
+    });
   },
+  showDeleteModal() {
+    ModalView.update({
+      model:
+      {
+        show: true,
+        header: '&iquest;BORRAR ENTRADA?',
+        body: '&iquest;Seguro que quieres borrar esta entrada?',
+      },
+      action: this.deleteThis.bind(this),
+    },
+    );
+  },
+  deleteThis() {
+    console.log('delete run');
+    this.model.destroy();
+  },
+
 });

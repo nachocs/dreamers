@@ -1,11 +1,22 @@
-<div class="contraer">%</div>
-<div class="expandirmas">)</div>
+<div class="contraer" title="CONTRAER">%</div>
+<div class="expandirmas" title="EXPANDIR">)</div>
+<% if(obj.userModel && obj.ciudadano && obj.userModel.ID === obj.ciudadano){ %>
+<div class="borrargordo" title="BORRAR">6</div>
+<% } %>
 <div class="container-inner">
   <div class="basico-background" style="background-image:url(<%=obj.IMAGEN0_URL || obj.IMAGEN1_URL%>)"></div>
   <% if(obj.subject){ %>
   <div class="content">
     <span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span>
   </div>
+  <% } else if(obj.ciudadano) { %>
+  <div class="content">
+    <% if (obj.emocion) { %>
+    <img class="emocion emocion-head" src="<%= obj.emocion %>">
+    <% } %>
+    <span style="padding-left: 50px;"><%= obj.name %></span>
+  </div>
+
   <% } %>
   <div class="basico-container">
       <%if(obj.encabezamiento){%>
@@ -72,14 +83,25 @@
     <% if(obj.date){ %>
       <div class="date"><%= obj.date %></div>
     <% } %>
-      <div>
-        <%for (var key in obj){ if ((/^url\d*$/).test(key)){ var url = obj[key]; var url_title = obj[key+"_title"] || "enlace"; %>
-          <a href="<%=url%>" class="url" target="_blank"><%=url_title%></a>
-        <% } } %>
+    <div>
+      <%for (var key in obj){ if ((/^url\d*$/).test(key)){ var url = obj[key]; var url_title = obj[key+"_title"] || "enlace"; %>
+        <a href="<%=url%>" class="url" target="_blank"><%=url_title%></a>
+      <% } } %>
+    </div>
+    <% if(obj.ciudadano && obj.subject) { %>
+      <div style="text-align: right;">
+      <div class="comic-box">
+        <% if (obj.emocion) { %>
+        <img class="emocion emocion-head" src="<%= obj.emocion %>">
+        <% } %>
+        <span style="padding-left: 50px;"><%= obj.name %></span>
       </div>
-      <div class="espacioantesmensajes"></div>
-      <div class="previous-msgs-view"></div>
-      <div class="msg-collection-view"></div>
-      <div class="msg-form-view"></div>
+      </div>
+    <% } %>
+
+    <div class="espacioantesmensajes"></div>
+    <div class="previous-msgs-view"></div>
+    <div class="msg-collection-view"></div>
+    <div class="msg-form-view"></div>
   </div>
 </div>

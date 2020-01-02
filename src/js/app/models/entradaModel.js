@@ -3,8 +3,13 @@ import $D from '../global';
 import config from '../config';
 
 export default Backbone.Model.extend({
+  // url() {
+  //   return `${config.path}cgi/json.cgi?indice=${this.attributes.indice}&entrada=${this.attributes.entrada}`;
+  // },
   url() {
-    return `${config.path}cgi/json.cgi?indice=${this.attributes.indice}&entrada=${this.attributes.entrada}`;
+    if (this.get('INDICE') && this.get('ID')) {
+      return config.path + 'cgi/index.cgi?indice=' + this.get('INDICE') + '&ID=' + this.get('ID');
+    }
   },
   defaults: {
     'subject': '',

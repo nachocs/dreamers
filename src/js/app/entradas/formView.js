@@ -141,6 +141,7 @@ export default Backbone.View.extend({
       return;
     }
     this.clearArea();
+
     this.showEmojisIn(false);
     const self = this;
     const data = new FormData();
@@ -405,7 +406,7 @@ export default Backbone.View.extend({
     const runPost = _.throttle(this.submitPostThrottle.bind(this), 1000);
     const waiting = (callback, wait) => {
       setTimeout(() => {
-        console.log('countWait', countWait, wait);
+        // console.log('countWait', countWait, wait);
         if (!this.capturingUrls || (countWait > 4)) {
           callback();
         } else {
@@ -456,18 +457,20 @@ export default Backbone.View.extend({
         self.isSaving = false;
         self.formModel.clear();
         self.active = false;
+        self.$el.removeClass('extended');
+        self.render();
         self.capturedUrls = {};
         self.removedCapturedUrls = {};
-        self.render();
-        const newMsg = Object.assign(data.mensaje, { indice: data.mensaje.INDICE });
-        const msgModel = new EntradaModel(newMsg);
-        self.collection.add(msgModel, {
-          merge: true,
-          individual: true,
-        });
-
-        // self.collection.reset();
-        // self.collection.fetch();
+        // self.render();
+        // const newMsg = Object.assign(data.mensaje, { indice: data.mensaje.INDICE });
+        // const msgModel = new EntradaModel(newMsg);
+        // self.collection.add(msgModel, {
+        //   merge: true,
+        //   individual: true,
+        // });
+        self.collection.resetFirstEntry();
+        self.collection.reset();
+        self.collection.fetch();
         // console.log('success', data);
       },
       error(data) {
@@ -495,16 +498,25 @@ export default Backbone.View.extend({
           return false;
         }
       });
+      try {
+        if (check || !target || !container || container.is(target) ||
+          $.contains(container[0], target) ||
+          container.has(target).length !== 0 ||
+          $(target).hasClass('formulario-inactivo') ||
+          $(target).parent().hasClass('formulario-inactivo')) {
 
-      if (check || !target || !container || container.is(target) ||
-        $.contains(container[0], target) ||
-        container.has(target).length !== 0 ||
-        $(target).hasClass('formulario-inactivo') ||
-        $(target).parent().hasClass('formulario-inactivo')) { } else {
+          } else {
+          self.active = false;
+          self.$el.removeClass('extended');
+          self.render();
+          $(document).off('click.showFormView');
+        }  
+      } catch (error) {
         self.active = false;
         self.$el.removeClass('extended');
         self.render();
         $(document).off('click.showFormView');
+        console.log(error);
       }
     });
     this.render();

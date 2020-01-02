@@ -10,6 +10,9 @@ export default Backbone.Collection.extend({
     this.firstEntry = '';
     this.indice = '';
   },
+  resetFirstEntry(){
+    this.firstEntry = '';
+  },
   url() {
     return config.path + 'cgi/json.cgi?' + 'indice=' + this.indice + '&empieza=' + this.firstEntry;
   },
@@ -20,10 +23,10 @@ export default Backbone.Collection.extend({
     return resp;
   },
   fetch(options){
-    if (options.indice !== undefined && this.indice !== options.indice){
+    if (options && options.indice !== undefined && this.indice !== options.indice){
       this.firstEntry = '';
     }
-    if (options.indice !== undefined){
+    if (options && options.indice !== undefined){
       this.indice = options.indice || '';
     }
     return Backbone.Collection.prototype.fetch.apply(this, arguments);

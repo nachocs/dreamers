@@ -27,6 +27,16 @@ export default Backbone.View.extend({
       logo: require('../../img/logodreamers50x50.jpg'),
     };
   },
+  events: {
+    'click .logomask': 'logomask',
+  },
+  logomask() {
+    const layout = document.querySelector('.mdl-layout');
+    layout.MaterialLayout.toggleDrawer();
+    // const indice = $(ev.currentTarget).data('indice');
+    // this.router.navigate('/indices/' + indice, { trigger: true });
+  },
+
   render() {
     this.$el.html(this.template(this.serializer()));
     this.$('#container').html(this.libraryView.render().el);
