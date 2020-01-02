@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
-const OfflinePlugin = require('offline-plugin');
+// const OfflinePlugin = require('offline-plugin');
 
 const STATIC_DOMAIN = '';
 const BUILD_NUM = require('../package.json').version;
@@ -212,16 +212,16 @@ const config = {
         VERSION: JSON.stringify(require('../package.json').version),
       },
     }),
-    new OfflinePlugin({
-      externals: ['/'].filter((i) => i !== false),
-      rewrites: (asset) => asset,
-      ServiceWorker: {
-        navigateFallbackURL: '/',
-        publicPath: '/sw.js',
-      },
-      AppCache: false,
-      caches: 'all',
-    }),
+    // new OfflinePlugin({
+    //   externals: ['/'].filter((i) => i !== false),
+    //   rewrites: (asset) => asset,
+    //   ServiceWorker: {
+    //     navigateFallbackURL: '/',
+    //     publicPath: '/sw.js',
+    //   },
+    //   AppCache: false,
+    //   caches: 'all',
+    // }),
     new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(en|es)$/),
   ],
   resolve: {
