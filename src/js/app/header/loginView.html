@@ -1,62 +1,63 @@
 <% if (obj.alias_principal){ %>
-	<span data-link="/ciudadanos/<%=obj.ID%>" class="mdl-layout--large-screen-only">
-		<% if (obj.dreamy_principal){ %>
-			<img src="<%= obj.dreamy_principal %>" class="dreamy">
-		<% } else if (obj.FB_picture){ %>
-			<img src="<%= obj.FB_picture %>" class="dreamy">
-		<% } else { %>
-	    <i class="material-icons" class="dreamy">face</i>
-	  <% } %>
-		<span class="mdl-layout--large-screen-only alias-principal">
-			<%= obj.alias_principal %>
-		</span>
-	</span>
-	<button class="login-menu-button mdl-button mdl-js-button mdl-button--icon desplegable">
-		<i class="material-icons">keyboard_arrow_down</i>
-	</button>
-  <ul class="login-menu hidden short mdl-card mdl-shadow--4dp">
-	<% if(obj.uid){ %>
-		<li>
-			<button class="js-control-panel mdl-button mdl-js-button mdl-button--icon">
-				<a href="https://dreamers.es/ciudad/panelillo/panel.cgi?uid=<%= obj.uid %>"><i
-						class="material-icons">settings_applications</i></a>
-			</button>
-			<span>Control Panel</span>
-		</li>
+<span data-link="/ciudadanos/<%=obj.ID%>">
+	<% if (obj.dreamy_principal){ %>
+	<img src="<%= obj.dreamy_principal %>" class="dreamy">
+	<% } else if (obj.FB_picture){ %>
+	<img src="<%= obj.FB_picture %>" class="dreamy">
+	<% } else { %>
+	<i class="material-icons" class="dreamy">face</i>
 	<% } %>
-    <li>
-      <button class="js-logout logout mdl-button mdl-js-button mdl-button--icon">
-        <i class="material-icons">exit_to_app</i>
-      </button>
-    <span>Log Out</span>
-    </li>
-  </ul>
+	<span class="mdl-layout--large-screen-only alias-principal">
+		<%= obj.alias_principal %>
+	</span>
+</span>
+<button class="login-menu-button mdl-button mdl-js-button mdl-button--icon desplegable">
+	<i class="material-icons">keyboard_arrow_down</i>
+</button>
+<ul class="login-menu hidden short mdl-card mdl-shadow--4dp">
+	<% if(obj.uid){ %>
+	<li>
+		<button class="js-control-panel mdl-button mdl-js-button mdl-button--icon">
+			<a href="https://dreamers.es/ciudad/panelillo/panel.cgi?uid=<%= obj.uid %>"><i
+					class="material-icons">settings_applications</i></a>
+		</button>
+		<span>Control Panel</span>
+	</li>
+	<% } %>
+	<li>
+		<button class="js-logout logout mdl-button mdl-js-button mdl-button--icon">
+			<i class="material-icons">exit_to_app</i>
+		</button>
+		<span>Log Out</span>
+	</li>
+</ul>
 
 <%} else {%>
-	<span class="mdl-layout--large-screen-only">
-		Log In
-	</span>
-	<button class="login-menu-button mdl-button mdl-js-button mdl-button--icon">
-	  <i class="material-icons">power_settings_new</i>
-	</button>
+<span class="mdl-layout--large-screen-only">
+	Log In
+</span>
+<button class="login-menu-button mdl-button mdl-js-button mdl-button--icon">
+	<i class="material-icons">power_settings_new</i>
+</button>
 
-	<ul class="login-menu hidden mdl-card mdl-shadow--4dp">
-		<form id='login-form'>
-			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				<input class="mdl-textfield__input" type="text" id="loginAlias">
-				<label class="mdl-textfield__label" for="loginAlias">Alias/email</label>
-			</div>
-			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				<input class="mdl-textfield__input" type="password" id="loginPassword">
-				<label class="mdl-textfield__label" for="loginPassword">Password</label>
-			</div>
-			<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id='loginSubmit'>
-				entrar
-			</button>
-		</form>
-		<div class="error-login"></div>
-		<div class='fb-login'><i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i><span>facebook log in/sign up</span></div>
-		  <div style="margin-top: 10px;"><a href="https://dreamers.es/indexclasico.html">Web Cl&aacute;sica</a></div>
-	</ul>
+<ul class="login-menu hidden mdl-card mdl-shadow--4dp">
+	<form id='login-form'>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="loginAlias">
+			<label class="mdl-textfield__label" for="loginAlias">Alias/email</label>
+		</div>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="password" id="loginPassword">
+			<label class="mdl-textfield__label" for="loginPassword">Password</label>
+		</div>
+		<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id='loginSubmit'>
+			entrar
+		</button>
+	</form>
+	<div class="error-login"></div>
+	<div class='fb-login'><i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i><span>facebook log in/sign
+			up</span></div>
+	<div style="margin-top: 10px;"><a href="https://dreamers.es/indexclasico.html">Web Cl&aacute;sica</a></div>
+</ul>
 
 <% } %>
