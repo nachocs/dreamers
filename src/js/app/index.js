@@ -1,11 +1,12 @@
 import 'babel-polyfill';
 import App from './app';
 import loadFBSDK from 'facebook-sdk-promise';
+loadFBSDK.logging.on();
 
-import * as OfflinePluginRuntime from 'offline-plugin/runtime';
-if (process.env.NODE_ENV === 'production') {
-  OfflinePluginRuntime.install();
-}
+// import * as OfflinePluginRuntime from 'offline-plugin/runtime';
+// if (process.env.NODE_ENV === 'production') {
+//   OfflinePluginRuntime.install();
+// }
 
 loadFBSDK().then(FB => {
   FB.init({
