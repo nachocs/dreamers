@@ -49,7 +49,7 @@ faceb.prototype = {
         console.log('Good to see you, ' + response.name + '.', response);
         FB.api('/me/picture?width=100&height=100', res => {
           _.extend(response, {
-            imgUrl: res.data.url,
+            imgUrl: res && res.data && res.data.url || '',
           });
           dLogin(response);
         });
