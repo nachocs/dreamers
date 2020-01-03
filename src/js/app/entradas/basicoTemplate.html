@@ -88,6 +88,9 @@
         <a href="<%=url%>" class="url" target="_blank"><%=url_title%></a>
       <% } } %>
     </div>
+    <% if(obj.indice && obj.indice === 'tienda/productos'){ %>
+    <div><a href="https://tienda.dreamers.es/productos/<%=obj.ID%>">Ver en la Tienda</a></div>
+    <% } %>
     <% if(obj.ciudadano && obj.subject) { %>
       <div style="text-align: right;">
       <div class="comic-box">
