@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 import App from './app';
 import loadFBSDK from 'facebook-sdk-promise';
-loadFBSDK.logging.on();
+// loadFBSDK.logging.on();
 
 // import * as OfflinePluginRuntime from 'offline-plugin/runtime';
 // if (process.env.NODE_ENV === 'production') {
@@ -14,7 +14,7 @@ loadFBSDK().then(FB => {
     cookie: true, // enable cookies to allow the server to access
     // the session
     xfbml: true, // parse social plugins on this page
-    version: 'v5.0', // use graph api version 2.5
+    version: 'v2.11', // use graph api version 2.5
     status: true,
   });
 
