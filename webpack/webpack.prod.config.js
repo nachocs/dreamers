@@ -99,8 +99,8 @@ const config = {
     new webpack.optimize.UglifyJsPlugin({
       // Optimize the JavaScript...
       compress: {
-        warnings: false, // ...but do not show warnings in the console (there is a lot of them)
-        drop_console: true,
+        // warnings: false, // ...but do not show warnings in the console (there is a lot of them)
+        // drop_console: true,
         drop_debugger: true,
       },
     }),

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import userModel from '../models/userModel';
 import Cookies from 'js-cookie';
 import loadFBSDK from 'facebook-sdk-promise';
-import $D from '../global';
+import config from '../config';
 
 const faceb = () => {};
 
@@ -28,7 +28,7 @@ faceb.prototype = {
             FBuser: data,
           };
         $.ajax({
-          url: $D.emailLoginCgi,
+          url: config.emailLoginCgi,
           dataType: 'json',
           type: 'POST',
           data: payload,
