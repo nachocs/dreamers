@@ -438,7 +438,7 @@
   display: none;
 }
 #formPlace {
-  max-width: 376px;
+  /* max-width: 376px; */
   position: static;
   margin: 0px auto;
 }
