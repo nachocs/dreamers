@@ -1,7 +1,9 @@
 <%if (obj.alias_principal){%>
   <% if (obj.active){ %>
     <div class="main-form on">
-      <div class="selected-indice indices-dropdown"><%= obj.selectedIndice %><i class="fa  <%= obj.indicesDropdown ? 'fa-caret-up' : 'fa-caret-down' %>" aria-hidden="true"></i></div>
+      <div class="selected-indice indices-dropdown"><%= obj.selectedIndice %>
+        <!-- <i class="fa  <%= obj.indicesDropdown ? 'fa-caret-up' : 'fa-caret-down' %>" aria-hidden="true"></i> -->
+      </div>
       <!-- <ul class="select-indice <%= obj.indicesDropdown ? '' : 'hide' %>">
         <% Object.keys(obj.indicesArray).forEach(function(indice){ if(indice !== obj.indice){ %>
           <li data-indice="<%= indice %>"><%= indicesArray[indice] %></li>

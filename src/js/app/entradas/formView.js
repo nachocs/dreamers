@@ -520,7 +520,7 @@ export default Backbone.View.extend({
       }
     });
     this.render();
-    this.$('#comments').focus();
+    this.$('.formularioTextArea').focus();
 
 
   },

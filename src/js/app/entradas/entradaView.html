@@ -2,29 +2,48 @@
   <i class="fa fa-expand fa-2x" aria-hidden="true"></i>
 </div>
 
-<div class="container-inner">
+<div class="container-inner expandir">
   <%var indicedospuntos = obj.indice.replace(/\//ig, '::');%>
     <% if(obj.subject){ %>
-      <div class="content expandir"><span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span></div>
-    <% } %>
     <div class="background" style="background-image: url(<%= obj.IMAGEN0_URL || obj.IMAGEN1_URL %>)"></div>
-    <div class="comentarios">
-      <span>
-        <%= obj.cabeza || obj.comments%>
-        <% if(obj.indice && obj.indice === 'tienda/productos'){ %>
-        <div><a href="https://tienda.dreamers.es/productos/<%=obj.ID%>">Ver en la Tienda</a></div>
-        <% } %>
-      </span>
-      <div class="vermas expandir">
-        <% if (obj.loading){ %>
-        <i class="fa fa-refresh fa-spin fa-2x fa-fw"></i>
-      <% } else { %>
-        <i class="fa fa-expand fa-2x" aria-hidden="true"></i>
-      <% } %>
+      <div class="content expandir"><span><%= obj.subject %><%if(obj.temporada){%> (T<%=obj.temporada%>)<%}%></span></div>
+      <div class="comentarios">
+        <span>
+          <%= obj.cabeza || obj.comments%>
+          <% if(obj.indice && obj.indice === 'tienda/productos'){ %>
+          <div><a href="https://tienda.dreamers.es/productos/<%=obj.ID%>">Ver en la Tienda</a></div>
+          <% } %>
+        </span>
+        <div class="vermas expandir">
+          <% if (obj.loading){ %>
+          <i class="fa fa-refresh fa-spin fa-2x fa-fw"></i>
+          <% } else { %>
+          <i class="fa fa-expand fa-2x" aria-hidden="true"></i>
+          <% } %>
+        </div>
+      </div>
+    <% } else { %>
+    <div class="background full" style="background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url(<%= obj.IMAGEN0_URL || obj.IMAGEN1_URL || obj.emocion %>)">
     </div>
-  </div>
-  <% if(obj.nombreindice && obj.nombreindice !== 'indicescomun'){ %>
+      <div class="comentarios-full">
+        <div>
+        <%= obj.cabeza || obj.comments%>
+        </div>
+      </div>
+    <% } %>
+  <% if(obj.subject && obj.nombreindice && obj.nombreindice !== 'indicescomun'){ %>
   <div class="titular" data-indice="<%= indicedospuntos %>"><%= obj.nombreindice %></div>
   <% } %>
+  <% if(obj.ciudadano && !obj.subject) { %>
+  <div class="firma-full">
+    <div class="comic-box">
+      <% if (obj.emocion) { %>
+      <img class="emocion emocion-head" src="<%= obj.emocion %>">
+      <% } %>
+      <span style="padding-left: 50px;"><%= obj.name %></span>
+    </div>
+  </div>
+  <% } %>
+
   <div class='expand'></div>
 </div>
