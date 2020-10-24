@@ -84,9 +84,15 @@
       <div class="date"><%= obj.date %></div>
     <% } %>
     <div>
-      <%for (var key in obj){ if ((/^url\d*$/).test(key)){ var url = obj[key]; var url_title = obj[key+"_title"] || "enlace"; %>
-        <a href="<%=url%>" class="url" target="_blank"><%=url_title%></a>
-      <% } } %>
+      <% if(obj.indice === 'weblogs' && obj.url && obj.url1){ %>
+        <a href="<%=obj.url%>" class="url" target="_blank"><%=obj.titulo%></a>
+        <a href="<%=obj.url1%>" class="url" target="_blank">enlace</a>
+        <% } else { %>
+          <%for (var key in obj){ if ((/^url\d*$/).test(key)){ var url = obj[key]; var url_title = obj[key+"_title"] || (obj.indice === 'weblogs' && obj.titulo) || "enlace"; %>
+          <a href="<%=url%>" class="url" target="_blank"><%=url_title%></a>
+          <%  } %>
+        <% } %>
+      <% } %>
     </div>
     <% if(obj.indice && obj.indice === 'tienda/productos'){ %>
     <div><a href="https://tienda.dreamers.es/productos/<%=obj.ID%>">Ver en la Tienda</a></div>
