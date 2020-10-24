@@ -1,6 +1,4 @@
 set -x;
 cd /home/dreamers/git/dreamers;
 git pull;
-npm install --verbose;
-npm run build --verbose;
-cp -R dist/* ../../www/;
+npm install && npm run build && cp -R dist/* ../../www/;
