@@ -87,6 +87,6 @@
     "webpack": "^3.12.0",
     "webpack-assets-manifest": "^0.6.2",
     "webpack-bundle-analyzer": "^2.13.1",
-    "webpack-dev-server": "^2.11.5"
+    "webpack-dev-server": "^3.1.11"
   }
 }
