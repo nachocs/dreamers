@@ -43,7 +43,7 @@
     "request": "^2.88.2",
     "requirejs": "^2.3.6",
     "slick-carousel": "^1.8.1",
-    "socket.io": "^1.7.3",
+    "socket.io": "^4.5.3",
     "socket.io-client": "^1.7.3"
   },
   "devDependencies": {
