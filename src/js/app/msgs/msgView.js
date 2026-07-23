@@ -8,6 +8,7 @@ import MolaView from './molaView';
 import Autolinker from 'autolinker';
 import $ from 'jquery';
 import ModalView from './modalView';
+import lazyImages from '../util/lazyImages';
 
 const youtube_parser = url => {
   const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/,
@@ -169,8 +170,20 @@ export default Backbone.View.extend({
   render(){
     this.$el.html(this.template(this.serializer()));
     this.$('.mola-view').first().replaceWith(this.molaView.render().el);
+    if (this.afterRender && typeof this.afterRender === 'function') {
+      this.afterRender();
+    }
 
     return this;
+  },
+  afterRender() {
+    this.loadLazyImages();
+  },
+  loadLazyImages() {
+    const images = this.$('.js-lazy-image');
+    if (images.length > 0) {
+      lazyImages.apply(images.get());
+    }
   },
   serializer(){
     const images = [];

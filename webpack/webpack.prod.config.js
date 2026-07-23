@@ -43,7 +43,14 @@ const config = {
     // vendor: [
     //   'material-design-lite/material',
     // ],
-    app: [__dirname + '/../src/js/app/index.js', __dirname + '/../src/css/main.less'],
+    app: [
+      // Self-hosted: the storage.googleapis.com/code.getmdl.io CDN Google used to serve
+      // this from was permanently shut down (~June 2026). See README "Known issues".
+      'material-design-lite/dist/material.light_green-red.min.css',
+      'material-design-lite/dist/material.min.js',
+      __dirname + '/../src/js/app/index.js',
+      __dirname + '/../src/css/main.less',
+    ],
   },
   output: {
     path: __dirname + '/../dist',
