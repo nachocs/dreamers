@@ -135,9 +135,13 @@ const config = {
         minifyURLs: true,
       },
       appMountId: 'root',
-      // Se emiten con <%- %> (sin escapar) en src/index.ejs, por eso las
-      // tildes van como entidades HTML: asi el texto no depende de que la
+      // Las tildes van como entidades HTML para no depender de que la
       // codificacion sobreviva al pipeline de webpack + html-minifier.
+      // OJO: pese a la extension .ejs, html-webpack-plugin 5 renderiza la
+      // plantilla con lodash/template, donde la semantica es la CONTRARIA
+      // que en EJS: <%= %> interpola en crudo y <%- %> escapa HTML. Estas
+      // entidades SOLO salen bien con <%= %>; con <%- %> se emite
+      // &amp;oacute; y en la pestana se lee 'C&oacute;mics'. Comprobado.
       title: 'Dreamers | C&oacute;mics, cine, series, libros y videojuegos',
       description: 'C&oacute;mics, cine, series, libros, m&uacute;sica y videojuegos. '
         + 'Noticias, cr&iacute;ticas y fichas desde 1998, la comunidad de fans en espa&ntilde;ol.',

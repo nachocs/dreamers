@@ -6,8 +6,8 @@
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="es" class="" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title><%- htmlWebpackPlugin.options.title || 'Webpack App'%></title>
-  <meta name="description" content="<%- htmlWebpackPlugin.options.description %>">
+  <title><%= htmlWebpackPlugin.options.title || 'Webpack App'%></title>
+  <meta name="description" content="<%= htmlWebpackPlugin.options.description %>">
   <link rel="canonical" href="https://dreamers.es/">
 
   <% if (htmlWebpackPlugin.files.favicon) { %>
@@ -45,8 +45,8 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Dreamers">
   <meta property="og:locale" content="es_ES">
-  <meta property="og:title" content="<%- htmlWebpackPlugin.options.title %>">
-  <meta property="og:description" content="<%- htmlWebpackPlugin.options.description %>">
+  <meta property="og:title" content="<%= htmlWebpackPlugin.options.title %>">
+  <meta property="og:description" content="<%= htmlWebpackPlugin.options.description %>">
   <meta property="og:url" content="https://dreamers.es/">
   <meta property="og:image" content="https://dreamers.es/apple-icon-180x180.png">
   <meta name="twitter:card" content="summary">
