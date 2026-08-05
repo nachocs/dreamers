@@ -1,4 +1,9 @@
 set -x;
 cd /home/dreamers/git/dreamers;
 git pull;
-npm install && npm run build && cp -R dist/* ../../www/;
+# --legacy-peer-deps es obligatorio: extract-text-webpack-plugin@2.1.2 pide
+# webpack ^2.2.0 y el proyecto usa webpack ^3.12.0. npm 7+ trata ese
+# conflicto de peer deps como error fatal (ERESOLVE), asi que sin el flag
+# el despliegue se para antes de construir. Se quita cuando se modernice
+# el build (webpack 3 y este plugin llevan anos sin mantenimiento).
+npm install --legacy-peer-deps && npm run build && cp -R dist/* ../../www/;
