@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]> <html lang="en" class="ie6" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="ie7" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="ie8" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="ie9" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <!--<![endif]-->
+<!--[if lt IE 7 ]> <html lang="es" class="ie6" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
+<!--[if IE 7 ]>    <html lang="es" class="ie7" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
+<!--[if IE 8 ]>    <html lang="es" class="ie8" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
+<!--[if IE 9 ]>    <html lang="es" class="ie9" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="es" class="" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title><%= htmlWebpackPlugin.options.title || 'Webpack App'%></title>
+  <title><%- htmlWebpackPlugin.options.title || 'Webpack App'%></title>
+  <meta name="description" content="<%- htmlWebpackPlugin.options.description %>">
+  <link rel="canonical" href="https://dreamers.es/">
 
   <% if (htmlWebpackPlugin.files.favicon) { %>
   <link rel="shortcut icon" href="<%= htmlWebpackPlugin.files.favicon%>">
@@ -39,6 +41,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Dreamers">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="<%- htmlWebpackPlugin.options.title %>">
+  <meta property="og:description" content="<%- htmlWebpackPlugin.options.description %>">
+  <meta property="og:url" content="https://dreamers.es/">
+  <meta property="og:image" content="https://dreamers.es/apple-icon-180x180.png">
+  <meta name="twitter:card" content="summary">
+
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebSite","name":"Dreamers","url":"https://dreamers.es/"}
+  </script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"Organization","name":"Dreamers","url":"https://dreamers.es/","logo":"https://dreamers.es/apple-icon-180x180.png"}
+  </script>
 
 
 
@@ -104,6 +122,40 @@
   <% if (htmlWebpackPlugin.options.devServer) { %>
   <script src="<%= htmlWebpackPlugin.options.devServer%>/webpack-dev-server.js" crossorigin="anonymous"></script>
   <% } %>
+<!-- Navegacion para clientes sin JavaScript y para los rastreadores. La app
+     monta su contenido por AJAX en #root, asi que sin esto el HTML de la
+     portada solo contiene DOS enlaces y ningun buscador puede llegar desde
+     aqui a las secciones. Son las mismas URLs que sirve el motor Indices,
+     verificadas una a una: no hay nada oculto ni distinto de lo que ve un
+     visitante. Se enlaza 'news' y no 'noticias', y 'destacados' y no
+     'redaccion', porque cada par sirve el mismo contenido en dos URLs. -->
+<noscript>
+  <nav>
+    <h1>Dreamers</h1>
+    <ul>
+      <li><a href="/comics/">C&oacute;mics</a></li>
+      <li><a href="/peliculas/">Pel&iacute;culas</a></li>
+      <li><a href="/series/">Series</a></li>
+      <li><a href="/libros/">Libros</a></li>
+      <li><a href="/discos/">Discos</a></li>
+      <li><a href="/videojuegos/">Videojuegos</a></li>
+      <li><a href="/news/">Noticias</a></li>
+      <li><a href="/articulos/">Art&iacute;culos</a></li>
+      <li><a href="/relatos/">Relatos</a></li>
+      <li><a href="/autores/">Autores</a></li>
+      <li><a href="/personajes/">Personajes</a></li>
+      <li><a href="/destacados/">Destacados</a></li>
+      <li><a href="/webcomics/">Webc&oacute;mics</a></li>
+      <li><a href="/advance/">Advance</a></li>
+      <li><a href="/lanzamientos/">Lanzamientos</a></li>
+      <li><a href="/promociones/">Promociones</a></li>
+      <li><a href="/tebelogs/">Tebelogs</a></li>
+      <li><a href="/ciudad/">La Ciudad</a></li>
+      <li><a href="https://tienda.dreamers.es">Tienda</a></li>
+      <li><a href="/indexclasico.html">Web Cl&aacute;sica</a></li>
+    </ul>
+  </nav>
+</noscript>
 <div style="position: absolute; top: 75px; left: 12px; z-index: 4;"><a
     href="https://tienda.dreamers.es">Tienda</a></div>
 <div style="position: absolute; top: 75px; right: 12px; z-index: 2;"><a

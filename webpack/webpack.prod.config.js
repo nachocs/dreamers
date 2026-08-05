@@ -135,7 +135,12 @@ const config = {
         minifyURLs: true,
       },
       appMountId: 'root',
-      title: 'Dreamers',
+      // Se emiten con <%- %> (sin escapar) en src/index.ejs, por eso las
+      // tildes van como entidades HTML: asi el texto no depende de que la
+      // codificacion sobreviva al pipeline de webpack + html-minifier.
+      title: 'Dreamers | C&oacute;mics, cine, series, libros y videojuegos',
+      description: 'C&oacute;mics, cine, series, libros, m&uacute;sica y videojuegos. '
+        + 'Noticias, cr&iacute;ticas y fichas desde 1998, la comunidad de fans en espa&ntilde;ol.',
       unsupportedBrowser: false,
       chunksSortMode: packageSort(['vendor', 'app']),
     }),
