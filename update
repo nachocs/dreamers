@@ -1,5 +1,14 @@
 set -x;
 cd /home/dreamers/git/dreamers;
+# npm install reescribe package-lock.json en cada pasada, asi que el checkout
+# de despliegue queda siempre sucio. En cuanto un commit toca el lock, el pull
+# aborta con "Los cambios locales seran sobrescritos" y -- como abajo va ';' y
+# no '&&' -- el script sigue y reconstruye el codigo VIEJO sin avisar. Eso ya
+# paso el 2026-08-06 con el fichero 'update' (por el bit de ejecucion) y dejo
+# el servidor clavado en un commit antiguo durante dos despliegues seguidos.
+# Se descarta la reescritura local del lock antes de tirar: aqui es un
+# subproducto de npm, nunca un cambio que alguien quiera conservar.
+git checkout -- package-lock.json 2>/dev/null;
 git pull;
 # --legacy-peer-deps es obligatorio: extract-text-webpack-plugin@2.1.2 pide
 # webpack ^2.2.0 y el proyecto usa webpack ^3.12.0. npm 7+ trata ese
