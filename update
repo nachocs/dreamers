@@ -15,4 +15,12 @@ git pull;
 # conflicto de peer deps como error fatal (ERESOLVE), asi que sin el flag
 # el despliegue se para antes de construir. Se quita cuando se modernice
 # el build (webpack 3 y este plugin llevan anos sin mantenimiento).
-npm install --legacy-peer-deps && npm run build && cp -R dist/* ../../www/;
+# src/assets/ NO lo copia webpack: en dist solo entra lo que pasa por el
+# bundle, mas el favicon. Por eso los 7 iconos que declara el <head>
+# (apple-icon-*, favicon-*, ms-icon-*, android-icon-*) daban 404 en
+# produccion, y con ellos la og:image -- o sea que al compartir un enlace
+# de dreamers.es no salia imagen ninguna. Comprobado el 2026-08-06.
+# Se copian ANTES que dist para que, si algo coincide de nombre, mande lo
+# generado por el build: manifest.json lo produce WebpackAssetsManifest y
+# es el que tiene que ganar, no la copia estatica de src/assets/.
+npm install --legacy-peer-deps && npm run build && cp -R src/assets/* ../../www/ && cp -R dist/* ../../www/;

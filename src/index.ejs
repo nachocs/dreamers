@@ -48,14 +48,28 @@
   <meta property="og:title" content="<%= htmlWebpackPlugin.options.title %>">
   <meta property="og:description" content="<%= htmlWebpackPlugin.options.description %>">
   <meta property="og:url" content="https://dreamers.es/">
-  <meta property="og:image" content="https://dreamers.es/apple-icon-180x180.png">
-  <meta name="twitter:card" content="summary">
+  <!-- og:image apuntaba a apple-icon-180x180.png, que ademas de ser cuadrado
+       y de solo 180px daba 404 en produccion (src/assets/ no se copiaba al
+       desplegar), asi que al compartir un enlace no salia imagen ninguna.
+       Ahora es una de 1200x630, la proporcion que piden Facebook, WhatsApp,
+       Twitter y LinkedIn, hecha con el trazado original del logo. Las
+       medidas explicitas evitan que la primera vez que se comparte el
+       enlace salga sin imagen mientras el scraper la descarga. -->
+  <meta property="og:image" content="https://dreamers.es/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:alt" content="Dreamers">
+  <!-- summary_large_image y no summary: con 1200x630 corresponde la tarjeta
+       grande; 'summary' la recortaria a un cuadrado pequeno. -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://dreamers.es/og-image.png">
 
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebSite","name":"Dreamers","url":"https://dreamers.es/"}
   </script>
   <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"Organization","name":"Dreamers","url":"https://dreamers.es/","logo":"https://dreamers.es/apple-icon-180x180.png"}
+    {"@context":"https://schema.org","@type":"Organization","name":"Dreamers","url":"https://dreamers.es/","logo":"https://dreamers.es/android-icon-192x192.png"}
   </script>
 
 
