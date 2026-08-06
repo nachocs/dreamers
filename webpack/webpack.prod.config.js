@@ -133,6 +133,11 @@ const config = {
         minifyJS: true,
         minifyCSS: true,
         minifyURLs: true,
+        // collapseWhitespace por si solo dejaba TODO el html en una sola
+        // linea, ilegible para depurar o para leer el fuente de la portada.
+        // preserveLineBreaks mantiene un salto por etiqueta y sigue
+        // colapsando los espacios redundantes. Cuesta ~6% de tamano.
+        preserveLineBreaks: true,
       },
       appMountId: 'root',
       // Las tildes van como entidades HTML para no depender de que la
