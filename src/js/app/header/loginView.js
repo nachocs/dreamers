@@ -13,6 +13,12 @@ export default Backbone.View.extend({
     _.bindAll(this);
     this.model = userModel;
     this.listenTo(this.model, 'change', this.render.bind(this));
+    // Recuperar la sesion al cargar. Esto FALTABA: comprobarSesion (antes
+    // checkCookie) estaba definida y no la llamaba nadie, asi que la sesion
+    // solo duraba lo que durara la pagina en la que habias entrado. Al
+    // volver aparecias desconectado aunque tu sesion siguiera viva en el
+    // servidor, y con el formulario de publicar escondido detras.
+    this.comprobarSesion();
   },
   events: {
     'click #loginSubmit': 'submit',
@@ -45,7 +51,7 @@ export default Backbone.View.extend({
     this.$('.login-menu').toggleClass('hidden');
 
   },
-  checkCookie(){
+  comprobarSesion(){
     // Ya no se lee la cookie desde JS. Antes habia que interpretarla aqui, y
     // convivian DOS formatos con el mismo nombre: el que escribia este JS
     // ({"uid":"..."}) y el del Perl (uid::...), que es el unico que entienden
