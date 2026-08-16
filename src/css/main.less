@@ -227,12 +227,6 @@ h6 {
     padding: 5px;
     right: -5px;
     font-size: 12px;
-    .facebookLogin {
-        background-color: darkslateblue;
-        padding: 2px 5px;
-        margin: 5px 0;
-        display: block;
-    }
 }
 
 .main .head #loginPlace #menuLogin input {
@@ -812,11 +806,25 @@ h6 {
 }
 
 .login-menu .login-extra {
-    margin-top: 10px;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
     display: flex;
     flex-direction: column;
     a {
-        padding: 2px 0;
+        padding: 3px 0;
+    }
+    // Al quitar el boton azul de Facebook, que era lo mas grande del
+    // desplegable, el registro se queda como la accion principal despues
+    // de entrar: se le da algo de peso para que no parezca un pie de
+    // pagina mas.
+    // OJO con las unidades: html tiene font-size 12px, asi que 1rem son
+    // 12px, y los otros enlaces de este menu reciben 16px de otra regla.
+    // En rem "pequenos" esto salia MAS chico que lo que queria destacar.
+    .registrate {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 4px;
     }
 }
 
@@ -1061,28 +1069,9 @@ h6 {
     .mdl-menu__item {
         line-height: initial;
     }
-    .fb-login {
-        height: 42px;
-        color: white;
-        background-color: #3a5795;
-        border-radius: 5px;
-        padding: 0;
-        margin: 20px 0 0;
-        line-height: 40px;
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
-        cursor: pointer;
-        &:hover {
-            background-color: #435B8D;
-        }
-        .fa-facebook-official {
-            margin-left: 12px;
-            margin-top: 5px;
-        }
-        span {
-            vertical-align: top;
-            margin-left: 50px;
-        }
-    }
+    // Aqui vivia el .fb-login, el boton azul de Facebook del desplegable.
+    // OJO al limpiar: .fa-facebook-official SIGUE en uso, pero para
+    // COMPARTIR en Facebook desde msgView, que es otra cosa y funciona.
 }
 
 .fblogo {

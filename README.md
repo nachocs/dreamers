@@ -34,6 +34,42 @@ Dreamers.es New Site
   requires a usable measurement (`anchoDocumento > 0`) and otherwise keeps the defaults.
   Real narrow screens (360px and the like) behave exactly as before.
 
+## 1.0.13
+Retirado el acceso con Facebook.
+
+El boton declaraba `version: 'v2.11'`, una version de la Graph API que Meta
+retiro hacia enero de 2020: **llevaba unos seis anos sin funcionar**. Y era el
+elemento mas grande del desplegable de acceso, o sea que se llevaba los clics de
+justo la gente que venia a darse de alta y los dejaba en un callejon sin salida.
+
+No se reactiva porque Meta exige hoy vincular la app a un portfolio de negocio
+**verificado** (documentacion de una sociedad real) y la SL ya no existe. No es
+que falte un tramite: no se cumple el supuesto.
+
+- Fuera `fbView.js`, `fb.js` (este ya estaba huerfano), el `loadFBSDK`/`FB.init`
+  de `index.js`, el boton `.fb-login`, el `<div id="fb-root">` y la dependencia
+  `facebook-sdk-promise`.
+- `logOut()` llamaba a `FB.logout()`. Sin SDK, `FB` no existe y eso reventaba el
+  cierre de sesion; retirada la llamada.
+- De paso se van `menuLoginView.js`/`.html`, que eran codigo huerfano (no los
+  importaba nadie) y contenian un SEGUNDO boton de login con Facebook.
+- El registro pasa a ser la accion destacada del desplegable.
+
+**NO se ha tocado nada del servidor**: `emaillogin.cgi` se deja intacto a
+proposito, por si algun dia se puede recuperar.
+
+**Pendiente, y es una deuda con usuarios reales:** hay ciudadanos que se dieron
+de alta *solo* por Facebook. Llevan tiempo sin poder entrar (y nadie se ha
+quejado, que dice bastante). Antes de darlo por cerrado hay que mirar que hacia
+`emaillogin.cgi`: si solo **emparejaba** por email con un ciudadano existente, esa
+gente puede entrar con `recordar.cgi` y no hay nada que hacer; pero si **creaba
+ciudadanos nuevos sin clave**, esos registros no tienen contrasena que recuperar
+y hay que mandarles un correo para que se pongan una.
+
+Ojo tambien: lo que NO es login es el **compartir en Facebook** de `util.js` /
+`msgView.js` (`sharer.php`), que sigue funcionando y no se toca. Y la clase
+`.fa-facebook-official` sigue en uso por eso mismo.
+
 ## 1.0.12
 Hacer alcanzable el registro y visible la participacion.
 

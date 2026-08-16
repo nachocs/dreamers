@@ -20,7 +20,6 @@ export default [
       sourceType: 'module',
       globals: {
         ...globals.browser,
-        FB: 'readonly',
         componentHandler: 'readonly',
         // mainView.js carga el logo con el require() de webpack, que no
         // es el de Node ni existe en el navegador: lo resuelve el bundler.

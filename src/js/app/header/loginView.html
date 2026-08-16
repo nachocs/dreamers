@@ -55,17 +55,19 @@
 		</button>
 	</form>
 	<div class="error-login"></div>
-	<div class='fb-login'><i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i><span>facebook log in/sign
-			up</span></div>
+	<!-- Aqui estaba el boton de "facebook log in/sign up". Era el elemento
+	     mas grande del desplegable y llevaba anos roto (Graph API v2.11,
+	     retirada por Meta hacia enero de 2020), asi que se llevaba los
+	     clics de la gente que venia a darse de alta y no la llevaba a
+	     ninguna parte. Ver la nota en index.js. -->
 	<!-- El registro y la recuperacion de clave viven en el motor clasico y
 	     no se enlazaban desde ningun sitio de la portada, asi que quien no
-	     tuviera ya una cuenta no tenia forma de conseguirla: este
-	     desplegable solo ofrecia alias/clave y el boton de Facebook. -->
+	     tuviera ya una cuenta no tenia forma de conseguirla. -->
 	<div class="login-extra">
-		<a href="https://dreamers.es/ciudad/registro/">Reg&iacute;strate</a>
+		<a class="registrate" href="https://dreamers.es/ciudad/registro/">&iquest;No tienes cuenta? Reg&iacute;strate</a>
 		<a href="https://dreamers.es/ciudad/panelillo/recordar.cgi">&iquest;Olvidaste la clave?</a>
+		<a href="https://dreamers.es/indexclasico.html">Web Cl&aacute;sica</a>
 	</div>
-	<div style="margin-top: 10px;"><a href="https://dreamers.es/indexclasico.html">Web Cl&aacute;sica</a></div>
 </ul>
 
 <% } %>

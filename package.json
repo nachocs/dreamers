@@ -1,6 +1,6 @@
 {
   "name": "dreamers",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Dreamers",
   "main": "src/js/app/app.js",
   "scripts": {
@@ -35,7 +35,6 @@
     "backbone": "^1.6.1",
     "bootstrap": "^3.4.1",
     "emojione": "^2.2.7",
-    "facebook-sdk-promise": "^1.2.2",
     "font-awesome": "^4.7.0",
     "jquery": "^3.7.1",
     "js-cookie": "^3.0.8",

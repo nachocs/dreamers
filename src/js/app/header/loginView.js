@@ -2,7 +2,6 @@ import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
 import template from './loginView.html';
-import FbView from './fbView';
 import Cookies from 'js-cookie';
 import config from '../config';
 import userModel from '../models/userModel';
@@ -14,8 +13,6 @@ export default Backbone.View.extend({
   initialize() {
     _.bindAll(this);
     this.model = userModel;
-    this.fbView = new FbView();
-    this.fbView.initialize();
     this.listenTo(this.model, 'change', this.render.bind(this));
   },
   events: {
@@ -25,20 +22,13 @@ export default Backbone.View.extend({
       e.stopPropagation();
     },
     'click .login-menu-button': 'openMenu',
-    'click .fb-login': 'fBlogin',
     'click .js-logout': 'logOut',
   },
   logOut(){
     Cookies.set('city', null);
     this.model.clear();
-    FB.logout();
-  },
-  fBlogin() {
-    FB.login(response => {
-      console.log('fb login response', response);
-    }, {
-      scope: 'public_profile,email',
-    });
+    // Aqui iba tambien un FB.logout(). Al retirar el SDK, 'FB' ya no
+    // existe en el navegador y llamarlo reventaba el cierre de sesion.
   },
 
   openMenu() {
