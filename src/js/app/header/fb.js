@@ -77,7 +77,7 @@ export default {
           } else {
             console.log('success', response.id);
           }
-        }
+        },
       );
     };
 

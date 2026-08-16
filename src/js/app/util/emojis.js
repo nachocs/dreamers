@@ -14,7 +14,7 @@ class Emojis {
         shortname: value.shortname,
         name: key,
         aliases_ascii: value.aliases_ascii,
-        img: emojione.toImage(value.shortname, ),
+        img: emojione.toImage(value.shortname ),
       });
     });
   }

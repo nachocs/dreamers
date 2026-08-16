@@ -89,9 +89,10 @@
        storage.googleapis.com/code.getmdl.io, which Google permanently shut down (~June 2026). -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
-  <!-- Add the slick-theme.css if you want default styling -->
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
+  <!-- Se quitan las dos hojas de slick-carousel: apuntaban a
+       //cdn.jsdelivr.net/jquery.slick/1.6.0/, una ruta del CDN antiguo de
+       jsDelivr que ya no existe, y ademas el carrusel no se usa en ningun
+       sitio del codigo (la dependencia tambien se ha retirado). -->
   <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans" rel="stylesheet">
   <% for (var css in htmlWebpackPlugin.files.css) { %>
   <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
@@ -129,12 +130,10 @@
     </script>
   <% } %>
 
-  <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-  <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>" crossorigin="anonymous"></script>
-  <% } %>
-
-  <% if (htmlWebpackPlugin.options.devServer) { %>
-  <script src="<%= htmlWebpackPlugin.options.devServer%>/webpack-dev-server.js" crossorigin="anonymous"></script>
+  <!-- html-webpack-plugin 5 elimino 'files.chunks'; ahora los bundles de
+       JS vienen en 'files.js', ya como lista de rutas. -->
+  <% for (var i = 0; i < htmlWebpackPlugin.files.js.length; i++) { %>
+  <script src="<%= htmlWebpackPlugin.files.js[i] %>" crossorigin="anonymous"></script>
   <% } %>
 <!-- Navegacion para clientes sin JavaScript y para los rastreadores. La app
      monta su contenido por AJAX en #root, asi que sin esto el HTML de la

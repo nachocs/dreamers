@@ -52,7 +52,7 @@ export default Backbone.View.extend({
       try{
         obj = JSON.parse(cookie);
       }
-      catch(e){
+      catch{
         console.log('cookie', cookie);
         if (cookie.match(/^uid\:\:(.+)/)){
           obj = {
@@ -80,9 +80,12 @@ export default Backbone.View.extend({
           Cookies.set('city', null);
         } else {
           self.model.set(data.user);
-          Cookies.set('city', {
+          // Ver la nota en fbView.js: js-cookie 3 no serializa objetos,
+          // asi que el JSON.stringify va explicito para no cambiar ni un
+          // byte del valor de la cookie.
+          Cookies.set('city', JSON.stringify({
             uid: data.uid,
-          });
+          }));
         }
       },
     });

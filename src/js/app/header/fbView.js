@@ -5,7 +5,12 @@ import Cookies from 'js-cookie';
 import loadFBSDK from 'facebook-sdk-promise';
 import config from '../config';
 
-const faceb = () => {};
+// OJO: esto tiene que ser una funcion, no una arrow function. loginView
+// hace 'new FbView()' y las arrow functions no son construibles. Colaba
+// porque babel las convertia a 'function' al compilar para ES5; en cuanto
+// el objetivo de navegadores paso a ser moderno, la arrow sobrevivio al
+// build y la portada entera dejaba de montarse.
+function faceb() {}
 
 faceb.prototype = {
   initialize() {
@@ -36,9 +41,14 @@ faceb.prototype = {
             console.log('Respuesta de dreamers', res);
             userModel.set(res.user);
             userModel.set('uid', res.uid);
-            Cookies.set('city', {
+            // js-cookie 3 ya no serializa objetos sola: la 2 hacia el
+            // JSON.stringify por dentro y la 3 haria String(obj), o sea
+            // '[object Object]'. Se hace explicito para que la cookie
+            // 'city' siga teniendo exactamente los mismos bytes, que es
+            // lo que espera el CGI de login.
+            Cookies.set('city', JSON.stringify({
               uid: res.uid,
-            });
+            }));
           },
         });
       }

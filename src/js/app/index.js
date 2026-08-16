@@ -1,4 +1,6 @@
-import 'babel-polyfill';
+// Ya no se carga babel-polyfill (core-js 2, sin mantenimiento desde 2019):
+// el objetivo de navegadores declarado en 'browserslist' trae Promise,
+// Object.assign y fetch de serie, asi que solo anadia peso.
 import App from './app';
 import loadFBSDK from 'facebook-sdk-promise';
 // loadFBSDK.logging.on();

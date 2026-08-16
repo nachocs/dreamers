@@ -7,7 +7,6 @@ import template from './formView.html';
 import userModel from '../models/userModel';
 import config from '../config';
 import EmojisModal from '../util/emojisModal';
-import EntradaModel from '../models/entradaModel';
 import emojione from 'emojione';
 import Service from '../util/service';
 
@@ -453,7 +452,7 @@ export default Backbone.View.extend({
     this.isSaving = true;
     this.formModel.save(
       saveObj, {
-      success(model, data) {
+      success() {
         self.isSaving = false;
         self.formModel.clear();
         self.active = false;
@@ -476,7 +475,7 @@ export default Backbone.View.extend({
       error(data) {
         console.log('error', data);
       },
-    }
+    },
     );
   },
   clearArea() {

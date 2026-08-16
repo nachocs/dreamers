@@ -1,48 +1,20 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
-const WebpackAssetsManifest = require('webpack-assets-manifest');
-// const OfflinePlugin = require('offline-plugin');
+// La version 6 exporta con nombre; la 0.6 exportaba el constructor directo.
+const { WebpackAssetsManifest } = require('webpack-assets-manifest');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const STATIC_DOMAIN = '';
 const BUILD_NUM = require('../package.json').version;
+const CDN_BASE_URL = '/';
 
-var CDN_BASE_URL = '/'; // eslint-disable-line no-var
-
-// if(STATIC_DOMAIN && BUILD_NUM) {
-// CDN_BASE_URL = `${STATIC_DOMAIN}/${BUILD_NUM}/`;
-// } else if(STATIC_DOMAIN) {
-CDN_BASE_URL = `${STATIC_DOMAIN}/`;
-// }
-// const __dirname = '';
-function packageSort(packages) {
-  // packages = ['polyfills', 'vendor', 'app']
-  const len = packages.length - 1;
-  const first = packages[0];
-  const last = packages[len];
-  return function sort(a, b) {
-    // polyfills always first
-    if (a.names[0] === first) {
-      return -1;
-    }
-    // app always last
-    if (a.names[0] === last) {
-      return 1;
-    }
-    // vendor before app
-    if (a.names[0] !== first && b.names[0] === last) {
-      return -1;
-    } else {
-      return 1;
-    }
-  };
-}
 const config = {
+  mode: 'production',
+  // 'browserslist' en package.json manda tanto aqui como en babel y
+  // autoprefixer, asi que el objetivo de navegadores se declara UNA vez.
+  target: ['web', 'browserslist'],
   entry: {
-    // vendor: [
-    //   'material-design-lite/material',
-    // ],
     app: [
       // Self-hosted: the storage.googleapis.com/code.getmdl.io CDN Google used to serve
       // this from was permanently shut down (~June 2026). See README "Known issues".
@@ -54,67 +26,77 @@ const config = {
   },
   output: {
     path: __dirname + '/../dist',
-    filename: 'dist/' + BUILD_NUM + '/[name].[chunkhash].js',
-    chunkFilename: 'dist/' + BUILD_NUM + '/[name].[chunkhash].chunk.js',
+    filename: 'dist/' + BUILD_NUM + '/[name].[contenthash].js',
+    chunkFilename: 'dist/' + BUILD_NUM + '/[name].[contenthash].chunk.js',
+    // Las fuentes y las imagenes grandes salen por asset modules (antes
+    // file-loader/url-loader), asi que su ruta se declara aqui y no en
+    // cada regla.
+    assetModuleFilename: 'dist/' + BUILD_NUM + '/assets/[name].[hash][ext]',
     publicPath: CDN_BASE_URL,
+    clean: true,
   },
   module: {
-    loaders: [
+    rules: [
       {
-        loader: 'babel-loader',
         test: /\.js$/,
         exclude: /node_modules/,
-        query: {
-          plugins: ['lodash'],
-          presets: [['@babel/preset-env']],
-        },
+        // Los presets se leen de babel.config.json, para que webpack y
+        // eslint compartan exactamente la misma configuracion de Babel.
+        use: 'babel-loader',
       },
       {
         test: /\.less$/,
-        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!postcss-loader!less-loader' }),
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'less-loader'],
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!postcss-loader' }),
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
       },
       {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?(\?[0-9]*)?$/,
-        loader: 'url-loader?limit=10000&minetype=application/font-woff&name=dist/' + BUILD_NUM + '/fonts/[name].[ext]',
+        // webpack 5 trae asset modules: 'asset/resource' sustituye a
+        // file-loader y 'asset' al url-loader con limite (inline en base64
+        // por debajo del limite, fichero aparte por encima).
+        test: /\.(woff2?|ttf|eot|svg)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'dist/' + BUILD_NUM + '/fonts/[name][ext]',
+        },
       },
       {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?(\?[0-9]*)?$/,
-        loader: 'file-loader?name=dist/' + BUILD_NUM + '/fonts/[name].[ext]',
+        test: /\.(png|jpe?g|gif)$/,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: { maxSize: 10000 },
+        },
       },
-      { test: /\.(html)(\?v=[0-9]\.[0-9]\.[0-9])?(\?[0-9]*)?$/, loader: 'html-loader' },
-      { test: /\.(png|jpg|gif)$/, loader: 'url-loader?limit=10000' },
-      { test: /\.json$/, loader: 'json-loader' },
+      {
+        test: /\.html$/,
+        // Las plantillas de Backbone se importan como cadena y se compilan
+        // con _.template en tiempo de ejecucion, asi que html-loader NO
+        // debe tocar sus atributos: <%= %> dentro de un src/href no es una
+        // URL que webpack pueda resolver.
+        use: {
+          loader: 'html-loader',
+          options: { sources: false, esModule: false, minimize: false },
+        },
+      },
+    ],
+  },
+  optimization: {
+    moduleIds: 'deterministic',
+    minimize: true,
+    minimizer: [
+      // '...' mantiene el minificador de JS por defecto (terser) y le suma
+      // el de CSS. Antes el CSS no se minificaba: extract-text-webpack-plugin
+      // no lo hacia y UglifyJsPlugin solo tocaba JS.
+      '...',
+      new CssMinimizerPlugin(),
     ],
   },
   plugins: [
-    new webpack.HashedModuleIdsPlugin(),
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        context: __dirname,
-        postcss: [autoprefixer],
-        debug: true,
-        progress: true,
-        colors: true,
-      },
-    }),
-    new webpack.optimize.OccurrenceOrderPlugin(true),
-    // Merge all duplicate modules
-    new webpack.optimize.UglifyJsPlugin({
-      // Optimize the JavaScript...
-      compress: {
-        // warnings: false, // ...but do not show warnings in the console (there is a lot of them)
-        // drop_console: true,
-        drop_debugger: true,
-      },
-    }),
-    new ExtractTextPlugin({
+    new MiniCssExtractPlugin({
       filename: 'dist/' + BUILD_NUM + '/[name].[contenthash].css',
-      disable: false,
-      allChunks: true,
+      chunkFilename: 'dist/' + BUILD_NUM + '/[id].[contenthash].css',
     }),
     new HtmlWebpackPlugin({
       template: __dirname + '/../src/index.ejs',
@@ -151,7 +133,6 @@ const config = {
       description: 'C&oacute;mics, cine, series, libros, m&uacute;sica y videojuegos. '
         + 'Noticias, cr&iacute;ticas y fichas desde 1998, la comunidad de fans en espa&ntilde;ol.',
       unsupportedBrowser: false,
-      chunksSortMode: packageSort(['vendor', 'app']),
     }),
     new WebpackAssetsManifest({
       output: 'manifest.json',
@@ -226,27 +207,21 @@ const config = {
       merge: false,
       publicPath: '',
     }),
+    // En webpack 5 hay que declarar cada clave por separado: definir el
+    // objeto 'process.env' entero rompe cualquier dependencia que lea otra
+    // variable distinta de estas tres.
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production'),
-        ENDPOINTS_ROOT_DOMAIN: JSON.stringify(process.env.ENDPOINTS_ROOT_DOMAIN),
-        VERSION: JSON.stringify(require('../package.json').version),
-      },
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      'process.env.ENDPOINTS_ROOT_DOMAIN': JSON.stringify(process.env.ENDPOINTS_ROOT_DOMAIN),
+      'process.env.VERSION': JSON.stringify(require('../package.json').version),
     }),
-    // new OfflinePlugin({
-    //   externals: ['/'].filter((i) => i !== false),
-    //   rewrites: (asset) => asset,
-    //   ServiceWorker: {
-    //     navigateFallbackURL: '/',
-    //     publicPath: '/sw.js',
-    //   },
-    //   AppCache: false,
-    //   caches: 'all',
-    // }),
-    new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(en|es)$/),
+    new webpack.ContextReplacementPlugin(/moment[\\/]locale$/, /^\.\/(en|es)$/),
+    ...(process.env.ANALYZE ? [new BundleAnalyzerPlugin()] : []),
   ],
   resolve: {
     alias: {
+      // Backbone pide 'underscore'; lodash lo suple y asi va una sola
+      // libreria de utilidades en el bundle.
       underscore: 'lodash',
     },
   },

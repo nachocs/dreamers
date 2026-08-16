@@ -461,7 +461,7 @@ export default Backbone.View.extend({
         error() {
           // console.log('error', data);
         },
-      }
+      },
     );
   },
   clearArea(focus) {

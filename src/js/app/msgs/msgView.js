@@ -199,7 +199,7 @@ export default Backbone.View.extend({
         userModel: userModel.toJSON(),
         date: moment.unix(this.model.get('FECHA')).fromNow(),
         comments: this.formatComments(this.model.get('comments')),
-      }
+      },
     );
   },
 });
