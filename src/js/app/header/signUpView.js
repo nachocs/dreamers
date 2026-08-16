@@ -1,7 +1,6 @@
 import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
-import Cookies from 'js-cookie';
 import template from './signUpView.html';
 import config from '../config';
 import userModel from '../models/userModel';
@@ -183,12 +182,13 @@ export default Backbone.View.extend({
         self.actualizar();
         return;
       }
-      // Mismo cierre que el login: guardar el uid en la cookie 'city' y
-      // volcar el usuario en userModel, que es lo que hace que aparezcan el
+      // La cookie ya NO se escribe aqui: la pone registro.cgi en el
+      // Set-Cookie de esta misma respuesta, en formato uid::, que es el que
+      // entienden tambien la tienda y el resto del sitio. Escribirla desde
+      // JS creaba un segundo formato del mismo valor que el Perl no sabia
+      // leer, y ademas impediria activar HttpOnly.
+      // Volcar el usuario en userModel es lo que hace que aparezcan el
       // formulario de entradas y el de comentarios.
-      // El JSON.stringify va explicito porque js-cookie 3 ya no serializa
-      // objetos sola, y el CGI espera exactamente estos bytes.
-      Cookies.set('city', JSON.stringify({ uid: data.uid }));
       userModel.set(data.user);
       userModel.set('uid', data.uid);
       self.trigger('registrado');

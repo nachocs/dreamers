@@ -2,7 +2,6 @@ import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
 import template from './loginView.html';
-import Cookies from 'js-cookie';
 import config from '../config';
 import userModel from '../models/userModel';
 
@@ -25,8 +24,19 @@ export default Backbone.View.extend({
     'click .js-logout': 'logOut',
   },
   logOut(){
-    Cookies.set('city', null);
-    this.model.clear();
+    // Cerrar sesion tiene que pasar por el servidor. Vaciar la cookie aqui
+    // dejaba VIVO el fichero de sesion (hasta 10 dias), asi que la tienda te
+    // seguia viendo dentro: ese era el "si te haces log-off de uno no se va
+    // del otro". panel.cgi?logoff=1 borra la sesion de verdad; el navegador
+    // manda la cookie solo, no hace falta leerla desde aqui.
+    const self = this;
+    $.ajax({
+      type: 'GET',
+      url: config.logoffCgi,
+      xhrFields: { withCredentials: true },
+    }).always(() => {
+      self.model.clear();
+    });
     // Aqui iba tambien un FB.logout(). Al retirar el SDK, 'FB' ya no
     // existe en el navegador y llamarlo reventaba el cierre de sesion.
   },
@@ -36,47 +46,34 @@ export default Backbone.View.extend({
 
   },
   checkCookie(){
-    let obj = {};
-    const cookie = Cookies.get('city');
-    if (cookie){
-      try{
-        obj = JSON.parse(cookie);
-      }
-      catch{
-        console.log('cookie', cookie);
-        if (cookie.match(/^uid\:\:(.+)/)){
-          obj = {
-            uid: cookie.match(/^uid\:\:(.*)/)[1],
-          };
-        } else {
-          return;
-        }
-      }
-      if (obj && obj.uid){
-        this.loginCall(obj);
-      }
-    }
+    // Ya no se lee la cookie desde JS. Antes habia que interpretarla aqui, y
+    // convivian DOS formatos con el mismo nombre: el que escribia este JS
+    // ({"uid":"..."}) y el del Perl (uid::...), que es el unico que entienden
+    // la tienda y el resto del sitio. Ahora se le pregunta al servidor y el
+    // navegador manda la cookie sola, sea del formato que sea. Ademas esto
+    // seguira funcionando cuando la cookie pase a ser HttpOnly.
+    this.loginCall({}, true);
   },
-  loginCall(data){
+  // 'sondeo' = solo estamos mirando si hay sesion abierta. No haberla es lo
+  // normal para un visitante anonimo y no debe pintar ningun error.
+  loginCall(data, sondeo){
     const self = this;
     $.ajax({
       type: 'POST',
       url: config.loginCgi,
       data,
-      success(data) {
-        if (data.status !== 'ok') {
-          self.showError('no tira');
-          console.log('error: ', data.status);
-          Cookies.set('city', null);
-        } else {
-          self.model.set(data.user);
-          // Ver la nota en fbView.js: js-cookie 3 no serializa objetos,
-          // asi que el JSON.stringify va explicito para no cambiar ni un
-          // byte del valor de la cookie.
-          Cookies.set('city', JSON.stringify({
-            uid: data.uid,
-          }));
+      xhrFields: { withCredentials: true },
+      success(respuesta) {
+        if (!respuesta || respuesta.status !== 'ok') {
+          if (!sondeo) {
+            self.showError('no tira');
+          }
+          return;
         }
+        self.model.set(respuesta.user);
+        // La cookie NO se toca desde aqui: la pone el servidor en el
+        // Set-Cookie de esta misma respuesta, en formato uid::, que es el
+        // que ya leen panel.cgi, foros.cgi y la tienda.
       },
     });
   },

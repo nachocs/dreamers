@@ -182,7 +182,9 @@ Modernizacion de dependencias, sin cambios de funcionalidad.
 - ESLint 4 -> 9 (flat config en `eslint.config.mjs`); `npm run lint` pasa limpio.
 - Babel centralizado en `babel.config.json` y objetivo de navegadores declarado una sola vez
   en el campo `browserslist` de `package.json` (lo leen babel, autoprefixer y webpack).
-- `js-cookie` 2 -> 3: la 3 ya no serializa objetos sola, asi que el `JSON.stringify` va
+- `js-cookie` se RETIRO el 2026-08-16: la cookie de sesion la pone y la lee ahora el
+  servidor, y el JS no la toca. Mientras se uso, el salto de la 2 a la 3 obligo a poner
+  el `JSON.stringify`
   explicito en `fbView.js` y `loginView.js`. La cookie `city` conserva exactamente los
   mismos bytes (el juego de caracteres que ambas versiones dejan sin codificar es identico),
   que es lo que espera el CGI de login.
