@@ -34,6 +34,45 @@ Dreamers.es New Site
   requires a usable measurement (`anchoDocumento > 0`) and otherwise keeps the defaults.
   Real narrow screens (360px and the like) behave exactly as before.
 
+## 1.0.14
+Alta rapida en la portada, en un modal de 3 campos.
+
+Hasta ahora el unico registro era el formulario largo del motor clasico
+(`/ciudad/registro/`), con region, ciudad, fecha de nacimiento y confirmacion
+por email en una semana. Ahora se puede crear la cuenta sin salir de la portada
+con alias, email y clave, y **sin confirmacion**: se entra en el sitio. El
+formulario largo sigue existiendo y esta enlazado desde dentro del modal.
+
+Lado servidor (instalado a mano, NO esta en este repo):
+`com/home2/cgi/registro.cgi`, `check.cgi` y `common.pl`, copiados y adaptados de
+`jsgritos/api/` de gritos. **Los dos sitios comparten el mismo sistema de
+cuentas**: aquel `registro.cgi` ya hacia `require` de
+`/home/dreamers/datos/indices/admin/` y escribia en el indice `ciudadanos`, o
+sea que no hay base de datos nueva. Diferencias a proposito respecto al de
+gritos: solo acepta POST (el suyo tambien responde a GET, y una URL con
+`?alias=..&password=..` crea una cuenta), valida largos en el servidor, y trae
+puesta la guarda de POSTDATA. Su `common.pl` deja fuera `prepare_secure`, que
+reescribe URLs a gritos.com.
+
+Lado cliente: `signUpView.js`/`.html`, enganchado al `ModalView` que ya existia
+mediante una opcion `signUp`, mas `sinBotones` en la plantilla del modal para
+ocultar el pie generico de OK/Cancelar (el alta trae su propio boton, que solo
+se activa con los tres campos validos). Los tres sitios que invitan a
+participar (`js-registro`) abren el mismo modal.
+
+**Cuidado si se toca `signUpView`:** la primera version repintaba la vista
+entera en cada tecla y restauraba foco y cursor a mano. Pasaba las pruebas por
+programa y al escribir de verdad **perdia el foco y se comia el texto**.
+Reemplazar el nodo que hay bajo el cursor pelea con el navegador y esa pelea no
+se gana. Ahora el formulario se pinta una vez y `actualizar()` solo toca los
+avisos y el boton; los `<input>` no se tocan nunca.
+
+Pendiente: los dos endpoints crean cuentas y **no tienen limite por IP ni
+CAPTCHA**. Mientras estuvieron rotos daba igual; ahora no. Y `check.cgi` permite
+preguntar si un email esta registrado (se dejo asi porque el mismo oraculo ya
+era publico en gritos contra esta misma base, pero si se cierra hay que cerrarlo
+en los dos sitios).
+
 ## 1.0.13
 Retirado el acceso con Facebook.
 

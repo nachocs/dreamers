@@ -1,6 +1,6 @@
 {
   "name": "dreamers",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Dreamers",
   "main": "src/js/app/app.js",
   "scripts": {

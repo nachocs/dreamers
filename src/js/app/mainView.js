@@ -30,6 +30,13 @@ export default Backbone.View.extend({
   events: {
     'click .logomask': 'logomask',
     'click .js-abrir-login': 'abrirLogin',
+    'click .js-registro': 'abrirRegistro',
+  },
+  // El alta rapida se ofrece desde tres sitios (el desplegable de la
+  // cabecera y las dos invitaciones), y desde los tres abre el mismo modal.
+  abrirRegistro(ev) {
+    ev.preventDefault();
+    ModalView.abrirRegistro();
   },
   // Las invitaciones a participar salen en sitios muy distintos (el hueco
   // del formulario en la portada y el pie de cada ficha expandida), pero

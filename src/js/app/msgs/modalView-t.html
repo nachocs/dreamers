@@ -9,7 +9,11 @@
     <div class="modal-body">
       <span><%= obj.body %></span>
     </div>
-    <div class="modal-footer">
+    <!-- Hay modales que traen sus propios botones dentro del cuerpo, como
+         el de registro, que necesita un enviar que se activa solo cuando
+         los tres campos valen. Para esos se oculta este pie generico, en
+         vez de dejar un OK que no sabria que hacer. -->
+    <div class="modal-footer <%= obj.sinBotones ? 'hide' : '' %>">
       <div class="btn-group" role="group" aria-label="...">
         <button type="button" class="btn btn-default js-close">Cancel</button>
         <button type="button" class="btn btn-default js-action">OK</button>

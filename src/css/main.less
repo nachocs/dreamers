@@ -828,6 +828,66 @@ h6 {
     }
 }
 
+// Alta rapida (modal). Va dentro de .modal-body, sobre fondo claro.
+.sign-up-form {
+    font-family: 'Laffayette Comic Pro', sans-serif;
+    text-align: left;
+    .sign-up-campo {
+        margin-bottom: 12px;
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 16px;
+            padding: 6px 8px;
+            border: 1px solid #999;
+            border-radius: 3px;
+            &:focus {
+                outline: none;
+                border-color: #AD1F26;
+            }
+        }
+    }
+    .sign-up-aviso {
+        font-size: 13px;
+        min-height: 18px;
+        line-height: 18px;
+        // Sin texto no ocupa ni deja hueco de color: el min-height evita
+        // que el formulario pegue saltos al aparecer y desaparecer avisos.
+        &.ok {
+            color: #2e7d32;
+        }
+        &.error {
+            color: #c00;
+        }
+        &.cargando {
+            color: #888;
+        }
+    }
+    .sign-up-enviar {
+        margin-top: 6px;
+        background-color: #AD1F26;
+        color: white;
+        &[disabled] {
+            background-color: #ccc;
+            color: #777;
+            cursor: not-allowed;
+        }
+    }
+    .sign-up-nota {
+        font-size: 13px;
+        color: #555;
+        margin: 14px 0 0;
+        padding-top: 10px;
+        border-top: 1px dashed #ccc;
+    }
+}
+
 .formulario-inactivo {
     background-color: white;
     /*padding: 5px;*/
