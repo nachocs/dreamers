@@ -34,6 +34,37 @@ Dreamers.es New Site
   requires a usable measurement (`anchoDocumento > 0`) and otherwise keeps the defaults.
   Real narrow screens (360px and the like) behave exactly as before.
 
+## 1.0.12
+Hacer alcanzable el registro y visible la participacion.
+
+El registro de ciudadanos existe desde siempre en el motor clasico
+(`/ciudad/registro/`), pero **no se enlazaba desde ningun sitio de la portada**.
+El desplegable de login solo ofrecia alias/clave y el boton de Facebook, asi que
+quien no tuviera ya una cuenta no tenia por donde conseguirla, y quien hubiera
+olvidado la clave tampoco. Ademas, sin sesion no se renderiza nada del formulario
+(cuelga entero de `alias_principal`) ni de los comentarios, o sea que un visitante
+veia un mosaico de contenido y ninguna senal de que esto lo escribe la gente.
+
+- `loginView.html`: enlaces a **Registrate** (`/ciudad/registro/`) y a
+  **Olvidaste la clave?** (`/ciudad/panelillo/recordar.cgi`).
+- `formView.html`: donde antes solo salia el logotipo, ahora hay una invitacion
+  a entrar o registrarse.
+- `basicoTemplate.html`: misma invitacion al pie de cada ficha expandida, que es
+  el momento de mas intencion (acabas de leerte la entrada entera).
+- El enlace "Entra" reutiliza el desplegable de la cabecera via un manejador
+  delegado en `mainView`, en vez de duplicar el formulario de login.
+
+Ojo con el color de `.invitacion`: en la portada cae justo debajo de la barra
+negra de la cabecera, pero **la barra la pinta otro elemento** y el fondo efectivo
+ahi es el blanco del `body` (toda la cadena de padres es transparente). Con texto
+claro no se lee nada; va en `#333` a proposito.
+
+Pendiente, que no depende de este repo: `/ciudad/panelillo/` (el directorio)
+devuelve el PHP en crudo en vez de redirigir -- Apache no ejecuta PHP ahi -- y
+encima apunta a `dreamerscity.com`. Por eso se enlaza `panel.cgi` y `recordar.cgi`
+directos, que si funcionan. La pagina de registro sigue enlazando al directorio
+roto.
+
 ## 1.0.11
 Modernizacion de dependencias, sin cambios de funcionalidad.
 

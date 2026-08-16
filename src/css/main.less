@@ -779,6 +779,47 @@ h6 {
     display: none;
 }
 
+// Invitacion a participar para quien no ha entrado. Sale en el hueco del
+// formulario de la portada y al pie de cada ficha expandida.
+// OJO con el color: aunque en la portada esto cae justo debajo de la barra
+// negra de la cabecera, la barra la pinta otro elemento y el fondo efectivo
+// aqui es el blanco del body -- toda la cadena de padres, hasta
+// .mdl-layout__container, es transparente. Con texto claro no se lee nada.
+.invitacion {
+    font-family: 'Laffayette Comic Pro', sans-serif;
+    font-size: 1rem;
+    line-height: 1.4rem;
+    margin: 6px 0 0;
+    text-align: center;
+    color: #333;
+    a {
+        color: #c00;
+        text-decoration: underline;
+        cursor: pointer;
+        &:hover {
+            color: #ff5252;
+        }
+    }
+}
+
+.basico-container .invitacion {
+    // Dentro de la ficha va alineada a la izquierda como los mensajes, y
+    // separada de ellos con una raya.
+    text-align: left;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #bbb;
+}
+
+.login-menu .login-extra {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    a {
+        padding: 2px 0;
+    }
+}
+
 .formulario-inactivo {
     background-color: white;
     /*padding: 5px;*/

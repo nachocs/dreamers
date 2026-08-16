@@ -112,5 +112,16 @@
     <div class="previous-msgs-view"></div>
     <div class="msg-collection-view"></div>
     <div class="msg-form-view"></div>
+    <% if (!(obj.userModel && obj.userModel.ID)) { %>
+    <!-- Sin sesion, entradaView deja este hueco vacio (solo mete el
+         formulario si hay userModel.ID), asi que quien acaba de leerse la
+         ficha entera no ve ni que se pueda comentar ni por donde entrar.
+         Es el momento de mas intencion de toda la portada. -->
+    <p class="invitacion">
+      <a href="#" class="js-abrir-login">Entra</a> o
+      <a href="https://dreamers.es/ciudad/registro/">reg&iacute;strate</a>
+      para comentar.
+    </p>
+    <% } %>
   </div>
 </div>

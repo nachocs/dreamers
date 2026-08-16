@@ -29,6 +29,18 @@ export default Backbone.View.extend({
   },
   events: {
     'click .logomask': 'logomask',
+    'click .js-abrir-login': 'abrirLogin',
+  },
+  // Las invitaciones a participar salen en sitios muy distintos (el hueco
+  // del formulario en la portada y el pie de cada ficha expandida), pero
+  // todas tienen que abrir el MISMO desplegable de login de la cabecera.
+  // El manejador vive aqui porque el el de mainView contiene a los dos, y
+  // Backbone delega, asi que vale igual para las fichas que se pintan
+  // despues. En vez de duplicar el formulario, se pulsa el boton que ya
+  // existe y se deja que loginView siga siendo el unico que sabe abrirlo.
+  abrirLogin(ev) {
+    ev.preventDefault();
+    this.$('.login-view .login-menu-button').first().trigger('click');
   },
   logomask() {
     const layout = document.querySelector('.mdl-layout');
