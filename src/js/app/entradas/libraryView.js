@@ -64,7 +64,17 @@ export default Backbone.View.extend({
     if ((SQanchoTotal === 0) && (this.currentColumns !== 'undefined')) {
       SQanchoTotal = this.currentColumns;
     }
-    if (SQanchoTotal < 2) {
+    // La comparacion va negada a proposito: 'SQanchoTotal < 2' NO atrapa
+    // NaN (toda comparacion con NaN es falsa) y '!(SQanchoTotal >= 2)' si.
+    // Sin esto la portada se quedaba EN BLANCO cuando window.innerWidth
+    // valia 0 al arrancar -- pestana oculta o preinterpretada por el
+    // navegador --: $D.ancho salia negativo, esta funcion devolvia el NaN
+    // heredado de this.currentColumns (que a su vez viene de un .width()
+    // sobre un elemento que aun no esta en el DOM), el bucle de columnas
+    // de ordenar() no llegaba a ejecutarse ni una vez y matrix[0] quedaba
+    // sin definir, con lo que 'matrix[0].length' reventaba y con el la
+    // aplicacion entera.
+    if (!(SQanchoTotal >= 2)) {
       SQanchoTotal = 2;
     } // minimo numero de columnas
     return SQanchoTotal;
