@@ -34,6 +34,31 @@ Dreamers.es New Site
   requires a usable measurement (`anchoDocumento > 0`) and otherwise keeps the defaults.
   Real narrow screens (360px and the like) behave exactly as before.
 
+## 1.0.15
+Limite de altas por IP, y margenes en el formulario de registro.
+
+- **Limite por IP** (en el servidor, no en este repo): `ratelimit.pl` en el
+  `cgi/` de cada sitio, mas la llamada desde `registro.cgi`. **5 altas por hora
+  y 15 por dia**. El contador es `/home/dreamers/datos/ratelimit`, y es **el
+  mismo para dreamers.es y gritos.com** a proposito: los dos corren sus CGI como
+  `nobody` (no hay suexec) y comparten cuentas, asi que alternar de sitio no da
+  el doble de cupo. Se apunta **solo cuando se crea una cuenta**, nunca los
+  intentos fallidos, para que quien se equivoque escribiendo no se quede fuera.
+  Si el contador no fuese escribible el limite no existiria, asi que ese caso
+  escribe un `warn` en el `error_log` en vez de fallar en silencio.
+  **`check.cgi` NO lleva limite a proposito**: el formulario lo llama varias
+  veces mientras se escribe, asi que un tope por IP romperia el alta a los
+  usuarios de verdad. Si algun dia se quiere frenar la enumeracion de emails,
+  hay que hacerlo de otra forma.
+- **Margen del formulario**: `.modal-body` no trae relleno ninguno y el alta
+  salia pegada a los cuatro bordes. El `padding` va en `.sign-up-form`, no en
+  `.modal-body`, para no descolocar los otros dos modales que comparten ese
+  contenedor (borrar entrada y editar mensaje).
+- Arreglado de paso un fallo que venia de 1.0.14: el modelo de `ModalView` es un
+  singleton, asi que la bandera `sinBotones` del registro se quedaba pegada y
+  **habria dejado sin pie de OK/Cancelar al siguiente modal de borrar entrada**.
+  Ahora `update()` la pone a false por defecto a quien no la pida.
+
 ## 1.0.14
 Alta rapida en la portada, en un modal de 3 campos.
 

@@ -832,6 +832,11 @@ h6 {
 .sign-up-form {
     font-family: 'Laffayette Comic Pro', sans-serif;
     text-align: left;
+    // .modal-body no trae relleno ninguno, asi que el formulario salia
+    // pegado a los cuatro bordes del modal. El margen se pone AQUI y no en
+    // .modal-body para no descolocar los otros dos modales que comparten
+    // ese contenedor: el de borrar entrada y el de editar mensaje.
+    padding: 10px 26px 26px;
     .sign-up-campo {
         margin-bottom: 12px;
         label {

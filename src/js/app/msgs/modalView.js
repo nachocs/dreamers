@@ -28,7 +28,12 @@ const ModalView = Backbone.View.extend({
   },
   update(obj){
     if (obj.model){
-      this.model.set(obj.model);
+      // El modelo es un singleton, asi que las banderas se quedan pegadas
+      // de una apertura a la siguiente: sin este defaults, abrir el
+      // registro (que pide sinBotones) dejaba sin pie de OK/Cancelar al
+      // siguiente modal de borrar entrada. Quien no lo pida, lo tiene a
+      // false.
+      this.model.set(_.defaults({}, obj.model, { sinBotones: false }));
     }
     if (obj.action){
       this.action = obj.action;
