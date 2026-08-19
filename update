@@ -28,4 +28,16 @@ git pull;
 # Se copian ANTES que dist para que, si algo coincide de nombre, mande lo
 # generado por el build: manifest.json lo produce WebpackAssetsManifest y
 # es el que tiene que ganar, no la copia estatica de src/assets/.
-npm install && npm run build && cp -R src/assets/* ../../www/ && cp -R dist/* ../../www/;
+#
+# Y se copian DOS VECES, a la raiz y a www/assets/, porque en el sitio
+# conviven dos convenciones de ruta y hasta hoy solo se atendia una:
+#   - los iconos del <head> (apple-icon-*, favicon-*, ms-icon-*) se piden
+#     desde la RAIZ: href="/apple-icon-180x180.png"
+#   - los iconos y las capturas del MANIFEST se piden desde /assets/:
+#     "src": "/assets/android-icon-512x512.png"
+# Por eso los android-icon de 256, 384 y 512 daban 404 en Chrome aunque
+# estuvieran declarados en el manifest: nadie los subia a assets/. Estaban
+# ahi de milagro los seis pequenos, copiados a mano en algun momento.
+# Comprobado el 2026-08-19.
+mkdir -p ../../www/assets;
+npm install && npm run build && cp -R src/assets/* ../../www/ && cp -R src/assets/* ../../www/assets/ && cp -R dist/* ../../www/;
