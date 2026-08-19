@@ -198,6 +198,27 @@ const config = {
             type: 'image/png',
           },
         ],
+        // Sin estas capturas Chrome no ofrece la instalacion "rica" de la PWA
+        // y lo dice en DevTools > Application: hace falta AL MENOS una con
+        // form_factor 'wide' (escritorio) y otra sin form_factor o con uno
+        // distinto de 'wide' (movil). Son capturas reales de la portada,
+        // hechas con Chrome headless a 1280x800 y 750x1334.
+        screenshots: [
+          {
+            src: '/assets/screenshot-wide.jpg',
+            sizes: '1280x800',
+            type: 'image/jpeg',
+            form_factor: 'wide',
+            label: 'Portada de Dreamers en escritorio',
+          },
+          {
+            src: '/assets/screenshot-narrow.jpg',
+            sizes: '750x1334',
+            type: 'image/jpeg',
+            form_factor: 'narrow',
+            label: 'Portada de Dreamers en el movil',
+          },
+        ],
       },
       replacer: null,
       space: 2,
