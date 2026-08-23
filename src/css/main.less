@@ -1,4 +1,39 @@
-@import "../../node_modules/font-awesome/less/font-awesome.less";
+// Font Awesome quitado del todo (ver README "Known issues"): 17 glifos
+// usados en toda la app para arrastrar 1.1MB de fuente en 5 formatos.
+// Sustituidos por SVG inline (paths extraidos con fontTools directamente
+// del fontawesome-webfont.ttf real de este build, no de una version
+// distinta de la fuente) en cada plantilla, con class="fa" para heredar
+// estos mismos tamanos relativos que ya usaba la fuente. Solo se
+// reproducen los modificadores que esta app usa de verdad (2x, lg, fw,
+// spin); no estan 3x/4x/5x/pulse porque no hay ninguna instancia.
+.fa {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+}
+.fa-lg {
+    font-size: (4em / 3);
+    line-height: (3em / 4);
+    vertical-align: -15%;
+}
+.fa-2x {
+    font-size: 2em;
+}
+.fa-fw {
+    width: (18em / 14);
+    text-align: center;
+}
+.fa-spin {
+    animation: fa-spin 2s infinite linear;
+}
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(359deg);
+    }
+}
 @import "../../node_modules/bootstrap/less/variables.less";
 @import "../../node_modules/bootstrap/less/mixins.less";
 @import "../../node_modules/bootstrap/less/buttons.less";

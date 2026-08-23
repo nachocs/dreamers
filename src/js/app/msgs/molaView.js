@@ -14,7 +14,9 @@ export default Backbone.View.extend({
     this.listenTo(this.model, 'change:love', this.render.bind(this));
   },
   events: {
-    'click i': 'molaAction',
+    // Era 'click i': el icono ahora es un <svg class="fa ...">, no un <i>,
+    // asi que la delegacion tiene que ir por clase, no por etiqueta.
+    'click .fa': 'molaAction',
   },
   molaAction(e) {
     e.stopPropagation();
