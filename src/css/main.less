@@ -85,6 +85,26 @@ h6 {
     font-family: newdreamers, sans-serif;
 }
 
+// El boton de hamburguesa NO esta en ninguna plantilla nuestra: lo crea el
+// propio JS de MDL en tiempo de ejecucion (material.js, Layout.prototype.init,
+// "Add drawer toggling button"), con un <i class="material-icons"> cuyo
+// contenido es el codepoint de la fuente (&#xE5D2;), no la palabra "menu".
+// Al quitar la hoja de Material Icons (ver README) ese caracter se quedo sin
+// glifo que mostrar - por eso desaparecio el icono, y por eso no salio en la
+// busqueda de "material-icons" en src/ de aquel dia: no hay nada que buscar,
+// lo inyecta MDL. Aqui se sustituye por un SVG oficial (mask + currentColor,
+// asi seguimos heredando el color como hacia la fuente) en vez de devolver la
+// hoja de Google Fonts entera por un solo icono.
+.mdl-layout__drawer-button .material-icons {
+    font-size: 0;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z'/%3E%3C/svg%3E") no-repeat center;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z'/%3E%3C/svg%3E") no-repeat center;
+}
+
 .newdreamers {
     font-family: newdreamers, sans-serif;
 }
