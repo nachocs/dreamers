@@ -19,4 +19,22 @@ import App from './app';
 // tiempo sin poder entrar; ver la nota en el README antes de tocar nada
 // de eso.
 
+// El service worker (src/assets/sw.js, se copia tal cual a la raiz del
+// sitio; no pasa por webpack). Va dentro de 'load' a proposito: registrarlo
+// antes compite por red y CPU con el primer pintado, que es justo lo que se
+// acaba de optimizar. Y el registro solo se hace desde aqui, o sea desde el
+// bundle de la portada: las paginas del motor Perl no lo cargan y por tanto
+// no lo registran.
+//
+// OJO al ambito: el fichero esta en la raiz, asi que el ambito es '/' y el
+// worker ve TODO el dominio, incluido el sitio clasico. La cabecera de
+// sw.js explica por que solo intercepta la portada y /dist//assets/.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {
+      // Si falla el registro no pasa nada: el sitio funciona igual sin el.
+    });
+  });
+}
+
 export default App;
