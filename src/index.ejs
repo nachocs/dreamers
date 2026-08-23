@@ -110,13 +110,26 @@
 
   <!-- Material Design Lite is now bundled from node_modules (see webpack entry.app) instead of
        storage.googleapis.com/code.getmdl.io, which Google permanently shut down (~June 2026). -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
   <!-- Se quitan las dos hojas de slick-carousel: apuntaban a
        //cdn.jsdelivr.net/jquery.slick/1.6.0/, una ruta del CDN antiguo de
        jsDelivr que ya no existe, y ademas el carrusel no se usa en ningun
        sitio del codigo (la dependencia tambien se ha retirado). -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans" rel="stylesheet">
+  <!-- Estas dos hojas eran render-blocking: Lighthouse las marcaba con
+       926ms y 200ms de bloqueo cada una pese a pesar menos de 3KB, solo por
+       ser cross-origin. Se cargan ahora con el patron loadCSS (preload +
+       onload cambia el rel a stylesheet): el navegador sigue pintando sin
+       esperarlas. OJO, esto NO es font-display (eso rompio la fuente de
+       marca en tienda.dreamers.es, ver memoria) - aqui solo se retrasa
+       CUANDO se aplica la hoja, no como se comporta la fuente al llegar.
+       El unico efecto visible es el icono "material-icons" del boton de
+       la cabecera (power_settings_new) mostrando su texto en crudo un
+       instante hasta que carga; probado visualmente antes de desplegar. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/icon?family=Material+Icons" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans">
+  </noscript>
   <% for (var css in htmlWebpackPlugin.files.css) { %>
   <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
   <% } %>
