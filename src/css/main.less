@@ -1407,7 +1407,11 @@ h6 {
         display: inline-block;
         padding: 2px;
         cursor: pointer;
-        i {
+        // Era 'i' (el <i class="material-icons"> del icono de Google
+        // Fonts); ahora el icono es un <svg class="material-icons"
+        // fill="currentColor">, asi que el selector tiene que ser por
+        // clase, no por etiqueta, o este color deja de aplicarse.
+        .material-icons {
             color: rgba(0, 100, 0, 0.51);
         }
     }
