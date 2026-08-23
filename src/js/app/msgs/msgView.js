@@ -37,8 +37,6 @@ export default Backbone.View.extend({
     'click .js-delete': 'showDeleteModal',
     'click .js-edit': 'editThis',
     'click .share':'openShare',
-    'click .fa-facebook-official':'shareFb',
-    'click .fa-twitter-square':'shareTw',
   },
   initialize(options) {
     this.parentModel = options.parentModel;
@@ -50,12 +48,6 @@ export default Backbone.View.extend({
     this.listenTo(this.model, 'change', this.render.bind(this));
   },
 
-  shareFb(){
-    Util.bookmarkthis('facebook', 'https://gritos.com/' + this.model.get('INDICE').replace(/^gritos\//,'') + '/' + this.model.get('ID'), this.headModel.get('Title'));
-  },
-  shareTw(){
-    Util.bookmarkthis('twitter', 'https://gritos.com/' + this.model.get('INDICE').replace(/^gritos\//,'') + '/' + this.model.get('ID'), this.headModel.get('Title'));
-  },
   openShare(e){
     e.preventDefault();
     e.stopPropagation();
