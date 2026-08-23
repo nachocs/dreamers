@@ -10,11 +10,20 @@
     display: inline-block;
     width: 1em;
     height: 1em;
+    // Un <svg> es un elemento REEMPLAZADO: su baseline es el borde inferior
+    // de la caja, mientras que el glifo de la fuente descendia por debajo de
+    // la baseline (los iconos de FA van de y=-128 a y=1408 sobre 1792upm).
+    // Sin esto el icono queda flotando por encima de su sitio de siempre.
+    // -0.125em es el mismo valor que usa Font Awesome 5 para sus SVG.
+    vertical-align: -0.125em;
 }
 .fa-lg {
     font-size: (4em / 3);
     line-height: (3em / 4);
-    vertical-align: -15%;
+    // El -15% original de FA era relativo al line-height de un elemento con
+    // texto dentro; sobre un SVG hay que mantener la unidad en em para que
+    // no dependa del line-height que herede cada contexto.
+    vertical-align: -0.2em;
 }
 .fa-2x {
     font-size: 2em;
@@ -130,9 +139,21 @@ h6 {
 // lo inyecta MDL. Aqui se sustituye por un SVG oficial (mask + currentColor,
 // asi seguimos heredando el color como hacia la fuente) en vez de devolver la
 // hoja de Google Fonts entera por un solo icono.
+// MDL le pone al boton `line-height: 56px` (54 en escritorio) contando con
+// que dentro va un glifo de texto de 26px, que se centra solo con esa
+// metrica. Un cuadrado de 24px es un inline-block y se apoya en la BASELINE
+// de esa linea de 56px, o sea muy por debajo: el icono se salia del boton de
+// 48px de alto (medido: el boton de y=4 a 52, el icono de y=41 a 65) y solo
+// se veia un tercio. Con flex el line-height deja de intervenir y el icono
+// queda centrado de verdad, sin depender de la metrica de ninguna fuente.
+.mdl-layout__drawer-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .mdl-layout__drawer-button .material-icons {
     font-size: 0;
-    display: inline-block;
+    flex: none;
     width: 24px;
     height: 24px;
     background-color: currentColor;
