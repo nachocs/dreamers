@@ -10,6 +10,13 @@
   <meta name="description" content="<%= htmlWebpackPlugin.options.description %>">
   <link rel="canonical" href="https://dreamers.es/">
 
+  <!-- La app es un SPA de Backbone: pinta #root vacio, baja y ejecuta el
+       bundle, y SOLO ENTONCES pide este feed. Bajo latencia movil eso es
+       una cadena serial larga. La URL del feed inicial es siempre esta
+       misma (indice y empieza arrancan vacios, ver entradaCollection.js),
+       asi que se puede precargar en paralelo a la descarga del JS. -->
+  <link rel="preload" href="https://dreamers.es/com/home2/cgi/json.cgi?indice=&empieza=" as="fetch" crossorigin="anonymous">
+
   <% if (htmlWebpackPlugin.files.favicon) { %>
   <link rel="shortcut icon" href="<%= htmlWebpackPlugin.files.favicon%>">
   <% } %>
@@ -84,6 +91,12 @@
   <% if (htmlWebpackPlugin.options.messagesPath) { %>
   <script src="<%= htmlWebpackPlugin.options.messagesPath%>"></script>
   <% } %>
+
+  <!-- Sin preconnect el navegador no abre la conexion (DNS+TCP+TLS) a estos
+       dos origenes hasta que lee el <link> mas abajo; con RTT movil eso son
+       rondas enteras perdidas antes de que empiece a bajar la fuente. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Material Design Lite is now bundled from node_modules (see webpack entry.app) instead of
        storage.googleapis.com/code.getmdl.io, which Google permanently shut down (~June 2026). -->

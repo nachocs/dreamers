@@ -15,6 +15,20 @@ Dreamers.es New Site
   [Material Components for the Web](https://github.com/material-components/material-components-web).
   We're only pinned to MDL 1.x because that's what the site has always used; we should plan to
   upgrade off MDL before this bites us again.
+- **MDL (61 KB JS + 126 KB CSS) can't be lazy-loaded behind a route split**: `mainView.js` and
+  `header/menuDreamersView.js` — the always-visible header — use `mdl-*` classes directly, so it's
+  part of the initial paint on every page including the homepage. Checked 2026-08-23 while chasing
+  Lighthouse performance; not a quick win.
+- **moment.js (177 KB) is loaded eagerly in `app.js` just to call `moment.locale('es')`** at boot,
+  but the only place that actually formats a date (`.fromNow()`) is `msgs/msgView.js`, which isn't
+  part of the homepage's initial render. Candidate for a lighter lib (day.js) or a dynamic
+  `import()`, but the locale has to be set before anything calls `.fromNow()` anywhere in the app,
+  so this needs a real look at load ordering — not a drop-in replacement. Flagged 2026-08-23 for
+  the same reason as the MDL item above: keeps coming up as "later" and never gets done.
+- **Font Awesome 4.7 ships every format (woff2/woff/ttf/eot/svg, ~1.1 MB total in the build) for
+  only 15 icon classes used across the whole app.** Modern browsers only fetch the woff2 (77 KB),
+  so this doesn't hurt real visitors today, but subsetting to just those 15 glyphs would shrink
+  both the repo and that 77 KB considerably. Nobody's built the subsetting step yet.
 - **Bootstrap 3.4.1 shows up in `npm audit` and that's expected.** The two advisories are XSS in
   Bootstrap's *JavaScript* Popover/Tooltip components. This project never loads Bootstrap's JS —
   `src/css/main.less` imports only `variables.less`, `mixins.less`, `buttons.less` and
