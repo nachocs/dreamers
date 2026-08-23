@@ -26,9 +26,16 @@ Dreamers.es New Site
   against a table of reference timestamps before shipping. No more `moment.locale('es')` call to
   order-of-load around, since nothing formats a date anywhere else in the app.
 - **Font Awesome 4.7 ships every format (woff2/woff/ttf/eot/svg, ~1.1 MB total in the build) for
-  only 15 icon classes used across the whole app.** Modern browsers only fetch the woff2 (77 KB),
-  so this doesn't hurt real visitors today, but subsetting to just those 15 glyphs would shrink
-  both the repo and that 77 KB considerably. Nobody's built the subsetting step yet.
+  only 17 icon glyphs used across the whole app** (checked 2026-08-23: `angle-down`, `ban`,
+  `caret-down`, `caret-up`, `chevron-circle-right`, `ellipsis-v`, `expand`, `heart`, `heart-o`,
+  `pencil`, `refresh`, `thumbs-down`, `thumbs-o-down`, `thumbs-up`, `thumbs-o-up`, `times-circle`,
+  `trash-o` — an earlier pass here undercounted this at 15). Modern browsers only fetch the woff2
+  (77 KB), so this doesn't hurt real visitors today, but subsetting to just those 17 glyphs would
+  shrink both the repo and that 77 KB considerably. Nobody's built the subsetting step yet.
+  Separately: `msgs/msgView.js` binds click handlers to `.fa-facebook-official` and
+  `.fa-twitter-square` (share buttons) but no template in this repo renders either class — a
+  comment in `main.less` claims the Facebook one "sigue en uso" (still in use), but that couldn't
+  be confirmed. Possibly dead, not investigated further.
 - **Bootstrap 3.4.1 shows up in `npm audit` and that's expected.** The two advisories are XSS in
   Bootstrap's *JavaScript* Popover/Tooltip components. This project never loads Bootstrap's JS —
   `src/css/main.less` imports only `variables.less`, `mixins.less`, `buttons.less` and
