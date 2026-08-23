@@ -97,7 +97,6 @@ const config = {
       'process.env.ENDPOINTS_ROOT_DOMAIN': JSON.stringify('dreamers.es'),
       'process.env.VERSION': JSON.stringify(require('../package.json').version),
     }),
-    new webpack.ContextReplacementPlugin(/moment[\\/]locale$/, /^\.\/(en|es)$/),
   ],
   resolve: {
     alias: {

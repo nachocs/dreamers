@@ -3,7 +3,6 @@ import _ from 'lodash';
 import template from './msgView.html';
 import userModel from '../models/userModel';
 import Util from '../util/util';
-import moment from 'moment';
 import MolaView from './molaView';
 import Autolinker from 'autolinker';
 import $ from 'jquery';
@@ -197,7 +196,7 @@ export default Backbone.View.extend({
       {
         images,
         userModel: userModel.toJSON(),
-        date: moment.unix(this.model.get('FECHA')).fromNow(),
+        date: Util.hace(this.model.get('FECHA')),
         comments: this.formatComments(this.model.get('comments')),
       },
     );

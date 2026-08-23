@@ -19,12 +19,12 @@ Dreamers.es New Site
   `header/menuDreamersView.js` — the always-visible header — use `mdl-*` classes directly, so it's
   part of the initial paint on every page including the homepage. Checked 2026-08-23 while chasing
   Lighthouse performance; not a quick win.
-- **moment.js (177 KB) is loaded eagerly in `app.js` just to call `moment.locale('es')`** at boot,
-  but the only place that actually formats a date (`.fromNow()`) is `msgs/msgView.js`, which isn't
-  part of the homepage's initial render. Candidate for a lighter lib (day.js) or a dynamic
-  `import()`, but the locale has to be set before anything calls `.fromNow()` anywhere in the app,
-  so this needs a real look at load ordering — not a drop-in replacement. Flagged 2026-08-23 for
-  the same reason as the MDL item above: keeps coming up as "later" and never gets done.
+- ~~**moment.js (177 KB) is loaded eagerly in `app.js` just to call `moment.locale('es')`**~~
+  Removed 2026-08-23. It had exactly one real caller (`msgs/msgView.js`'s `.fromNow()`), so it's
+  replaced with `Util.hace()` (`util/util.js`) — a ~20-line function using moment's own default
+  thresholds (`ss:44, s:45, m:45, h:22, d:26, M:11`) and the `es.js` locale strings, verified
+  against a table of reference timestamps before shipping. No more `moment.locale('es')` call to
+  order-of-load around, since nothing formats a date anywhere else in the app.
 - **Font Awesome 4.7 ships every format (woff2/woff/ttf/eot/svg, ~1.1 MB total in the build) for
   only 15 icon classes used across the whole app.** Modern browsers only fetch the woff2 (77 KB),
   so this doesn't hurt real visitors today, but subsetting to just those 15 glyphs would shrink

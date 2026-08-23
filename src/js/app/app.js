@@ -2,13 +2,10 @@
 /*jslint browser: true*/
 
 import Backbone from 'backbone';
-import moment from 'moment';
 import MainView from './mainView';
 import EntradaCollection from './models/entradaCollection';
 import $ from 'jquery';
 import Router from './router';
-
-moment.locale('es');
 
 // const App = new DHome({
 //   userModel,

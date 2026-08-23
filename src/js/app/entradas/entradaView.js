@@ -5,7 +5,6 @@ import $ from 'jquery';
 import _ from 'lodash';
 import template from './entradaView.html';
 import basicoTemplate from './basicoTemplate.html';
-// import moment from 'moment';
 import MsgCollectionView from '../msgs/msgCollectionView';
 import MsgCollection from '../models/msgCollection';
 import userModel from '../models/userModel';
@@ -270,7 +269,6 @@ export default Backbone.View.extend({
   serializer() {
     const model = this.model.toJSON();
     const usermodelId = userModel.get('ID');
-    // model.date = moment.unix(this.model.get('FECHA')).fromNow();
     return Object.assign(model, {
       userModel: {
         ID: usermodelId,

@@ -236,7 +236,6 @@ const config = {
       'process.env.ENDPOINTS_ROOT_DOMAIN': JSON.stringify(process.env.ENDPOINTS_ROOT_DOMAIN),
       'process.env.VERSION': JSON.stringify(require('../package.json').version),
     }),
-    new webpack.ContextReplacementPlugin(/moment[\\/]locale$/, /^\.\/(en|es)$/),
     ...(process.env.ANALYZE ? [new BundleAnalyzerPlugin()] : []),
   ],
   resolve: {
