@@ -1,3 +1,12 @@
+# TODO el script va dentro de estas llaves, y termina en 'exit'. No es
+# cosmetico: mas abajo se hace 'git pull', y ese pull puede REESCRIBIR este
+# mismo fichero mientras se esta ejecutando. La shell lee el script por
+# trozos, guardandose un desplazamiento en bytes; si el fichero cambia de
+# tamano a mitad, lo que lee despues queda desalineado y ejecuta basura.
+# Metiendolo todo en un comando compuesto, la shell tiene que leerlo entero
+# ANTES de ejecutar nada, y el 'exit' final garantiza que no vuelva al
+# fichero. Sin esto, cualquier commit que toque 'update' es una ruleta.
+{
 set -x;
 cd /home/dreamers/git/dreamers;
 # npm install reescribe package-lock.json en cada pasada, asi que el checkout
@@ -40,4 +49,59 @@ git pull;
 # ahi de milagro los seis pequenos, copiados a mano en algun momento.
 # Comprobado el 2026-08-19.
 mkdir -p ../../www/assets;
-npm install && npm run build && cp -R src/assets/* ../../www/ && cp -R src/assets/* ../../www/assets/ && cp -R dist/* ../../www/;
+npm install && npm run build && cp -R src/assets/* ../../www/ && cp -R src/assets/* ../../www/assets/ && cp -R dist/* ../../www/ || {
+    echo "!! El despliegue ha fallado. NO se limpia nada.";
+    exit 1;
+};
+
+# ---------------------------------------------------------------------------
+# Limpieza de ficheros huerfanos del build
+#
+# Los bundles llevan el hash del contenido en el nombre
+# (app.<hash>.js/.css), asi que cada despliegue deja en el servidor los del
+# despliegue anterior, para siempre: 'cp' copia, nunca borra. El 2026-08-23
+# habia 8 bundles JS y 5 CSS de la misma version conviviendo, mas la fuente
+# de Font Awesome ya retirada, 49 MB en total. Nadie los pide (el index.html
+# solo nombra los del ultimo build), pero se acumulan sin fin.
+#
+# ATENCION AL ALCANCE. Lo unico que este script puede borrar sin peligro es
+# el directorio de la version ACTUAL dentro de www/dist/, porque ese lo
+# genera el build entero en cada pasada. NO se toca:
+#   - www/          -> es el DocumentRoot del sitio: ahi vive todo el
+#                      dreamers.es de Perl (indices/, web1/, foros/, ciudad/,
+#                      counter/...). Un --delete ahi se lleva el sitio.
+#   - www/assets/   -> comparte sitio con ficheros subidos a mano.
+#   - www/dist/     -> a este nivel cuelgan las OTRAS versiones (1.0.0 ...
+#                      1.0.14). Se dejan a proposito: borrarlas es una
+#                      decision aparte, no algo que deba pasar solo.
+# ---------------------------------------------------------------------------
+VER=$(node -p "require('./package.json').version" 2>/dev/null);
+SRC="dist/dist/$VER";
+DST="../../www/dist/$VER";
+
+# Guarda 1: la version tiene que ser una version. Si 'node -p' fallara, VER
+# quedaria vacio y el destino seria '../../www/dist//' -- con --delete eso
+# borraria TODAS las versiones de golpe.
+echo "$VER" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$' || {
+    echo "!! Version '$VER' no valida: no se limpia nada.";
+    exit 1;
+};
+
+# Guarda 2: el origen tiene que parecer un build de verdad. Si el build
+# hubiera dejado el directorio vacio o a medias, sincronizar con --delete
+# vaciaria produccion.
+if [ -d "$SRC" ] && ls "$SRC"/app.*.js >/dev/null 2>&1 && ls "$SRC"/app.*.css >/dev/null 2>&1; then
+    # -a preserva permisos y fechas, --delete quita del destino lo que ya no
+    # existe en el build, -v para que quede en el log QUE se ha borrado.
+    rsync -a --delete -v "$SRC/" "$DST/";
+else
+    echo "!! $SRC no parece un build valido (sin app.*.js / app.*.css): no se limpia nada.";
+    exit 1;
+fi;
+
+# Informativo: las versiones viejas siguen ocupando sitio. No se borran solas.
+echo "--- Otras versiones en www/dist (NO se tocan, borrar a mano si procede) ---";
+du -sh ../../www/dist/*/ 2>/dev/null | grep -v "/$VER/$";
+
+exit 0;
+}
