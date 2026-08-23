@@ -17,6 +17,16 @@
        asi que se puede precargar en paralelo a la descarga del JS. -->
   <link rel="preload" href="https://dreamers.es/com/home2/cgi/json.cgi?indice=&empieza=" as="fetch" crossorigin="anonymous">
 
+  <!-- El elemento LCP real de la portada es un fondo CSS
+       (background-image, no <img>) que sirve tienda.dreamers.es dentro de
+       la primera tarjeta de "novedades tienda". Al ser un background-image
+       inyectado por JS, el navegador no puede ni descubrirlo ni empezar a
+       conectar a ese origen hasta que la app arranca; comprobado con
+       Lighthouse (lcp-breakdown-insight): 979ms de "resource load delay"
+       antes de que empiece siquiera la peticion. Esto adelanta al menos el
+       DNS+TCP+TLS. -->
+  <link rel="preconnect" href="https://tienda.dreamers.es">
+
   <% if (htmlWebpackPlugin.files.favicon) { %>
   <link rel="shortcut icon" href="<%= htmlWebpackPlugin.files.favicon%>">
   <% } %>
