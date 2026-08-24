@@ -55,7 +55,12 @@
     <meta name="theme-color" content="#ffffff">
   <% } %>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <!-- Sin 'user-scalable=no': impedir el zoom deja tirado a quien no ve bien
+       de cerca, y es el unico fallo de accesibilidad que le quedaba a la
+       portada. La razon historica para ponerlo (evitar el zoom accidental al
+       tocar dos veces) dejo de existir cuando los navegadores moviles
+       adoptaron el retardo de 300ms y luego 'touch-action'. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes">
 
