@@ -1,0 +1,74 @@
+# Configuracion de Dependabot.
+#
+# Sin este fichero corria con los valores por defecto, y eso dejo 20 PRs
+# abiertos entre 2020 y 2023 que nadie miro. Cuando por fin se revisaron
+# (2026-08-27) ninguno era mergeable: 14 apuntaban a paquetes que ya no
+# existen en el arbol -- casi todos transitivos de webpack-dev-server 2.x/3.x,
+# que se fueron solos al pasar a webpack 5 -- y el resto pedian versiones ya
+# superadas (express 4.18 cuando el lock tiene 5.2, webpack-dev-server 3.1
+# cuando tiene 6.0). Mergear cualquiera habria sido un downgrade.
+#
+# La leccion no es que Dependabot sobre, es que sin limite ni agrupacion
+# genera mas ruido del que un proyecto de una persona puede atender, y el
+# ruido que no se atiende acaba tapando el aviso que si importa.
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+
+    schedule:
+      # Mensual, no semanal. Las de seguridad NO dependen de esto: Dependabot
+      # las abre en cuanto hay aviso, sin esperar al dia programado.
+      interval: "monthly"
+
+    # Con 20 PRs abiertos ninguno se lee. Con 5 se leen los 5.
+    open-pull-requests-limit: 5
+
+    groups:
+      # Las herramientas de build en un solo PR: se prueban juntas de todas
+      # formas (npm run lint && npm run build), asi que revisarlas por
+      # separado es repetir el mismo trabajo N veces.
+      build:
+        patterns:
+          - "webpack*"
+          - "*-loader"
+          - "*-webpack-plugin"
+          - "@babel/*"
+          - "babel-*"
+          - "postcss*"
+          - "autoprefixer"
+          - "less*"
+          - "eslint*"
+          - "globals"
+          - "cross-env"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Las de runtime tambien agrupadas, pero solo parches: un minor de
+      # jquery o backbone en el bundle merece PR propio y mirarselo.
+      runtime:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "webpack*"
+          - "*-loader"
+          - "*-webpack-plugin"
+          - "@babel/*"
+          - "babel-*"
+          - "postcss*"
+          - "autoprefixer"
+          - "less*"
+          - "eslint*"
+          - "globals"
+          - "cross-env"
+        update-types:
+          - "patch"
+
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+    labels:
+      - "dependencies"
