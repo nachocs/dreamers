@@ -1,0 +1,136 @@
+//
+// Botones: extraido de Bootstrap 3.4.1 (less/buttons.less y less/button-groups.less),
+// licencia MIT. Se vendoriza en vez de depender del paquete porque:
+//
+//   1. De todo Bootstrap solo se usaban estas tres clases (.btn, .btn-default y
+//      .btn-group), en un unico sitio: el modal de msgs/modalView-t.html. El
+//      paquete aportaba ~220 selectores para gastar 3.
+//   2. Bootstrap 3 esta EOL: 3.4.1 es su ultima version y arrastra dos avisos de
+//      XSS (GHSA-q58r-hwc8-rm9j y GHSA-vxmc-5x29-h64v). Ambos estan en el
+//      JavaScript de tooltip/popover, que este proyecto nunca cargo, asi que no
+//      habia exposicion real; pero al no existir version parcheada en la rama
+//      3.x, la alerta no se cerraba de ninguna otra forma.
+//
+// Los valores son los que Bootstrap generaba ya resueltos (sus variables por
+// defecto), de modo que el CSS compilado no cambia. Si algun dia hacen falta mas
+// variantes (.btn-primary, tamanos, .btn-group-vertical), se anaden aqui.
+//
+.btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    &:focus,
+    &:active:focus {
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+    }
+    &:hover,
+    &:focus {
+        color: #333;
+        text-decoration: none;
+    }
+    &:active {
+        background-image: none;
+        outline: 0;
+        -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    }
+    &[disabled] {
+        cursor: not-allowed;
+        filter: alpha(opacity=65);
+        opacity: 0.65;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+}
+
+.btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+
+    &:focus {
+        color: #333;
+        background-color: #e6e6e6;
+        border-color: #8c8c8c;
+    }
+    &:hover {
+        color: #333;
+        background-color: #e6e6e6;
+        border-color: #adadad;
+    }
+    &:active {
+        color: #333;
+        background-color: #e6e6e6;
+        background-image: none;
+        border-color: #adadad;
+
+        &:hover,
+        &:focus {
+            color: #333;
+            background-color: #d4d4d4;
+            border-color: #8c8c8c;
+        }
+    }
+    &[disabled] {
+        &:hover,
+        &:focus {
+            background-color: #fff;
+            border-color: #ccc;
+        }
+    }
+}
+
+// Agrupa botones contiguos: solapa los bordes y cuadra las esquinas interiores
+// para que el grupo se lea como una sola pieza.
+.btn-group {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+
+    > .btn {
+        position: relative;
+        float: left;
+
+        &:hover,
+        &:focus,
+        &:active {
+            z-index: 2;
+        }
+        &:not(:first-child):not(:last-child) {
+            border-radius: 0;
+        }
+        &:first-child {
+            margin-left: 0;
+
+            &:not(:last-child) {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        }
+        &:last-child:not(:first-child) {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    }
+
+    .btn + .btn {
+        margin-left: -1px;
+    }
+}
