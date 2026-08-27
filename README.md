@@ -41,11 +41,20 @@ Dreamers.es New Site
   Also removed the dead `.fa-facebook-official`/`.fa-twitter-square` share-button handlers in
   `msgs/msgView.js` (and `Util.bookmarkthis`, which only they called) — the Facebook feature they
   belonged to had already been removed, and no template rendered those classes anymore.
-- **Bootstrap 3.4.1 shows up in `npm audit` and that's expected.** The two advisories are XSS in
-  Bootstrap's *JavaScript* Popover/Tooltip components. This project never loads Bootstrap's JS —
-  `src/css/main.less` imports only `variables.less`, `mixins.less`, `buttons.less` and
-  `button-groups.less`. Bootstrap 4/5 dropped Less entirely, so "fixing" the audit means
-  rewriting `main.less` against Sass. Not worth it until somebody rewrites the CSS anyway.
+- ~~**Bootstrap 3.4.1 shows up in `npm audit` and that's expected.**~~ Removed 2026-08-27, and
+  with it both advisories (GHSA-q58r-hwc8-rm9j and GHSA-vxmc-5x29-h64v — XSS in Bootstrap's
+  *JavaScript* Popover/Tooltip components, which this project never loaded: there was not a single
+  reference to bootstrap in the built bundle). The dependency turned out to be carrying about 220
+  generated selectors to serve **three classes used in one place** — `.btn`, `.btn-default` and
+  `.btn-group`, on the two footer buttons of `msgs/modalView-t.html`. `main.less` used none of its
+  variables or mixins, confirmed by compiling with the imports removed. The rules that actually
+  apply are now vendored in `src/css/buttons.less` with the default variables already resolved.
+  Bootstrap 3 is EOL (3.4.1 is its last release, so no patched version exists in the 3.x line) and
+  4/5 dropped Less entirely, so upgrading would have broken the build instead of fixing anything.
+  Verified with no visual change: the computed styles of both buttons in Chromium (geometry, corner
+  radii, colors, border overlap) are identical before and after — checked against a control render
+  with no CSS at all, because a first screenshot comparison came back "identical" on three blank
+  images and proved nothing. `npm audit` is now clean.
 - ~~**The homepage renders nothing if `window.innerWidth` is 0 when the bundle boots.**~~
   Fixed in 1.0.11. `global.js` computed a negative tile width, `libraryView.calculaAncho()`
   returned `NaN`, the old `if (SQanchoTotal < 2)` guard didn't catch it (every comparison
