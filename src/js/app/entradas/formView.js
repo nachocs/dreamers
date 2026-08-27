@@ -7,7 +7,7 @@ import template from './formView.html';
 import userModel from '../models/userModel';
 import config from '../config';
 import EmojisModal from '../util/emojisModal';
-import emojione from 'emojione';
+import emojis from '../util/emojis';
 import Service from '../util/service';
 
 function isOrContains(node, container) {
@@ -580,7 +580,7 @@ export default Backbone.View.extend({
       });
     }
     Object.assign(obj, {
-      emojis: emojione.toImage(':smile:'),
+      emojis: emojis.img(':smile:'),
       formModel: this.formModel.toJSON(),
       tags: this.formModel.get('tags') ? this.formModel.get('tags').split(',') : null,
       tagPlaceShown: this.tagPlaceShown,

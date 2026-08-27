@@ -4,8 +4,8 @@ import _ from 'lodash';
 import $ from 'jquery';
 import Wysiwyg from '../util/Wysiwyg';
 import template from './msgFormView.html';
-import emojione from 'emojione';
 import EmojisModal from '../util/emojisModal';
+import emojis from '../util/emojis';
 import Util from '../util/util';
 import MsgModel from '../models/msgModel';
 import vent from '../util/vent';
@@ -512,7 +512,7 @@ export default Backbone.View.extend({
       Object.assign(obj, { parentModel: this.parentModel.toJSON() });
     }
     Object.assign(obj, {
-      emojis: emojione.toImage(':smile:'),
+      emojis: emojis.img(':smile:'),
       formModel: this.formModel.toJSON(),
       tags: this.formModel.get('tags') ? this.formModel.get('tags').split(',') : null,
       tagPlaceShown: this.tagPlaceShown,

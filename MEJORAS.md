@@ -2,7 +2,7 @@
 
 > Documento de análisis, medido sobre **1.0.15** el 2026-08-27.
 > Son mejoras independientes entre sí: cada una se puede hacer y desplegar sola.
-> **Estado:** §3 hecha (2026-08-27). Las otras tres siguen pendientes.
+> **Estado:** §3 y §1 hechas (2026-08-27). Quedan §2 (animaciones) y §4 (MDL).
 
 Complementa a [`PLAN-REACT.md`](PLAN-REACT.md), que responde a *cómo* se migraría a React.
 Este responde a *qué conviene hacer antes*, se migre o no.
@@ -47,7 +47,7 @@ tree-shaking, así que tómense como cota superior. Se reproduce con
 
 ---
 
-## 1. Quitar emojione — 39 KB
+## 1. ~~Quitar emojione — 39 KB~~ — HECHO 2026-08-27
 
 **La mejor relación ganancia/esfuerzo de la lista.** 355 KB de módulo (39 KB gzip) para una
 sola función:
@@ -63,6 +63,25 @@ es una función corta sobre datos que ya están en memoria.
 **Cuidado:** hay que decidir qué hace con el texto que *no* es emoji y respetar el escapado de
 HTML actual — `toImage` recibe contenido de usuario. Comparar la salida contra la de emojione
 sobre un corpus de mensajes reales antes de cambiarlo, porque esto se pinta en cada mensaje.
+
+**Resultado.** Ese "cuidado" resultó no aplicar: `toImage` **nunca** veía texto libre. Dos de los
+tres usos eran la constante literal `:smile:`, y el tercero convertía shortnames del propio
+catálogo de uno en uno. No había nada que escapar ni ningún corpus que revisar.
+
+Lo que sí importaba era otra cosa, y más seria: cuando alguien elige un emoji en el selector,
+`emojisModal.selectEmoji()` coge el `outerHTML` del `<img>` y lo mete en el editor, así que **ese
+markup queda guardado en el backend**. Los mensajes ya escritos lo llevan dentro. El formato no se
+podía tocar ni en el orden de los atributos.
+
+Sustituido por `src/js/app/util/emojiImg.mjs`, 50 líneas. Se verificó reproduciendo la salida de
+emojione en **las 1820 entradas del catálogo**, no en una muestra. La referencia se congeló en
+`test/fixtures/emoji-golden.json` (sha256 del catálogo entero renderizado, más 52 casos concretos
+para que un fallo sea legible) generándola con el paquete instalado, justo antes de desinstalarlo.
+Se comprobó que la comparación detecta diferencias: quitar el `?v=2.2.7`, cambiar el `alt`, quitar
+la barra de cierre o alterar el orden de los atributos la llevan de 1820/1820 a 0/1820.
+
+**Ganancia real: −53 KB gzip** (198 → 145 KB; 840 → 548 KB sin comprimir), más de los 39 KB
+estimados, porque el módulo arrastraba además sus propias tablas de emoji.
 
 ## 2. El conflicto de animaciones
 
