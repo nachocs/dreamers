@@ -5,6 +5,7 @@
   "main": "src/js/app/app.js",
   "scripts": {
     "lint": "eslint .",
+    "test": "node --test \"test/**/*.test.mjs\"",
     "cleanup": "rm -rf dist",
     "build": "cross-env NODE_ENV=production webpack --config ./webpack/webpack.prod.config.js",
     "start": "cross-env NODE_ENV=development webpack serve --config ./webpack/webpack.dev.config.js",

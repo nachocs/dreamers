@@ -38,7 +38,11 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        // /\.m?js$/ y no /\.js$/: la logica pura del mosaico vive en .mjs
+        // (pack.mjs) para que `node --test` la cargue sin transpilador. Sin esto
+        // se colaria en el bundle SIN pasar por babel, y con ella el ES moderno
+        // que la browserslist del proyecto todavia transpila.
+        test: /\.m?js$/,
         exclude: /node_modules/,
         // Los presets se leen de babel.config.json, para que webpack y
         // eslint compartan exactamente la misma configuracion de Babel.

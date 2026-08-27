@@ -1,7 +1,8 @@
 # Mejoras que se pueden hacer ahora
 
-> Documento de análisis, medido sobre **1.0.15** el 2026-08-27. **Nada de esto está ejecutado.**
+> Documento de análisis, medido sobre **1.0.15** el 2026-08-27.
 > Son mejoras independientes entre sí: cada una se puede hacer y desplegar sola.
+> **Estado:** §3 hecha (2026-08-27). Las otras tres siguen pendientes.
 
 Complementa a [`PLAN-REACT.md`](PLAN-REACT.md), que responde a *cómo* se migraría a React.
 Este responde a *qué conviene hacer antes*, se migre o no.
@@ -82,7 +83,7 @@ parámetro `stop` de `rearrange(stop)`, que existe solo para decir "esta vez no 
 Es el punto que más duele hoy y **no necesita React**: el plan de migración lo da como ventaja de
 React, pero se puede hacer ya.
 
-## 3. Extraer `pack()` y ponerle el primer test
+## 3. ~~Extraer `pack()` y ponerle el primer test~~ — HECHO 2026-08-27
 
 `libraryView.ordenar()` (línea 72) es el *first-fit bin packing* del mosaico. **No lee ni escribe
 el DOM**: solo mira `SQancho`/`SQalto` y el número de columnas. Es decir, ya es una función pura
@@ -95,6 +96,25 @@ posición).
 **Vale la pena aunque no se migre nunca:** hoy `npm test` no existe y el proyecto no tiene ni un
 test. Este es el algoritmo más delicado del código y el que más caro sale romper. Es también el
 prerrequisito honesto de cualquier refactor grande posterior.
+
+**Resultado.** `src/js/app/entradas/pack.mjs`, con `ordenar()` reducido a leer los modelos,
+aplicar el resultado y avisar. 15 tests con `node --test` (`npm test`), sin una sola dependencia
+nueva y sin binarios nativos —lo que descartó Vitest, cuyo Vite 8 arrastra rolldown y
+lightningcss en Rust, y el despliegue hace `npm install` en el propio servidor—.
+
+El arnés diferencial (`test/pack-diferencial.test.mjs`) lleva una transcripción literal del
+`ordenar()` de 896f928 y compara ambos en 2.500 casos generados con semilla. Se comprobó que el
+arnés **detecta** diferencias, mutando `pack()` a propósito (recorrer las columnas al revés, no
+reiniciar `k` entre entradas): las dos mutaciones lo hacen fallar, y al restaurar vuelve a pasar.
+Un arnés que no se ha visto fallar nunca no prueba nada.
+
+Dos divergencias deliberadas, ambas documentadas y con test propio:
+- Las celdas se comprueban con `!== undefined` en vez de por veracidad. El original daba por
+  **libre** la celda de una entrada con `id` 0 o cadena vacía, y le colocaba otra encima. Los ids
+  vienen del JSON del CGI.
+- Si una entrada no cabe a lo ancho, lanza `RangeError` en vez de recursión infinita. Solo es
+  alcanzable cuando el recorte va contra un `$D.SQanchoTotal` mayor que las columnas medidas;
+  el original desbordaba la pila sin decir por qué.
 
 ## 4. MDL → CSS propio — 11 KB JS + 126 KB CSS
 

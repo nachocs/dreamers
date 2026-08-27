@@ -4,6 +4,7 @@ import Backbone from 'backbone';
 import _ from 'lodash';
 import $ from 'jquery';
 import EntradaView from './entradaView';
+import { pack } from './pack.mjs';
 import template from './libraryView.html';
 
 const LibraryEntradaView = EntradaView.extend({});
@@ -80,73 +81,53 @@ export default Backbone.View.extend({
     return SQanchoTotal;
   },
   ordenar() {
-    let j;
-    let i;
-    let k = 0;
-    const SQanchoTotal = this.calculaAncho();
-    const matrix = $D.matrix;
-    let posArr = [];
+    // El empaquetado vive en pack.mjs, probado en test/. Aqui queda solo lo
+    // que necesita Backbone: leer los modelos, aplicar el resultado y avisar.
+    //
+    // El original intercalaba los trigger('rearrange') con la colocacion, uno
+    // por entrada. Aqui se empaqueta todo primero y luego se avisa, que da la
+    // misma secuencia de eventos porque el handler de 'rearrange' (entradaView)
+    // solo anima o renderiza SU propio elemento: no toca el SQancho/SQalto de
+    // ningun otro modelo, o sea que no puede influir en donde caen las
+    // siguientes entradas. El unico sitio que si los cambia es ajustarAlto(),
+    // y va dentro de un setTimeout, asi que nunca corre a mitad de este bucle.
+    const modelos = this.collection.models;
+    const resultado = pack(
+      modelos.map(modelo => ({
+        id: modelo.get('id'),
+        SQancho: modelo.get('SQancho'),
+        SQalto: modelo.get('SQalto'),
+      })),
+      this.calculaAncho(),
+      // El recorte va contra el global, no contra la medida de arriba. Son lo
+      // mismo cuando ordenar() llega por detect_resize, pero NO cuando llega
+      // por el evento 'ordenar' de la coleccion. Se conserva la diferencia.
+      $D.SQanchoTotal,
+    );
 
-    for (j = 0; j < SQanchoTotal; j++) {
-      matrix[j] = [];
-    }
+    for (let i = 0; i < resultado.posiciones.length; i++) {
+      const posicion = resultado.posiciones[i];
+      const modelo = modelos[i];
 
-    function checkMatrix(j, k, ancho, alto) {
-      let ix, iy;
-      for (ix = 0; ix < ancho; ix++) {
-        for (iy = 0; iy < alto; iy++) {
-          if ((j + ix) >= SQanchoTotal) {
-            return false;
-          }
-          if (matrix[j + ix][k + iy]) {
-            return false;
-          }
-        }
-      }
-      return true;
-
-    }
-
-    function populateMatrix(modelo, ancho, alto) {
-      let j, ix, iy;
-      for (j = 0; j < SQanchoTotal; j++) {
-        if (checkMatrix(j, k, ancho, alto)) {
-          for (ix = 0; ix < ancho; ix++) {
-            for (iy = 0; iy < alto; iy++) {
-              matrix[j + ix][k + iy] = modelo;
-            }
-          }
-          return [j, k];
-        }
-      }
-      k++;
-      return populateMatrix(modelo, ancho, alto);
-    }
-
-    function getMatrixPopulated(modelo, ancho, alto) {
-      k = 0;
-      return populateMatrix(modelo, ancho, alto);
-    }
-
-    for (i = 0; i < this.collection.length; i++) {
-      if (this.collection.models[i].get('SQancho') > $D.SQanchoTotal) {
-        this.collection.models[i].set({
-          'SQancho': $D.SQanchoTotal,
-          'SQalto': $D.SQanchoTotal,
+      if (posicion.recortado) {
+        modelo.set({
+          'SQancho': posicion.SQancho,
+          'SQalto': posicion.SQalto,
         });
-        this.collection.models[i].trigger('rearrange');
+        modelo.trigger('rearrange');
       }
-      posArr = getMatrixPopulated(this.collection.models[i].get('id'), this.collection.models[i].get('SQancho'), this.collection.models[i].get('SQalto'));
-      if ((this.collection.models[i].get('posX') !== posArr[0]) || (this.collection.models[i].get('posY') !== posArr[1])) {
-        this.collection.models[i].set({
-          'posX': posArr[0],
-          'posY': posArr[1],
+
+      if ((modelo.get('posX') !== posicion.posX) || (modelo.get('posY') !== posicion.posY)) {
+        modelo.set({
+          'posX': posicion.posX,
+          'posY': posicion.posY,
         });
-        this.collection.models[i].trigger('rearrange');
+        modelo.trigger('rearrange');
       }
     }
-    this.maxLines = matrix[0].length;
-    $D.matrix = matrix;
+
+    this.maxLines = resultado.filas;
+    $D.matrix = resultado.matrix;
   },
 
   render() {

@@ -10,7 +10,7 @@ export default [
     ignores: ['dist/**', 'node_modules/**', 'src/assets/**'],
   },
   {
-    files: ['src/**/*.js'],
+    files: ['src/**/*.js', 'src/**/*.mjs'],
     languageOptions: {
       parser: babelParser,
       // Sin opciones propias: el parser lee babel.config.json, el mismo
@@ -45,6 +45,25 @@ export default [
       'prefer-const': 'error',
       'no-unused-vars': ['error', { vars: 'all', args: 'after-used' }],
       'no-undef': 'error',
+    },
+  },
+  {
+    // Los tests corren en Node con `node --test`, no en el navegador: necesitan
+    // sus globals y no los de window.
+    files: ['test/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { ...globals.node },
+    },
+    rules: {
+      quotes: ['error', 'single'],
+      semi: ['error', 'always'],
+      'comma-dangle': ['error', 'always-multiline'],
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'no-unused-vars': 'error',
+      'no-console': 'off',
     },
   },
   {
