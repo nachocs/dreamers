@@ -31,12 +31,27 @@ const config = {
     historyApiFallback: true,
     // El motor Indices vive en dreamers.es; sin este proxy el dev server
     // pediria los CGI a localhost:3002 y todo saldria 404.
+    //
+    // Para que esto sirva de algo, las rutas del front tienen que ser
+    // RELATIVAS: con URLs absolutas el navegador va directo a dreamers.es,
+    // se salta el proxy y la peticion es cross-origin. Ver src/js/app/config.js.
     proxy: [
       {
-        context: ['/indices', '/com', '/cgi'],
+        // '/ciudad' es del motor clasico y hace falta para el logoff, que va
+        // a /ciudad/panelillo/panel.cgi?logoff=1. Sin el, cerrar sesion era la
+        // unica llamada que seguia saliendo cross-origin.
+        context: ['/indices', '/com', '/cgi', '/ciudad'],
         target: 'https://dreamers.es',
         changeOrigin: true,
         secure: false,
+        // La sesion va en cookie. dreamers.es la manda con su dominio, y el
+        // navegador la RECHAZA si llega desde localhost. Esto le quita el
+        // dominio para que valga como cookie del propio dev server; sin ello
+        // el login responde ok y aun asi te quedas fuera a la siguiente
+        // peticion. (En http://localhost las cookies Secure si se aceptan,
+        // porque el navegador lo trata como contexto seguro; si entras por
+        // la IP de la LAN en vez de localhost, no, y volveran a perderse.)
+        cookieDomainRewrite: '',
       },
     ],
     client: {
@@ -96,9 +111,12 @@ const config = {
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development'),
-      // Permite apuntar el front a otro dominio durante el desarrollo. En
-      // produccion queda indefinido y el dominio se deduce del actual.
-      'process.env.ENDPOINTS_ROOT_DOMAIN': JSON.stringify('dreamers.es'),
+      // Vacio a proposito: asi config.js deja las rutas relativas y las
+      // recoge el proxy de arriba. Estaba puesto a 'dreamers.es', que era
+      // justo lo que hacia absolutas las URLs y rompia el login en local.
+      // Se puede forzar un dominio con ENDPOINTS_ROOT_DOMAIN=... npm start,
+      // pero entonces vuelve el cross-origin y el login deja de ir.
+      'process.env.ENDPOINTS_ROOT_DOMAIN': JSON.stringify(process.env.ENDPOINTS_ROOT_DOMAIN || ''),
       'process.env.VERSION': JSON.stringify(require('../package.json').version),
     }),
   ],

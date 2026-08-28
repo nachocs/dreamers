@@ -24,6 +24,10 @@ export default [
         // mainView.js carga el logo con el require() de webpack, que no
         // es el de Node ni existe en el navegador: lo resuelve el bundler.
         require: 'readonly',
+        // Igual que el anterior: config.js lee process.env.ENDPOINTS_ROOT_DOMAIN,
+        // que no existe en el navegador -- lo sustituye DefinePlugin al
+        // construir, en los dos webpack configs.
+        process: 'readonly',
       },
     },
     rules: {

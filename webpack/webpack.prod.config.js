@@ -237,7 +237,11 @@ const config = {
     // variable distinta de estas tres.
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
-      'process.env.ENDPOINTS_ROOT_DOMAIN': JSON.stringify(process.env.ENDPOINTS_ROOT_DOMAIN),
+      // Sin valor, config.js deja las rutas relativas, que es lo correcto en
+      // produccion: la portada se sirve desde dreamers.es y los CGI viven en
+      // ese mismo dominio. El '|| \'\'' evita que DefinePlugin inserte un
+      // undefined literal cuando la variable no esta puesta.
+      'process.env.ENDPOINTS_ROOT_DOMAIN': JSON.stringify(process.env.ENDPOINTS_ROOT_DOMAIN || ''),
       'process.env.VERSION': JSON.stringify(require('../package.json').version),
     }),
     ...(process.env.ANALYZE ? [new BundleAnalyzerPlugin()] : []),
