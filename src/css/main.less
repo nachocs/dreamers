@@ -1554,6 +1554,29 @@ h6 {
 
 .msg-form-view.formulario {
     padding: 0;
+    // Sitio para que el desplegable de emoticones quepa DENTRO de la vineta.
+    // Hay que reservarlo a mano porque '.emojis-modal' es 'position:
+    // absolute' y su hueco ('.emojis-modal-place') mide 0 de alto: no empuja
+    // nada, asi que el desplegable se pintaba por debajo del formulario y
+    // '.container' lo recortaba con su 'overflow: hidden'.
+    // El alto del desplegable NO es fijo: depende del ancho que le quede a
+    // la ficha, porque sus 8 pestanas de categoria (43px cada una) se parten
+    // en mas o menos lineas. Medido en produccion:
+    //     ficha 511px (escritorio) -> 1 linea  -> 136px
+    //     ficha 220-350px          -> 2 lineas -> 166px
+    //     ficha 156-180px (movil)  -> 3 lineas -> 196px
+    //     ficha 136px              -> 4 lineas -> 226px
+    // A eso hay que sumarle los 36px que '.basico-container' se sale de la
+    // vineta por abajo (esta a 'top: 45px' con 'height: 100%').
+    // Estos 220px cubren el escritorio, que es el caso normal, y sirven para
+    // que al pinchar ya haya sitio y no pegue un salto al abrirse. En movil
+    // se quedan cortos a proposito: 'encajarEmojis()' en msgFormView.js mide
+    // el alto de verdad al abrirlo y agranda el hueco si hace falta.
+    // Es 'padding' y no 'margin' a proposito: el margen inferior del ultimo
+    // hijo no siempre cuenta para el scroll del contenedor; el padding si.
+    &.abierto {
+        padding-bottom: 220px;
+    }
     .form-submit {
         display: none;
     }

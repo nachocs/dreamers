@@ -165,13 +165,57 @@ export default Backbone.View.extend({
   },
   showEmojisIn(prev){
     if (prev){
-      this.$('.emojis-modal-place').show('slow');
+      // Tambien aqui, y no solo en clearArea: al boton de los emoticones se
+      // puede llegar sin haber pinchado antes en el area de texto, y sin la
+      // clase no habria hueco ninguno reservado.
+      this.$el.addClass('abierto');
+      // Tener hueco no basta: el formulario suele quedar al final de la
+      // vineta, asi que el desplegable nace por debajo de lo que se ve y
+      // hay que subirlo. Se hace en el callback de show() para poder medir
+      // con la animacion terminada y el alto ya definitivo.
+      this.$('.emojis-modal-place').show('slow', () => this.encajarEmojis());
       EmojisModal.setParent(this);
       this.$('.emojis-modal-place').html(EmojisModal.render().el);
     } else {
+      // Al cerrar se suelta el hueco a medida y manda otra vez el del CSS.
+      this.$el.css('padding-bottom', '');
       this.$('.emojis-modal-place').hide('slow');
     }
     this.showEmojisModal = prev;
+  },
+  // Deja el desplegable de emoticones a la vista y entero dentro de la
+  // vineta, que es lo que no pasaba: nacia debajo del borde y '.container'
+  // lo recortaba con su 'overflow: hidden'.
+  encajarEmojis(){
+    const modal = this.$('.emojis-modal')[0],
+      caja = this.$el.closest('.basico-container')[0],
+      vineta = this.$el.closest('.container')[0];
+    if (!modal || !caja){ return; }
+    // El hueco que reserva el CSS (220px) esta calculado para el escritorio,
+    // donde el desplegable mide 136px. Pero su alto depende del ancho que le
+    // quede a la ficha, porque las 8 pestanas se parten en mas o menos
+    // lineas: en movil la vineta expandida se queda en ~315px y el
+    // desplegable sube a 196px, o a 226 si es aun mas estrecha. O sea que en
+    // movil el hueco del CSS NO llega. Se mide el alto de verdad y se
+    // agranda si hace falta, que sale mas fiable que ajustar el numero fijo.
+    const alto = Math.ceil(modal.getBoundingClientRect().height),
+      reservado = parseInt(this.$el.css('padding-bottom'), 10) || 0;
+    if (alto + 60 > reservado){
+      this.$el.css('padding-bottom', (alto + 60) + 'px');
+    }
+    // El limite de abajo NO es el de la caja con scroll sino el de la
+    // vineta: '.basico-container' esta a 'top: 45px' con 'height: 100%', o
+    // sea que sobresale ~36px por abajo, y lo que recorta de verdad es el
+    // 'overflow: hidden' de '.container'.
+    // Se mueve el scroll de la caja a mano en vez de usar scrollIntoView,
+    // que arrastraria tambien el scroll de la pagina y moveria la vineta.
+    const limite = vineta
+      ? Math.min(caja.getBoundingClientRect().bottom, vineta.getBoundingClientRect().bottom)
+      : caja.getBoundingClientRect().bottom;
+    const sobra = modal.getBoundingClientRect().bottom - limite;
+    if (sobra > 0){
+      caja.scrollTop = caja.scrollTop + sobra + 12;
+    }
   },
   showEmojis(){
     this.toggleTagsIn(false);
@@ -468,6 +512,11 @@ export default Backbone.View.extend({
     // if (this.isClear){return;}
     // this.$('.formularioTextArea').html(this.formModel.get('comments')).addClass('on');
     this.active = true;
+    // Al pinchar, el formulario ya se agranda; se aprovecha para reservarle
+    // sitio por debajo, que es donde luego nace el desplegable de
+    // emoticones. Sin ese hueco se pinta fuera de la vineta y se pierde:
+    // ver '.msg-form-view.formulario .abierto' en main.less.
+    this.$el.addClass('abierto');
     this.$('.formularioTextArea').addClass('on');
     if (focus){
       this.$('.formularioTextArea').focus();
