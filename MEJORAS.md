@@ -2,7 +2,8 @@
 
 > Documento de análisis, medido sobre **1.0.15** el 2026-08-27.
 > Son mejoras independientes entre sí: cada una se puede hacer y desplegar sola.
-> **Estado:** §3 y §1 hechas (2026-08-27). Quedan §2 (animaciones) y §4 (MDL).
+> **Estado:** §3 y §1 hechas (2026-08-27). Quedan §2 (animaciones) y §4 (MDL, con el
+> alcance ya medido y una decisión pendiente: ver el final de esa sección).
 
 Complementa a [`PLAN-REACT.md`](PLAN-REACT.md), que responde a *cómo* se migraría a React.
 Este responde a *qué conviene hacer antes*, se migre o no.
@@ -26,11 +27,12 @@ Fase 0 y parte de la Fase 5 del plan de React. Son la pista de aterrizaje, no tr
 
 ## De qué está hecho el bundle
 
-198 KB gzip de JS (840 KB minificado). Peso comprimido por librería:
+Medido antes de tocar nada: **198 KB gzip** de JS (840 KB minificado). Tras quitar emojione (§1)
+son **145 KB** (548 KB minificado); el resto de la tabla sigue vigente.
 
 | Librería | gzip | Uso real en el código |
 |---|---|---|
-| emojione | **39 KB** | **3 llamadas**, todas a `toImage` |
+| ~~emojione~~ | ~~**39 KB**~~ | quitada en §1; resultaron ser 53 KB |
 | jquery | 30 KB | 187 `$()`, ~270 métodos — entretejido |
 | lodash | 25 KB | 13 funciones, 43 usos; `_.template` es 19 de ellos |
 | `emoji_short.json` | 23 KB | datos, se necesitan |
@@ -38,7 +40,7 @@ Fase 0 y parte de la Fase 5 del plan de React. Son la pista de aterrizaje, no tr
 | mdl (js) | 11 KB | layout, drawer y contenedor de scroll |
 | backbone | 8 KB | el framework |
 
-Las librerías son el **78%** del bundle.
+Las librerías eran el **78%** del bundle de partida.
 
 *Método:* peso gzip del `dist` de cada paquete, contrastado con el tamaño de módulo que reporta
 `webpack --json`. Es una aproximación de su aportación real: webpack puede recortar algo por
@@ -141,13 +143,85 @@ Ya está anotado en el README como problema conocido: Google la dejó en soporte
 CDN en junio de 2026 y la cabecera usa clases `mdl-*` directamente, así que entra en la primera
 pintura de todas las páginas.
 
-Se usa poco: cabecera, drawer y el contenedor de scroll `.mdl-layout__content`. Casi todas las
-llamadas a `componentHandler.upgradeElement` **ya están comentadas**; queda una viva en
-`entradas/formView.js:569`.
+> **Medido el 2026-08-28, y NO se usa poco.** Esta sección decía antes «se usa poco: cabecera,
+> drawer y un par de textfields», copiando la estimación de `PLAN-REACT.md` §3.3. Es falso, y por
+> eso la §4 se pospuso: no es la mejora mecánica que parecía. Lo que sigue son mediciones, no
+> estimaciones.
 
-**Cuidado:** `.mdl-layout__content` no es solo estilo, es el elemento que scrollea —
-`libraryView.js:180` le engancha el scroll infinito y `entradaView.js:139` lo anima. Al sustituir
-el layout hay que trasladar esos dos enganches, no solo el CSS.
+### Cuánto se usa de verdad
+
+**38 clases `mdl-*` distintas, ~200 apariciones en 15 ficheros.** Las más frecuentes:
+
+```
+mdl-js-textfield              18      mdl-card                10
+mdl-textfield__input/__label  17      mdl-button               9
+mdl-textfield                 16      mdl-shadow--4dp          4
+mdl-textfield--floating-label 15      mdl-layout__content      4
+mdl-navigation__link          14      mdl-badge                3
+```
+
+Reparto por fichero (los cinco primeros): `entradas/formView.html` 67, `header/loginView.html` 32,
+`css/main.less` 25, `mainView.html` 13, `header/menuDreamersView.html` 10.
+
+Es decir: toca **todos los formularios de la aplicación** — registro, mensajes y entradas —, no
+solo la cabecera.
+
+### Qué está vivo y qué está muerto (sonda en navegador)
+
+Importa porque decide si hay que reescribir comportamiento o solo CSS. Se levantó el build con un
+servidor local y se sondeó con Chromium headless, leyendo el DOM ya arrancado:
+
+| | en el DOM | actualizados por MDL |
+|---|---|---|
+| `.mdl-layout` | 1 | **1** |
+| `.mdl-js-textfield` | 2 | **2** |
+| `.mdl-js-button` | 2 | **0** |
+| `.mdl-js-ripple-effect` | 1 | **0** |
+
+Ninguna plantilla `mdl-*` está en `index.ejs`: todo el markup lo pinta Backbone. Lo que pasa es
+que el bundle arranca y pinta **antes** de `DOMContentLoaded`, así que la pasada automática de
+`componentHandler` alcanza lo que existe en ese instante — el layout y los dos campos del login —
+y nada más. Todo lo que se pinta después (los otros 16 textfields, los botones, el ripple) **no se
+actualiza nunca**: hoy ya solo tienen el CSS de MDL, sin comportamiento.
+
+Para reproducir la sonda: `npm run build`, servir `dist/`, y en la página inyectar
+`document.querySelectorAll('.is-upgraded')` tras el `load`.
+
+### Lo que hay que replicar sí o sí
+
+- **El drawer depende de la API JS de MDL.** `header/menuDreamersView.js:23` hace
+  `document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer()`. Esa propiedad solo existe
+  porque MDL actualizó el elemento. Al quitar MDL hay que sustituir la llamada, no solo el estilo.
+- **`.mdl-layout__content` es el elemento que scrollea**, no un contenedor decorativo:
+  `libraryView.js:180` le engancha el scroll infinito, `libraryView.js:184` lo lee y
+  `entradaView.js:139` lo anima. Hay que trasladar esos tres enganches.
+- **Las etiquetas flotantes de los dos campos del login sí funcionan** (MDL les pone
+  `is-dirty`/`is-focused`/`is-invalid`). Si se quitan sin reemplazo, esos dos campos se degradan.
+- La única llamada viva a `componentHandler` es `formView.materialDesignUpdate()`
+  (`entradas/formView.js:557` y `:569`); las otras cuatro están comentadas.
+
+### Decisión pendiente antes de empezar
+
+Los **16 textfields que nunca se actualizan tienen la etiqueta flotante muerta**. Al escribir el
+CSS propio hay que elegir, y es una decisión de producto, no técnica:
+
+- **(a)** dejarlos como están, fieles al comportamiento actual aunque esté algo roto; o
+- **(b)** hacer que funcionen en todos, que es mejor pero es un cambio visible que nadie pidió.
+
+### Cómo abordarlo
+
+En **tres commits**, no en uno:
+
+1. Textfields, botones, cards, badges y sombras → CSS propio. Es la parte grande y es solo CSS,
+   porque esos componentes ya no tienen JS.
+2. Layout, drawer y `.mdl-layout__content` → aquí está el comportamiento real: el toggle del
+   drawer y los tres enganches de scroll.
+3. Quitar `material-design-lite` del `package.json` y de las dos entradas de webpack.
+
+**Esta mejora no se puede verificar de forma exhaustiva**, a diferencia de §1 y §3: no hay salida
+de referencia contra la que comparar. La validación es revisión de código y mirarlo en el
+navegador, formulario por formulario. Por eso conviene que vaya sola en su rama y no mezclada con
+nada más.
 
 ## 5. Candidatos menores
 
@@ -167,10 +241,16 @@ depende de la decisión sobre React.
 
 ## Orden sugerido
 
-1. **§3 (`pack()` + test)** — primero, porque es la red de seguridad de todo lo demás.
-2. **§1 (emojione)** — la ganancia grande y barata.
-3. **§2 (animaciones)** — el dolor real del día a día.
-4. **§4 (MDL)** — el más laborioso de los cuatro, y prerrequisito si luego se migra.
+1. ~~**§3 (`pack()` + test)**~~ — hecha. Era la red de seguridad de todo lo demás.
+2. ~~**§1 (emojione)**~~ — hecha. La ganancia grande y barata: −53 KB gzip.
+3. **§2 (animaciones)** — el dolor real del día a día, y la siguiente por tamaño.
+4. **§4 (MDL)** — con diferencia la más laboriosa, bastante más de lo que se estimó al escribir
+   este documento (ver las mediciones en su sección). Va la última a propósito, sola en su rama,
+   y con la decisión sobre las etiquetas flotantes tomada antes de empezar.
+
+Aviso sobre §2, para no repetir el error de §4: es la primera que **no se puede cerrar con un
+test**. Es comportamiento de animación, y comparar estilos computados no captura una transición en
+curso. Se valida leyendo el diff y mirándolo en el navegador.
 
 Después de esto tiene sentido volver a `PLAN-REACT.md` y decidir con datos: si el DOM imperativo
 sigue doliendo con dos librerías menos y un arnés de tests montado, la migración parte de un sitio
