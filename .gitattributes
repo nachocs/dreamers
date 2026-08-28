@@ -1,0 +1,24 @@
+# Un solo final de linea en todo el repo: LF, tanto en lo que guarda git como
+# en lo que saca al disco.
+#
+# Sin esto git no normaliza nada, y basta con que un editor o una herramienta
+# reescriba un fichero para que cambien TODAS sus lineas de golpe y el cambio
+# de verdad se pierda dentro. Paso el 2026-08-27 con libraryView.js, que
+# estaba guardado en CRLF: 23 lineas de cambio real dentro de un diff de 670.
+#
+# 'text=auto' deja que git detecte que es texto y lo guarde con LF; 'eol=lf'
+# hace que tambien salga con LF al disco, en cualquier sistema. Aqui interesa
+# fijarlo y no dejarlo "al gusto de cada sistema", porque hay ficheros que
+# van al servidor tal cual y son Linux: 'update' (shell) y src/assets/sw.js.
+* text=auto eol=lf
+
+# Los binarios, fuera: que git no les toque ni un byte.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
