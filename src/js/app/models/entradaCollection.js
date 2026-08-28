@@ -29,6 +29,15 @@ export default Backbone.Collection.extend({
     if (options && options.indice !== undefined){
       this.indice = options.indice || '';
     }
+    // 'empieza' coloca el cursor de golpe, para poder entrar directo a un
+    // articulo concreto en vez de por lo ultimo publicado (ver la ruta
+    // 'indices/:indice/:entrada' en router.js). Va DESPUES del bloque del
+    // indice a proposito, porque ese lo deja en blanco al cambiar de indice.
+    // A partir de aqui la paginacion sigue sola: parse() vuelve a mover
+    // firstEntry con cada respuesta.
+    if (options && options.empieza !== undefined){
+      this.firstEntry = options.empieza;
+    }
     return Backbone.Collection.prototype.fetch.apply(this, arguments);
   },
 });

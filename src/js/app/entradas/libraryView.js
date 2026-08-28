@@ -182,7 +182,29 @@ export default Backbone.View.extend({
       collection: col,
     });
     this.$el.append(view.render().el);
-
+    this.abrirSiTocaba(model, col, view);
+  },
+  // Enlace permanente a un articulo: la ruta 'indices/:indice/:entrada' deja
+  // dicho en la coleccion cual hay que abrir, y se abre aqui, en cuanto se
+  // pinta, sin que haya que pinchar. Es lo que hace que una notificacion
+  // pueda llevarte al articulo exacto.
+  //
+  // Se compara indice Y entrada porque el numero de entrada se repite entre
+  // indices. Y la marca se borra en cuanto se usa: si no, al paginar hacia
+  // atras se volveria a abrir sola en cada tanda que llegara.
+  abrirSiTocaba(model, col, view) {
+    const abrir = col && col.abrirEntrada;
+    if (!abrir) {
+      return;
+    }
+    if (String(model.get('indice')) !== abrir.indice ||
+        String(model.get('entrada')) !== abrir.entrada) {
+      return;
+    }
+    col.abrirEntrada = null;
+    // expandir() ya se encarga del resto: trae la ficha entera, cambia a la
+    // plantilla larga, carga los comentarios y hace scroll hasta ella.
+    view.expandir();
   },
   addOne(model, col) {
     this.ordenar();
