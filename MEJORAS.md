@@ -30,6 +30,10 @@ Fase 0 y parte de la Fase 5 del plan de React. Son la pista de aterrizaje, no tr
 Medido antes de tocar nada: **198 KB gzip** de JS (840 KB minificado). Tras quitar emojione (§1)
 son **145 KB** (548 KB minificado); el resto de la tabla sigue vigente.
 
+Desde el 2026-08-28 son **142 KB** (538 KB minificado), pero eso no lo hizo ninguna sección de
+aquí: es que jQuery pasó a 4.0.0 al fusionar los PRs de dependabot, y pesa algo menos. La §2 no
+mueve la aguja del bundle a propósito — lo suyo es el coste por fotograma, no el tamaño.
+
 | Librería | gzip | Uso real en el código |
 |---|---|---|
 | ~~emojione~~ | ~~**39 KB**~~ | quitada en §1; resultaron ser 53 KB |
