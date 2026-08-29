@@ -2,8 +2,8 @@
 
 > Documento de análisis, medido sobre **1.0.15** el 2026-08-27.
 > Son mejoras independientes entre sí: cada una se puede hacer y desplegar sola.
-> **Estado:** §3 y §1 hechas (2026-08-27), §2 hecha (2026-08-28). Queda §4 (MDL, con el
-> alcance ya medido y una decisión pendiente: ver el final de esa sección).
+> **Estado:** las cuatro hechas — §3 y §1 el 2026-08-27, §2 y §4 el 2026-08-28. Queda solo la §5
+> (candidatos menores), que a propósito se recomienda NO hacer todavía.
 
 Complementa a [`PLAN-REACT.md`](PLAN-REACT.md), que responde a *cómo* se migraría a React.
 Este responde a *qué conviene hacer antes*, se migre o no.
@@ -208,7 +208,7 @@ Dos divergencias deliberadas, ambas documentadas y con test propio:
   alcanzable cuando el recorte va contra un `$D.SQanchoTotal` mayor que las columnas medidas;
   el original desbordaba la pila sin decir por qué.
 
-## 4. MDL → CSS propio — 11 KB JS + 126 KB CSS
+## 4. ~~MDL → CSS propio~~ — HECHO 2026-08-28 (−27 KB gzip)
 
 Ya está anotado en el README como problema conocido: Google la dejó en soporte limitado, tumbó su
 CDN en junio de 2026 y la cabecera usa clases `mdl-*` directamente, así que entra en la primera
@@ -331,20 +331,62 @@ campos de markup y buena parte de las ~200 apariciones `mdl-*` que asustaban en 
 arriba; terminarlo es una funcionalidad, no una limpieza. Mientras no se decida, la §4 puede
 tratarlo como lo que es: markup inerte al que solo hay que no romperle el aspecto.
 
-### Cómo abordarlo
+### Resultado — HECHO 2026-08-28
 
-En **tres commits**, no en uno:
+Reemplazado por `src/css/mdl.less` (37 clases, lo que esta aplicación usa de verdad) más
+`src/js/app/util/drawer.js` para el comportamiento del cajón. Fuera `material-design-lite` del
+`package.json` y de las dos entradas de webpack.
 
-1. Textfields, botones, cards, badges y sombras → CSS propio. Es la parte grande y es solo CSS,
-   porque esos componentes ya no tienen JS.
-2. Layout, drawer y `.mdl-layout__content` → aquí está el comportamiento real: el toggle del
-   drawer y los tres enganches de scroll.
-3. Quitar `material-design-lite` del `package.json` y de las dos entradas de webpack.
+**Ganancia: −27 KB gzip.** JS 142 → **131 KB** (538 → 480 KB sin comprimir), CSS 28 → **12 KB**
+(168 → 56 KB).
 
-**Esta mejora no se puede verificar de forma exhaustiva**, a diferencia de §1 y §3: no hay salida
-de referencia contra la que comparar. La validación es revisión de código y mirarlo en el
-navegador, formulario por formulario. Por eso conviene que vaya sola en su rama y no mezclada con
-nada más.
+**Sí se podía verificar, y la afirmación de que no era el error de partida.** Esta sección decía
+«no hay salida de referencia contra la que comparar». La hay: los **estilos computados**. Con MDL
+puesto se capturó una huella de 44 propiedades × 33 elementos `mdl-*` × 2 estados del cajón, se
+guardó en `localStorage`, y después se comparó contra la misma huella sin MDL. **Terminó en 0
+diferencias.** No es un oráculo perfecto —solo cubre lo que está en el DOM de la portada sin
+sesión— pero encontró tres roturas que ninguna revisión de código habría cazado:
+
+1. **La aplicación entera se quedaba en 94 px de alto.** El JS de MDL envolvía el layout en un
+   `.mdl-layout__container`, y sin ese padre dimensionado el `height: 100%` de `.mdl-layout` no
+   resuelve contra nada. El contenido caía a 30 px.
+2. **El desplegable del login se quedaba abierto para siempre.** `.hidden { display: none
+   !important }` **no es de Material Design**: MDL empaqueta dentro un trozo de HTML5 Boilerplate,
+   y de ahí salía. `main.less` no la define, y `loginView.js:51` hace `toggleClass('hidden')`.
+3. **Toda la tipografía se movía.** MDL fijaba `html, body { font-size: 14px; line-height: 20px }`
+   y `html { color: rgba(0,0,0,.87) }`. Sin eso, todo el texto caía a los 12 px que `main.less`
+   pone en `<html>`. Del mismo bloque salían `ul, ol { line-height: 24px }` (el desplegable del
+   login es un `<ul>`) e `img { vertical-align: middle }` (sin él el logo crece de 50 a 56,5 px).
+
+La lección general: **MDL no era solo clases `mdl-*`, también estilaba etiquetas HTML desnudas y
+utilidades genéricas.** Buscar `mdl-` en el código —que es lo que hizo la medición de arriba— no
+encuentra nada de eso.
+
+Lo que el diff de estilos no cubre se comprobó aparte, en el navegador: los **9 pasos del cajón**
+(abre con el botón, cierra con la capa, cierra con Escape, abre con Intro, cierra con espacio,
+cierra al navegar, y los `aria-expanded`/`aria-hidden`), las **etiquetas flotantes** (sube al
+enfocar, se queda arriba con texto, baja al vaciar) y el **scroll infinito** sobre
+`.mdl-layout__content`, que sigue enganchado.
+
+**Una pérdida consciente:** el efecto *ripple* del botón de entrar. Es el único que lo tenía
+—existe en el DOM desde el arranque, así que le alcanzaba la pasada automática de MDL—; los demás
+botones se pintan después y nunca llegaban a actualizarse. Es una onda decorativa en un botón y
+replicarla pide JavaScript que mida la pulsación.
+
+**Va en un commit, no en tres**, al revés de lo que decía el plan. Los tres pasos que proponía
+están acoplados: con el CSS propio y MDL a la vez conviven reglas duplicadas, y quitando MDL antes
+de terminar el CSS la aplicación no se sostiene. Cualquier corte intermedio deja un commit roto,
+que es peor para revisar que uno completo con su verificación.
+
+**Se conservan los nombres `mdl-*`.** Son ~200 apariciones en 15 ficheros; renombrarlas es
+mecánico y fácil de revisar, reimplementar el CSS no. Mezclar las dos cosas convierte un fallo de
+estilo en una búsqueda entre dos causas. El renombrado, si se quiere, va aparte y después.
+
+**Lo que queda sin comprobar:** los 13 campos del formulario de entradas. Necesitan sesión
+iniciada y el formulario abierto, y no están en el DOM de la portada. Su CSS es el mismo que el de
+los dos campos del login, que sí está verificado, pero el propio formulario está sin terminar (ver
+más arriba), así que no se ha tocado más allá de añadirle el `placeholder=" "` que
+`:placeholder-shown` necesita.
 
 ## 5. Candidatos menores
 
@@ -367,9 +409,10 @@ depende de la decisión sobre React.
 1. ~~**§3 (`pack()` + test)**~~ — hecha. Era la red de seguridad de todo lo demás.
 2. ~~**§1 (emojione)**~~ — hecha. La ganancia grande y barata: −53 KB gzip.
 3. ~~**§2 (animaciones)**~~ — hecha. El dolor real del día a día.
-4. **§4 (MDL)** — con diferencia la más laboriosa, bastante más de lo que se estimó al escribir
-   este documento (ver las mediciones en su sección). Va la última a propósito, sola en su rama,
-   y con la decisión sobre las etiquetas flotantes tomada antes de empezar.
+4. ~~**§4 (MDL)**~~ — hecha. La más laboriosa, y la que más se equivocó al estimarse: primero
+   por creer que MDL se usaba poco, luego por creer que se usaba mucho. Lo que de verdad costaba
+   no era el número de clases, sino lo que MDL hacía SIN que nadie lo pidiera (envolver el
+   layout, estilar etiquetas desnudas, traerse un `.hidden` de otra librería).
 
 El aviso que llevaba aquí sobre §2 —que era la primera que no se podía cerrar con un test— se
 quedó a medias. Es verdad que no hay salida de referencia como en §1 y §3, pero **sí se pudo

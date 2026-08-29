@@ -554,23 +554,16 @@ export default Backbone.View.extend({
   },
   afterRender() {
     this.$('.wysiwyg').hide();
-    this.materialDesignUpdate();
 
     this.$('#comments').keyup(function () {
       $(this).height(38);
       $(this).height(this.scrollHeight + parseFloat($(this).css('borderTopWidth')) + parseFloat($(this).css('borderBottomWidth')));
     });
   },
-  materialDesignUpdate() {
-    const self = this;
-    _.defer(() => {
-      if (self && self.$el) {
-        self.$el.find('[class*=" mdl-js"]').each(function () {
-          componentHandler.upgradeElement(this);
-        });
-      }
-    });
-  },
+  // materialDesignUpdate() se ha ido con MDL (MEJORAS.md §4). Era la unica
+  // llamada viva a componentHandler y solo servia para que las etiquetas
+  // flotantes de este formulario subieran al escribir. Eso ahora lo hace el
+  // CSS con :placeholder-shown y :focus-within, sin JavaScript.
   serializer() {
     const obj = userModel.toJSON();
     let titulo_head;

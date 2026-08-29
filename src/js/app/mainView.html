@@ -3,8 +3,21 @@
      Facebook. Sin SDK no pinta nada. -->
 <div id="uroboro" class="uroboro" style="display: none;"></div>
 
+<!-- .mdl-layout__container lo creaba el JS de MDL envolviendo al layout. Sin
+     el, el 'height: 100%' de .mdl-layout no resuelve contra nada y la
+     aplicacion entera se queda en 94px de alto. -->
+<div class="mdl-layout__container">
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header <%= (obj.INDICE === 'ciudadanos')?'ciudadano':'' %>">
+    <!-- El boton de hamburguesa lo CREABA el JS de MDL en tiempo de ejecucion
+         (Layout.prototype.init), como primer hijo del header y con este mismo
+         markup. Al quitar MDL hay que escribirlo aqui. El <i> vacio no es un
+         descuido: main.less le pinta el icono con una mask SVG y font-size 0,
+         porque el codepoint que MDL metia dentro se quedo sin glifo al
+         retirar la fuente de Material Icons. -->
+    <div class="mdl-layout__drawer-button js-drawer-toggle" role="button" tabindex="0" aria-expanded="false" aria-label="Men&uacute;">
+      <i class="material-icons"></i>
+    </div>
     <div class="mdl-layout-icon"></div>
     <div class="mdl-layout__header-row">
       <div class="logomask pseudo mdl-layout--large-screen-only">
@@ -44,4 +57,8 @@
       </div>
     </div>
   </main>
+  <!-- La capa que oscurece el contenido con el drawer abierto y lo cierra al
+       pulsarla. Tambien la inyectaba el JS de MDL, al final del layout. -->
+  <div class="mdl-layout__obfuscator js-drawer-close"></div>
+</div>
 </div>
