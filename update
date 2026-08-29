@@ -9,14 +9,17 @@
 {
 set -x;
 cd /home/dreamers/git/dreamers;
-# npm install reescribe package-lock.json en cada pasada, asi que el checkout
-# de despliegue queda siempre sucio. En cuanto un commit toca el lock, el pull
-# aborta con "Los cambios locales seran sobrescritos" y -- como abajo va ';' y
-# no '&&' -- el script sigue y reconstruye el codigo VIEJO sin avisar. Eso ya
-# paso el 2026-08-06 con el fichero 'update' (por el bit de ejecucion) y dejo
-# el servidor clavado en un commit antiguo durante dos despliegues seguidos.
-# Se descarta la reescritura local del lock antes de tirar: aqui es un
-# subproducto de npm, nunca un cambio que alguien quiera conservar.
+# Desde que abajo se usa 'npm ci' (2026-08-28) esto ya no deberia hacer falta:
+# 'npm ci' NO escribe package-lock.json, asi que el checkout ya no se ensucia
+# solo en cada despliegue. Se deja como red por si alguien corre un
+# 'npm install' a mano en el servidor, que es lo unico que puede volver a
+# dejarlo sucio.
+#
+# Por que importaba: con el lock sucio el pull aborta con "Los cambios locales
+# seran sobrescritos" y -- como aqui va ';' y no '&&' -- el script sigue y
+# reconstruye el codigo VIEJO sin avisar. Eso ya paso el 2026-08-06 con el
+# fichero 'update' (por el bit de ejecucion) y dejo el servidor clavado en un
+# commit antiguo durante dos despliegues seguidos.
 git checkout -- package-lock.json 2>/dev/null;
 git pull;
 # Ya NO hace falta --legacy-peer-deps: lo pedia extract-text-webpack-plugin
@@ -26,9 +29,26 @@ git pull;
 # el arbol resuelve limpio. Si algun dia vuelve a hacer falta el flag, es
 # senal de que se ha colado una dependencia incompatible: mejor arreglarla
 # que tapar el aviso.
-# 'npm ci' seria lo suyo aqui, pero necesita que el lock este siempre en
-# sintonia exacta con package.json; se deja 'npm install' para no cambiar
-# dos cosas a la vez.
+# 'npm ci' desde el 2026-08-28, que es lo que aqui hacia falta desde siempre:
+#   - instala EXACTAMENTE lo que dice package-lock.json, o sea lo mismo que se
+#     probo en local. 'npm install' vuelve a resolver contra el registro, y
+#     como todas las versiones van con '^' podia traerse al servidor una
+#     version mas nueva que nadie habia probado.
+#   - no reescribe el lock, asi que el checkout de despliegue deja de
+#     ensuciarse solo (ver el 'git checkout --' de arriba).
+#   - si package.json y el lock no cuadran, falla en vez de reconciliarlos por
+#     su cuenta. Si algun dia aborta por eso, el arreglo NO es volver a
+#     'npm install': es regenerar el lock en local (npm install), comprobar
+#     que build y tests siguen verdes, y hacer push del lock.
+#
+# Sin '--omit=dev' a proposito: webpack, babel y los loaders son
+# devDependencies y sin ellas no hay build. (gritos-socket si lo usa, pero
+# ese no construye nada.)
+#
+# OJO: 'npm ci' borra node_modules antes de instalar, asi que si falla no deja
+# el arbol anterior de repuesto. No tumba el sitio -- lo que se sirve es
+# /home/dreamers/www, ya copiado -- pero bloquea el siguiente build hasta
+# arreglarlo.
 # src/assets/ NO lo copia webpack: en dist solo entra lo que pasa por el
 # bundle, mas el favicon. Por eso los 7 iconos que declara el <head>
 # (apple-icon-*, favicon-*, ms-icon-*, android-icon-*) daban 404 en
@@ -49,7 +69,7 @@ git pull;
 # ahi de milagro los seis pequenos, copiados a mano en algun momento.
 # Comprobado el 2026-08-19.
 mkdir -p ../../www/assets;
-npm install && npm run build && cp -R src/assets/* ../../www/ && cp -R src/assets/* ../../www/assets/ && cp -R dist/* ../../www/ || {
+npm ci && npm run build && cp -R src/assets/* ../../www/ && cp -R src/assets/* ../../www/assets/ && cp -R dist/* ../../www/ || {
     echo "!! El despliegue ha fallado. NO se limpia nada.";
     exit 1;
 };
