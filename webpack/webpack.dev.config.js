@@ -8,10 +8,10 @@ const config = {
   devtool: 'eval-source-map',
   entry: {
     app: [
-      // Self-hosted: the storage.googleapis.com/code.getmdl.io CDN Google used to serve
-      // this from was permanently shut down (~June 2026). See README "Known issues".
-      'material-design-lite/dist/material.light_green-red.min.css',
-      'material-design-lite/dist/material.min.js',
+      // Reemplazo propio de material-design-lite (MEJORAS.md §4). Va PRIMERO,
+      // en el mismo sitio que ocupaba el CSS de MDL: main.less sobreescribe
+      // muchas de estas reglas contando con ganar por orden de aparicion.
+      __dirname + '/../src/css/mdl.less',
       __dirname + '/../src/js/app/index.js',
       __dirname + '/../src/css/main.less',
     ],

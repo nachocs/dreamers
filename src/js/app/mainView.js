@@ -6,6 +6,7 @@ import LoginView from './header/loginView';
 import FormView from './entradas/formView';
 import ModalView from './msgs/modalView';
 import MenuDreamers from './header/menuDreamersView';
+import { alternarDrawer, cerrarDrawer, manejarTeclaEnBoton, engancharEscape } from './util/drawer';
 
 export default Backbone.View.extend({
   template: _.template(template),
@@ -28,6 +29,12 @@ export default Backbone.View.extend({
     };
   },
   events: {
+    // El cajon lateral: antes de esto lo movia el JS de MDL, que se enganchaba
+    // solo al inyectar el boton. Ahora el markup esta en la plantilla y los
+    // eventos van por delegacion, como el resto de la vista.
+    'click .js-drawer-toggle': 'alDrawerPulsado',
+    'keydown .js-drawer-toggle': 'alDrawerTecla',
+    'click .js-drawer-close': 'alDrawerCerrar',
     'click .logomask': 'logomask',
     'click .js-abrir-login': 'abrirLogin',
     'click .js-registro': 'abrirRegistro',
@@ -50,12 +57,23 @@ export default Backbone.View.extend({
     this.$('.login-view .login-menu-button').first().trigger('click');
   },
   logomask() {
-    const layout = document.querySelector('.mdl-layout');
-    layout.MaterialLayout.toggleDrawer();
+    alternarDrawer();
     // const indice = $(ev.currentTarget).data('indice');
     // this.router.navigate('/indices/' + indice, { trigger: true });
   },
 
+  // Nombres distintos a los de las funciones importadas a proposito: un
+  // metodo llamado igual que su import se lee como una recursion infinita.
+  alDrawerPulsado(ev) {
+    ev.preventDefault();
+    alternarDrawer();
+  },
+  alDrawerTecla(ev) {
+    manejarTeclaEnBoton(ev);
+  },
+  alDrawerCerrar() {
+    cerrarDrawer();
+  },
   render() {
     this.$el.html(this.template(this.serializer()));
     this.$('#container').html(this.libraryView.render().el);
@@ -64,6 +82,9 @@ export default Backbone.View.extend({
     this.$('.login-view').html(this.loginView.render().el);
     this.$('.modal-view').html(ModalView.render().el);
     this.$('.resumen-collection').html(this.menuDreamers.render().el);
+    // Escape cierra el cajon. Va al documento y se engancha una sola vez, asi
+    // que repintar la vista no acumula manejadores.
+    engancharEscape();
     return this;
   },
   serializer() {

@@ -1,0 +1,699 @@
+// Reimplementacion propia de las clases mdl-* que esta aplicacion usa de
+// verdad, para poder quitar material-design-lite (MEJORAS.md §4).
+//
+// Google dejo MDL en soporte limitado y tumbo su CDN en junio de 2026. La
+// libreria son 11 KB de JS y 126 KB de CSS, de los que aqui se usan 37 clases.
+// Esto es lo que hacen esas 37, y nada mas.
+//
+// POR QUE SE CONSERVAN LOS NOMBRES mdl-*
+// Son ~200 apariciones repartidas por 15 ficheros. Renombrarlas es un cambio
+// mecanico y facil de revisar; reimplementar el CSS no lo es. Mezclar los dos
+// en el mismo commit convierte un fallo de estilo en una busqueda a ciegas
+// entre dos causas posibles. El renombrado, si se quiere, va aparte y despues.
+// A partir de aqui estas clases son NUESTRAS: MDL ya no esta.
+//
+// ORDEN DE CARGA: este fichero tiene que ir ANTES que main.less en la entrada
+// de webpack, en el mismo sitio que ocupaba el CSS de MDL. main.less
+// sobreescribe un monton de estas reglas (cabecera, drawer, tarjetas,
+// textfields) contando con ganar por orden de aparicion, no por especificidad.
+
+@mdl-primario: rgb(139, 195, 74); // light green, el primary del tema que se usaba
+@mdl-acento: rgb(255, 82, 82); // red, el accent
+@mdl-texto: rgb(66, 66, 66);
+@mdl-ancho-drawer: 240px;
+@mdl-desplazamiento-drawer: -250px; // 240 + 10 de sombra, como el original
+@mdl-pantalla-pequena: ~"screen and (max-width: 1024px)";
+
+// ---------------------------------------------------------------------------
+// Base
+//
+// MDL no era solo componentes: traia tambien una base tipografica global. Se
+// nota al quitarla, y no poco -- sin estas dos reglas TODO el texto de la
+// aplicacion cae de 14px a los 12px que main.less pone en <html>, y el color
+// base pasa de gris muy oscuro a negro puro. Lo destapo el diff de estilos
+// computados contra la version con MDL; a ojo habria pasado por "se ve
+// parecido".
+//
+// main.less declara despues 'html { font-size: 12px }' y su propia
+// font-family para <body>, y sigue ganando por orden, igual que antes.
+// ---------------------------------------------------------------------------
+
+html {
+    color: rgba(0, 0, 0, .87);
+}
+
+html,
+body {
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+// ESTA CLASE NO ES DE MATERIAL DESIGN, y es la trampa mas fea de toda la §4.
+// El CSS de MDL empaqueta dentro un trozo de HTML5 Boilerplate, y de ahi salia
+// '.hidden'. main.less no la define en ninguna parte, pero la aplicacion
+// depende de ella: loginView.js:51 hace toggleClass('hidden') sobre
+// '.login-menu', que es el desplegable de entrar. Sin esta regla el
+// desplegable del login se queda ABIERTO PARA SIEMPRE.
+//
+// No se veia venir leyendo el codigo -- '.hidden' parece una utilidad propia -
+// y a ojo tampoco: pasa por "el menu esta desplegado". Lo caza el diff de
+// estilos computados contra la version con MDL.
+//
+// Del resto de ese bloque de boilerplate no hace falta nada: .clearfix ya lo
+// define main.less, y .visuallyhidden / .invisible / .browserupgrade no se
+// usan en ninguna plantilla.
+.hidden {
+    display: none !important;
+}
+
+// MDL tampoco se limitaba a clases: estilaba ETIQUETAS HTML desnudas. Es la
+// misma trampa que '.hidden' y salieron las dos por el mismo sitio, el diff
+// de estilos computados. Dos de estas se notaban de verdad:
+//
+//   - 'ul, ol { line-height: 24px }'  El desplegable del login es un <ul>, asi
+//     que sin esto heredaba los 64px de la fila de cabecera y se estiraba.
+//   - 'img { vertical-align: middle }'  Sin ello el logo de la cabecera se
+//     apoya en la linea base y su hueco crece de 50 a 56,5 px.
+//
+// main.less redefine despues 'a' y 'h1'-'h6' y sigue ganando por orden, igual
+// que antes. No se replican las reglas de @media print de MDL (page-break,
+// orphans/widows): solo afectan al imprimir y nadie imprime esto.
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+main {
+    display: block;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+ul,
+ol {
+    font-size: 14px;
+    line-height: 24px;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    padding: 0;
+}
+
+h1 { font-size: 56px; line-height: 1.35; letter-spacing: -.02em; margin: 24px 0; }
+h2 { font-size: 45px; line-height: 48px; margin: 24px 0; }
+h3 { font-size: 34px; line-height: 40px; margin: 24px 0; }
+h4 { font-size: 24px; line-height: 32px; margin: 24px 0 16px; }
+h5 { font-size: 20px; font-weight: 500; line-height: 1; letter-spacing: .02em; margin: 24px 0 16px; }
+h6 { font-size: 16px; letter-spacing: .04em; margin: 24px 0 16px; }
+h6, p { font-weight: 400; line-height: 24px; }
+p { font-size: 14px; letter-spacing: 0; margin: 0 0 16px; }
+
+a {
+    color: @mdl-acento;
+    font-weight: 500;
+}
+
+blockquote {
+    position: relative;
+    font-size: 24px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.35;
+    letter-spacing: .08em;
+}
+
+// ---------------------------------------------------------------------------
+// Layout
+// ---------------------------------------------------------------------------
+
+// El envoltorio que el JS de MDL creaba alrededor de .mdl-layout. NO es
+// decorativo: .mdl-layout mide 'height: 100%', y sin un padre dimensionado ese
+// 100% no resuelve contra nada. Quitarlo dejaba la aplicacion entera en 94px
+// de alto (el contenido, en 30px). Ahora el div esta en mainView.html.
+.mdl-layout__container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.mdl-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+// El elemento que scrollea de verdad. NO es decorativo: libraryView le engancha
+// el scroll infinito y entradaView lo usa para desplazarse a una vineta.
+.mdl-layout__content {
+    position: relative;
+    display: inline-block;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-grow: 1;
+    z-index: 1;
+    -webkit-overflow-scrolling: touch;
+}
+
+// Con el drawer abierto, el contenido de detras no debe poder desplazarse.
+.mdl-layout__drawer.is-visible ~ .mdl-layout__content {
+    overflow: hidden;
+}
+
+.mdl-layout-spacer {
+    flex-grow: 1;
+}
+
+.mdl-layout__header {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-height: 64px;
+    max-height: 1000px;
+    z-index: 3;
+    background-color: @mdl-primario;
+    color: @mdl-texto;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    @media @{mdl-pantalla-pequena} {
+        min-height: 56px;
+    }
+}
+
+.mdl-layout__header-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    align-self: stretch;
+    align-items: center;
+    height: 64px;
+    margin: 0;
+    // El 80 de la izquierda es el hueco del boton de hamburguesa, que va
+    // posicionado en absoluto encima.
+    padding: 0 40px 0 80px;
+    @media @{mdl-pantalla-pequena} {
+        height: 56px;
+        padding: 0 16px 0 72px;
+    }
+}
+
+// Los hijos de la fila de cabecera no se encogen. Sin esto el logo, el
+// separador y la navegacion pasan a flex-shrink: 1 y la cabecera se recoloca
+// en cuanto falta sitio.
+.mdl-layout__header-row > * {
+    flex-shrink: 0;
+}
+
+// MDL lo ocultaba con '.mdl-layout.has-drawer ... {display:none}', y
+// 'has-drawer' era otra clase que ponia su JS. Esta aplicacion SIEMPRE tiene
+// cajon, asi que la condicion se resuelve aqui y sobra la clase. Se conservan
+// las demas propiedades aunque hoy no se vea: si alguien lo vuelve a mostrar,
+// que aparezca donde aparecia.
+.mdl-layout__header > .mdl-layout-icon {
+    display: none;
+    position: absolute;
+    left: 40px;
+    top: 16px;
+    height: 32px;
+    width: 32px;
+    overflow: hidden;
+    z-index: 3;
+    @media @{mdl-pantalla-pequena} {
+        left: 16px;
+        top: 12px;
+    }
+}
+
+.mdl-layout-title {
+    display: block;
+    position: relative;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: .02em;
+    font-weight: 400;
+    box-sizing: border-box;
+}
+
+// MDL tenia esto detras de una clase 'is-small-screen' que ponia su JS con un
+// matchMedia. Una media query hace lo mismo sin JavaScript.
+@media @{mdl-pantalla-pequena} {
+    .mdl-layout--large-screen-only {
+        display: none;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Drawer
+//
+// El boton y la capa oscura los CREABA el JS de MDL en tiempo de ejecucion
+// (Layout.prototype.init). Ahora estan en mainView.html, que es donde se ven.
+// ---------------------------------------------------------------------------
+
+.mdl-layout__drawer {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: @mdl-ancho-drawer;
+    height: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    box-sizing: border-box;
+    border-right: 1px solid #e0e0e0;
+    background: #fafafa;
+    transform: translateX(@mdl-desplazamiento-drawer);
+    will-change: transform;
+    transition: transform .2s cubic-bezier(.4, 0, .2, 1);
+    color: @mdl-texto;
+    overflow: visible;
+    overflow-y: auto;
+    z-index: 5;
+
+    &.is-visible {
+        transform: translateX(0);
+    }
+    > * {
+        flex-shrink: 0;
+    }
+    > .mdl-layout-title {
+        line-height: 64px;
+        padding-left: 40px;
+        @media @{mdl-pantalla-pequena} {
+            line-height: 56px;
+            padding-left: 16px;
+        }
+    }
+    .mdl-navigation {
+        flex-direction: column;
+        align-items: stretch;
+        padding-top: 16px;
+        .mdl-navigation__link {
+            display: block;
+            flex-shrink: 0;
+            padding: 16px 40px;
+            margin: 0;
+            color: #757575;
+            @media @{mdl-pantalla-pequena} {
+                padding: 16px;
+            }
+        }
+    }
+}
+
+.mdl-layout__drawer-button {
+    display: block;
+    position: absolute;
+    height: 48px;
+    width: 48px;
+    border: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-align: center;
+    cursor: pointer;
+    font-size: 26px;
+    line-height: 56px;
+    background: transparent;
+    margin: 8px 12px;
+    top: 0;
+    left: 0;
+    color: @mdl-texto;
+    z-index: 4;
+    @media @{mdl-pantalla-pequena} {
+        margin: 4px;
+    }
+    @media screen and (min-width: 1025px) {
+        line-height: 54px;
+    }
+}
+
+.mdl-layout__header .mdl-layout__drawer-button {
+    position: absolute;
+    color: @mdl-texto;
+    background-color: inherit;
+}
+
+// La capa que oscurece el contenido con el drawer abierto y lo cierra al
+// pulsarla. 'visibility' va en la transicion a proposito: sin ella la capa
+// seguiria capturando pulsaciones durante la animacion de cierre.
+.mdl-layout__obfuscator {
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 4;
+    visibility: hidden;
+    transition: background-color .2s cubic-bezier(.4, 0, .2, 1), visibility 0s linear .2s;
+
+    &.is-visible {
+        background-color: rgba(0, 0, 0, .5);
+        visibility: visible;
+        transition: background-color .2s cubic-bezier(.4, 0, .2, 1), visibility 0s;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Navegacion
+// ---------------------------------------------------------------------------
+
+.mdl-navigation {
+    display: flex;
+    flex-wrap: nowrap;
+    box-sizing: border-box;
+}
+
+.mdl-navigation__link {
+    color: @mdl-texto;
+    text-decoration: none;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0;
+    opacity: .87;
+}
+
+// Dentro de la cabecera la navegacion se comporta distinto: fila, centrada y
+// a la altura de la barra. Sin esto los enlaces del login quedaban a media
+// altura y 48px mas a la derecha de su sitio.
+.mdl-layout__header-row {
+    .mdl-navigation {
+        margin: 0;
+        padding: 0;
+        height: 64px;
+        flex-direction: row;
+        align-items: center;
+    }
+    .mdl-navigation__link {
+        display: block;
+        color: @mdl-texto;
+        line-height: 64px;
+        padding: 0 24px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Campos de texto
+//
+// AQUI ESTA EL CAMBIO DE FONDO. MDL movia la etiqueta flotante desde
+// JavaScript: su componentHandler ponia is-dirty / is-focused sobre el <div>
+// de fuera, y el CSS reaccionaba a esas clases. En la hoja de MDL no hay UN
+// SOLO selector :focus sobre .mdl-textfield__input, o sea que sin su JS la
+// etiqueta no se movia nunca.
+//
+// Eso era necesario en 2015. Hoy :placeholder-shown y :focus-within hacen lo
+// mismo sin una linea de JavaScript, y con ellos se puede borrar la unica
+// llamada viva a componentHandler (formView.materialDesignUpdate).
+//
+// OJO: :placeholder-shown exige que el <input> TENGA atributo placeholder. Por
+// eso las plantillas llevan ahora placeholder=" " (un espacio): sin el, el
+// selector no casa nunca, :not(:placeholder-shown) casa SIEMPRE y la etiqueta
+// se queda arriba de forma permanente.
+// ---------------------------------------------------------------------------
+
+.mdl-textfield {
+    position: relative;
+    font-size: 16px;
+    display: inline-block;
+    box-sizing: border-box;
+    width: 300px;
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 0;
+}
+
+.mdl-textfield__input {
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, .12);
+    display: block;
+    font-size: 16px;
+    margin: 0;
+    padding: 4px 0;
+    width: 100%;
+    background: none;
+    text-align: left;
+    color: inherit;
+
+    &:focus {
+        outline: none;
+        border-bottom: 2px solid @mdl-primario;
+        // Compensa el pixel que crece el borde, para que el campo no salte.
+        padding-bottom: 3px;
+    }
+}
+
+.mdl-textfield__label {
+    bottom: 0;
+    color: rgba(0, 0, 0, .26);
+    font-size: 16px;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    position: absolute;
+    display: block;
+    top: 24px;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.mdl-textfield--floating-label {
+    .mdl-textfield__label {
+        transition: top .2s cubic-bezier(.4, 0, .2, 1), font-size .2s cubic-bezier(.4, 0, .2, 1), color .2s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    // Los tres casos en que la etiqueta sube:
+    //   1. el campo tiene el foco;
+    //   2. el campo tiene contenido;
+    //   3. el "campo" es un div contenteditable (#comments del formulario de
+    //      entradas), donde :placeholder-shown no existe y que ademas nunca
+    //      esta vacio: siempre lleva o el texto guardado o 'TU CRITICA'.
+    &:focus-within .mdl-textfield__label,
+    .mdl-textfield__input:not(:placeholder-shown) ~ .mdl-textfield__label,
+    div.mdl-textfield__input ~ .mdl-textfield__label {
+        color: @mdl-primario;
+        font-size: 12px;
+        top: 4px;
+        visibility: visible;
+    }
+}
+
+.mdl-textfield__error {
+    color: #d50000;
+    position: absolute;
+    font-size: 12px;
+    margin-top: 3px;
+    visibility: hidden;
+    display: block;
+}
+
+// ---------------------------------------------------------------------------
+// Botones
+//
+// PERDIDA CONSCIENTE: el efecto ripple. Hay UN boton que si lo tenia -- el de
+// entrar (#loginSubmit), que existe en el DOM desde el arranque y al que por
+// tanto si alcanzaba la pasada automatica de MDL; se le veian dentro los
+// <span class="mdl-button__ripple-container"> y <span class="mdl-ripple"> que
+// inyectaba. Los demas botones se pintan despues y nunca llegaban a
+// actualizarse, asi que esos no pierden nada.
+//
+// No se reproduce: es una onda decorativa en un solo boton, y replicarla pide
+// JavaScript que mida la pulsacion. Si algun dia se echa de menos, se hace con
+// un pseudoelemento y una animacion, sin volver a traer la libreria.
+// ---------------------------------------------------------------------------
+
+.mdl-button {
+    background: none;
+    border: none;
+    border-radius: 2px;
+    color: #000;
+    position: relative;
+    height: 36px;
+    margin: 0;
+    min-width: 64px;
+    padding: 0 16px;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    overflow: hidden;
+    will-change: box-shadow;
+    transition: box-shadow .2s cubic-bezier(.4, 0, 1, 1), background-color .2s cubic-bezier(.4, 0, .2, 1), color .2s cubic-bezier(.4, 0, .2, 1);
+    outline: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    line-height: 36px;
+    vertical-align: middle;
+
+    &:hover {
+        background-color: rgba(158, 158, 158, .2);
+    }
+    &::-moz-focus-inner {
+        border: 0;
+    }
+}
+
+.mdl-button--raised {
+    background: rgba(158, 158, 158, .2);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+
+    &:active {
+        box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2);
+    }
+}
+
+.mdl-button--icon {
+    border-radius: 50%;
+    font-size: 24px;
+    height: 32px;
+    margin-left: 0;
+    margin-right: 0;
+    min-width: 32px;
+    width: 32px;
+    padding: 0;
+    overflow: hidden;
+    color: inherit;
+    line-height: normal;
+}
+
+.mdl-button--accent {
+    color: @mdl-acento;
+}
+
+// ---------------------------------------------------------------------------
+// Tarjetas, insignias y sombra
+// ---------------------------------------------------------------------------
+
+.mdl-card {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    font-weight: 400;
+    min-height: 200px;
+    overflow: hidden;
+    width: 330px;
+    z-index: 1;
+    position: relative;
+    background: #fff;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+.mdl-card__title {
+    align-items: center;
+    color: #000;
+    display: flex;
+    justify-content: stretch;
+    line-height: normal;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.mdl-card__title-text {
+    align-self: flex-end;
+    color: inherit;
+    display: block;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: normal;
+    overflow: hidden;
+    margin: 0;
+}
+
+.mdl-card__subtitle-text {
+    font-size: 14px;
+    color: rgba(0, 0, 0, .54);
+    margin: 0;
+}
+
+.mdl-card__supporting-text {
+    color: rgba(0, 0, 0, .54);
+    font-size: 1rem;
+    line-height: 18px;
+    overflow: hidden;
+    padding: 16px;
+    width: 90%;
+}
+
+.mdl-shadow--4dp {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2);
+}
+
+.mdl-badge {
+    position: relative;
+    white-space: nowrap;
+    margin-right: 24px;
+
+    &[data-badge]:after {
+        content: attr(data-badge);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        position: absolute;
+        top: -11px;
+        right: -24px;
+        font-weight: 600;
+        font-size: 12px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: @mdl-acento;
+        color: #fff;
+    }
+    &.mdl-badge--no-background[data-badge]:after {
+        color: @mdl-acento;
+        background: rgba(255, 255, 255, .2);
+        box-shadow: 0 0 1px gray;
+    }
+    &.mdl-badge--overlap {
+        margin-right: 10px;
+        &:after {
+            right: -10px;
+        }
+    }
+}

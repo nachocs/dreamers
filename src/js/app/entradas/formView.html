@@ -14,13 +14,13 @@
         <div class="wysiwyg-view"></div>
       <% } else { %>
         <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input class="mdl-textfield__input" type="text" id="subject" name="subject">
+          <input class="mdl-textfield__input" type="text" id="subject" name="subject" placeholder=" ">
           <label class="mdl-textfield__label" for="subject">T&iacute;tulo de la pel&iacute;cula</label>
         </div>
         <div class="advanced-dropdown"><span><%= obj.advanced ? 'no meter m&aacute;s info' : 'meter m&aacute;s info'%> <% if (obj.advanced) { %><svg class="fa" aria-hidden="true" fill="currentColor" viewBox="0.0 -832.0 1024.0 576.0"><path d="M960 -256H64Q38 -256 19.0 -275.0Q0 -294 0.0 -320.0Q0 -346 19 -365L467 -813Q486 -832 512.0 -832.0Q538 -832 557 -813L1005 -365Q1024 -346 1024.0 -320.0Q1024 -294 1005.0 -275.0Q986 -256 960 -256Z"/></svg><% } else { %><svg class="fa" aria-hidden="true" fill="currentColor" viewBox="0.0 -896 1024.0 576.0"><path d="M1005 -787 557 -339Q538 -320 512.0 -320.0Q486 -320 467 -339L19 -787Q0 -806 0.0 -832.0Q0 -858 19.0 -877.0Q38 -896 64 -896H960Q986 -896 1005.0 -877.0Q1024 -858 1024.0 -832.0Q1024 -806 1005 -787Z"/></svg><% } %></span></div>
         <div class="advanced <%= obj.advanced ? '' : 'hide' %>">
           <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="titulo_original" name="titulo_original">
+            <input class="mdl-textfield__input" type="text" id="titulo_original" name="titulo_original" placeholder=" ">
             <label class="mdl-textfield__label" for="titulo_original">T&iacute;tulo original</label>
           </div>
           <div class="column">
@@ -32,7 +32,7 @@
             </select>
           </div>
           <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="ano" name="ano" pattern="-?[0-9]*(\.[0-9]+)?" size=5 maxlength=5>
+            <input class="mdl-textfield__input" type="text" id="ano" name="ano" pattern="-?[0-9]*(\.[0-9]+)?" size=5 maxlength=5 placeholder=" ">
             <label class="mdl-textfield__label" for="ano">A&ntilde;o</label>
             <span class="mdl-textfield__error">Un numero, porfa</span>
           </div>
@@ -53,41 +53,41 @@
             </select>
           </div>
           <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="duracion" name="duracion" pattern="-?[0-9]*(\.[0-9]+)?" size=5 maxlength=5>
+            <input class="mdl-textfield__input" type="text" id="duracion" name="duracion" pattern="-?[0-9]*(\.[0-9]+)?" size=5 maxlength=5 placeholder=" ">
             <label class="mdl-textfield__label" for="ano">Duraci&oacute;n (minutos)</label>
             <span class="mdl-textfield__error">Un numero, porfa</span>
           </div>
           <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="director" name="director">
+            <input class="mdl-textfield__input" type="text" id="director" name="director" placeholder=" ">
             <label class="mdl-textfield__label" for="director">Director</label>
           </div>
           <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="guion" name="guion">
+            <input class="mdl-textfield__input" type="text" id="guion" name="guion" placeholder=" ">
             <label class="mdl-textfield__label" for="guion">Gui&oacute;n</label>
           </div>
           <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="fotografia" name="fotografia">
+            <input class="mdl-textfield__input" type="text" id="fotografia" name="fotografia" placeholder=" ">
             <label class="mdl-textfield__label" for="fotografia">Fotograf&iacute;a</label>
           </div>
           <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="musica" name="musica">
+            <input class="mdl-textfield__input" type="text" id="musica" name="musica" placeholder=" ">
             <label class="mdl-textfield__label" for="musica">M&uacute;sica</label>
           </div>
           <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="produccion" name="produccion">
+            <input class="mdl-textfield__input" type="text" id="produccion" name="produccion" placeholder=" ">
             <label class="mdl-textfield__label" for="produccion">Productora</label>
           </div>
           <div class="column mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="distribuidora" name="distribuidora">
+            <input class="mdl-textfield__input" type="text" id="distribuidora" name="distribuidora" placeholder=" ">
             <label class="mdl-textfield__label" for="distribuidora">Distribuidora</label>
           </div>
         </div>
         <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <textarea class="mdl-textfield__input" type="text" rows= "2" id="reparto" ></textarea>
+          <textarea class="mdl-textfield__input" type="text" rows= "2" id="reparto" placeholder=" " ></textarea>
           <label class="mdl-textfield__label" for="reparto">Reparto -- Actor(personaje), actor2(personaje2)... --</label>
         </div>
         <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <textarea class="mdl-textfield__input" type="text" rows= "3" id="sinopsis" ></textarea>
+          <textarea class="mdl-textfield__input" type="text" rows= "3" id="sinopsis" placeholder=" " ></textarea>
           <label class="mdl-textfield__label" for="sinopsis">Sinopsis</label>
         </div>
         <div class="row mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-dirty is-focused">
