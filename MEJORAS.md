@@ -252,11 +252,33 @@ servidor local y se sondeó con Chromium headless, leyendo el DOM ya arrancado:
 Ninguna plantilla `mdl-*` está en `index.ejs`: todo el markup lo pinta Backbone. Lo que pasa es
 que el bundle arranca y pinta **antes** de `DOMContentLoaded`, así que la pasada automática de
 `componentHandler` alcanza lo que existe en ese instante — el layout y los dos campos del login —
-y nada más. Todo lo que se pinta después (los otros 16 textfields, los botones, el ripple) **no se
-actualiza nunca**: hoy ya solo tienen el CSS de MDL, sin comportamiento.
+y nada más.
+
+> **⚠️ Corrección (2026-08-28). La conclusión que había aquí era falsa.** Esta tabla decía que
+> «todo lo que se pinta después (los otros 16 textfields, los botones, el ripple) no se actualiza
+> nunca». **El error está en la sonda, no en el dato:** se midió sobre la portada, y ahí el
+> formulario de entradas **no está abierto**, así que sus campos ni siquiera existen en el DOM.
+>
+> `formView.afterRender()` llama a `materialDesignUpdate()` (`entradas/formView.js:557`), que
+> recorre `[class*=" mdl-js"]` dentro del formulario y actualiza cada elemento **cuando el
+> formulario se abre**. Comprobado que el selector casa de verdad: en todo el markup `mdl-js-*` va
+> siempre precedido de otra clase, nunca al principio del atributo — de estarlo, ese espacio
+> inicial lo dejaría fuera en silencio.
+>
+> Las etiquetas flotantes son **15 campos en solo dos formularios**: 2 en `header/loginView.html`
+> (los pilla la pasada de arranque) y 13 en `entradas/formView.html` (los actualizaría
+> `materialDesignUpdate()` al abrirse el formulario).
+>
+> **Pero de esos 13 no hay que conservar ninguno: el formulario de películas nunca se terminó.**
+> Ver la sección siguiente.
+>
+> **Lección:** una sonda que mide "qué hay actualizado" en una sola pantalla no mide la
+> aplicación, mide esa pantalla — y esta se hizo además **sin sesión iniciada**, que es la primera
+> de las tres condiciones que hacen falta para que ese formulario se pinte siquiera. Para el resto
+> de componentes de la tabla (botones, ripple) el dato sigue sin confirmar por lo mismo.
 
 Para reproducir la sonda: `npm run build`, servir `dist/`, y en la página inyectar
-`document.querySelectorAll('.is-upgraded')` tras el `load`.
+`document.querySelectorAll('.is-upgraded')` tras el `load` — **abriendo antes cada formulario**.
 
 ### Lo que hay que replicar sí o sí
 
@@ -266,18 +288,48 @@ Para reproducir la sonda: `npm run build`, servir `dist/`, y en la página inyec
 - **`.mdl-layout__content` es el elemento que scrollea**, no un contenedor decorativo:
   `libraryView.js:180` le engancha el scroll infinito, `libraryView.js:184` lo lee y
   `entradaView.js:139` lo anima. Hay que trasladar esos tres enganches.
-- **Las etiquetas flotantes de los dos campos del login sí funcionan** (MDL les pone
-  `is-dirty`/`is-focused`/`is-invalid`). Si se quitan sin reemplazo, esos dos campos se degradan.
+- **Las etiquetas flotantes del login** (2 campos): MDL pone `is-dirty`/`is-focused`/`is-invalid`
+  sobre el `<div>` de fuera. Si se quitan sin reemplazo, esos dos se degradan. Los otros 13 campos
+  con etiqueta flotante cuelgan del formulario sin terminar (ver más abajo) y no hay nada que
+  conservar en ellos.
 - La única llamada viva a `componentHandler` es `formView.materialDesignUpdate()`
-  (`entradas/formView.js:557` y `:569`); las otras cuatro están comentadas.
+  (`entradas/formView.js:557` y `:569`); las otras cuatro están comentadas. Solo da servicio al
+  formulario sin terminar, así que **se va con él**.
 
-### Decisión pendiente antes de empezar
+### El formulario de películas está sin terminar: son 2 campos, no 15
 
-Los **16 textfields que nunca se actualizan tienen la etiqueta flotante muerta**. Al escribir el
-CSS propio hay que elegir, y es una decisión de producto, no técnica:
+Lo apuntó el dueño de memoria («pensé en meter películas con este formulario pero creo que nunca
+lo terminé») y el código lo confirma sin ambigüedad. `submitPostThrottle()`
+(`entradas/formView.js:422`) manda esto y solo esto:
 
-- **(a)** dejarlos como están, fieles al comportamiento actual aunque esté algo roto; o
-- **(b)** hacer que funcionen en todos, que es mejor pero es un cambio visible que nadie pidió.
+```js
+const saveObj = { comments, uid, indice };
+```
+
+**Ninguno de los 13 campos viaja.** Y no es que se recojan por otro lado: `subject`,
+`titulo_original`, `ano`, `duracion`, `director`, `guion`, `fotografia`, `musica`, `produccion`,
+`distribuidora`, `reparto` y `sinopsis` tienen **cero menciones** en todo `formView.js`, y no hay
+un solo handler de `change`/`input` sobre ellos (los únicos son `keyup` para la selección de texto
+y `change #file-submit` para subir imagen). Son markup que nadie lee nunca. Encima, con
+`if (comments.length < 1) return;`, rellenar solo esos campos y dejar la crítica vacía hace que el
+formulario **no haga nada, en silencio**.
+
+Así que para la §4 **las etiquetas flotantes que hay que conservar son 2: las del login.** Las
+otras 13 cuelgan de campos muertos.
+
+Cómo replicar esas dos, que es lo único que queda: MDL deja la etiqueta dentro del campo
+(`position: absolute; top: 24px`, justo donde va el texto) y la sube a `top: 4px; font-size: 12px`
+cuando el contenedor lleva `is-focused`, `is-dirty` o `has-placeholder`. **Esas clases las pone el
+JavaScript**: en la hoja de MDL hay **cero** selectores `:focus` sobre `.mdl-textfield__input`, o
+sea que no hay respaldo en CSS puro. Pero es una solución de 2015: hoy `:placeholder-shown` +
+`:focus` da lo mismo **sin una línea de JavaScript**. Detalle: `:placeholder-shown` exige que el
+`<input>` tenga atributo `placeholder` (basta `placeholder=" "`), y hoy no lo llevan porque la
+etiqueta hace ese papel.
+
+**Decisión aparte, que no bloquea la §4:** qué hacer con el formulario a medias. Borrarlo quita 13
+campos de markup y buena parte de las ~200 apariciones `mdl-*` que asustaban en la medición de
+arriba; terminarlo es una funcionalidad, no una limpieza. Mientras no se decida, la §4 puede
+tratarlo como lo que es: markup inerte al que solo hay que no romperle el aspecto.
 
 ### Cómo abordarlo
 
