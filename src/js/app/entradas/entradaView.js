@@ -12,6 +12,12 @@ import MsgFormView from '../msgs/msgFormView';
 import PreviousMsgView from './previousMsgView';
 import ModalView from '../msgs/modalView';
 
+// Tiene que coincidir con la transicion de '.container' en css/main.less.
+// Es la unica constante duplicada entre el CSS y el JS, y esta aqui a mano y no
+// leida con getComputedStyle a proposito: leerla obligaria a un recalculo de
+// estilo por viñeta y por reordenacion, justo el coste que esta seccion quita.
+const DURACION_REORDENADO = 500;
+
 export default Backbone.View.extend({
   initialize() {
     _.bindAll(this);
@@ -79,7 +85,10 @@ export default Backbone.View.extend({
       });
     }
     _.extend(obj, {
-      'style': `top:${this.model.get('top')}px; left:${this.model.get('left')}px; width:${this.model.get('ancho')}px; height:${this.model.get('alto')}px;`,
+      // --tx/--ty en vez de left/top: los consume el 'transform' de .container
+      // en main.less. Backbone solo aplica attributes() al crear el elemento,
+      // asi que a partir de aqui quien las mueve es rearrange().
+      'style': `--tx:${this.model.get('left')}px; --ty:${this.model.get('top')}px; width:${this.model.get('ancho')}px; height:${this.model.get('alto')}px;`,
       'data-entrada': this.model.get('entrada'),
       'data-indice': this.model.get('indice').replace(/\//ig, '::'),
       'data-link': `https://dreamers.es/${this.model.get('indice')}/${this.model.get('entrada')}`,
@@ -128,7 +137,7 @@ export default Backbone.View.extend({
           'SQalto': nuevoAlto,
         });
         this.collection.trigger('ordenar');
-        this.rearrange(true);
+        this.rearrange();
         this.ajustado = true;
       }
     }, 1000);
@@ -197,25 +206,50 @@ export default Backbone.View.extend({
       SQalto: 1, //this.model.get('SQalto') + 1
     });
     this.collection.trigger('ordenar');
-    this.rearrange(true);
+    this.rearrange();
   },
-  rearrange(stop) {
-    const self = this;
+  // Coloca la viñeta donde diga el modelo. Solo escribe el destino: de
+  // interpolar se encarga la transicion CSS de '.container'.
+  //
+  // El parametro 'stop' que llevaba antes ("esta vez no avises al terminar")
+  // ya no hace falta. Sus dos llamadas, rearrange(true), estaban guardadas por
+  // otro lado: contraer() pone expandido:false y ajustarAlto() pone
+  // this.ajustado = true justo despues, y ajustarAlto() se corta con las dos
+  // cosas nada mas entrar. O sea que 'quietoparao' ya no hacia nada en ninguno
+  // de los dos casos.
+  rearrange() {
     if (!this.rendered) {
       this.render();
-    } else {
-      this.$el.animate({
-        top: this.model.get('top'),
-        left: this.model.get('left'),
-        width: this.model.get('ancho'),
-        height: this.model.get('alto'),
-      }, 400, () => {
-        if (!stop) {
-          self.trigger('quietoparao');
-        }
-        // animation complete
-      });
+      return;
     }
+    const estilo = this.el.style;
+    estilo.setProperty('--tx', `${this.model.get('left')}px`);
+    estilo.setProperty('--ty', `${this.model.get('top')}px`);
+    estilo.width = `${this.model.get('ancho')}px`;
+    estilo.height = `${this.model.get('alto')}px`;
+
+    // 'quietoparao' dispara ajustarAlto(), que MIDE alturas del contenido. Hay
+    // que avisar cuando la viñeta ya esta quieta: midiendo a mitad de la
+    // transicion el ancho aun no es el final y las alturas salen mal.
+    //
+    // Va con reloj y no con 'transitionend' aposta. transitionend NO se emite
+    // cuando el valor no llega a cambiar -- reordenar sin mover esta viñeta es
+    // el caso normal, no el raro --, y ahi el aviso se perderia para siempre.
+    // jQuery.animate() llamaba a su callback pasara lo que pasara, y eso es lo
+    // que se conserva. El clearTimeout hace que varias reordenaciones seguidas
+    // avisen una sola vez, al pararse; antes se encolaban en la cola de efectos
+    // de jQuery y avisaban una por una.
+    clearTimeout(this.relojReordenado);
+    this.relojReordenado = setTimeout(() => {
+      this.trigger('quietoparao');
+    }, DURACION_REORDENADO);
+  },
+  // El reloj de rearrange() mantiene viva la vista si esta se va justo despues
+  // de una reordenacion. jQuery.animate() no daba este problema porque .remove()
+  // vaciaba tambien la cola de efectos del elemento.
+  remove() {
+    clearTimeout(this.relojReordenado);
+    return Backbone.View.prototype.remove.call(this);
   },
   render() {
     // console.log('render' + this.cid);

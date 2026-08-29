@@ -372,9 +372,27 @@ h6 {
     border-color: black;
     border-width: 3px 4px 3px 5px;
     border-radius: 95% 4% 92% ~"5%/4%" 95% 6% 95%;
-    transform: rotate(2deg);
-    // transition: height 0.5s ease-out, width 0.5s ease-out;
-    transition: all 0.5s ease-out;
+    // La posicion de la viñeta en el mosaico va por 'transform', no por
+    // 'top'/'left': translate no dispara layout y compone en GPU, mientras que
+    // animar top/left recalculaba el layout de la pagina entera en cada
+    // fotograma. Antes lo escribia jQuery.animate() a 400 ms POR ENCIMA de esta
+    // misma transicion de 500 ms; ahora el JS escribe el destino una sola vez
+    // (entradaView.rearrange) y de interpolar se encarga solo el navegador.
+    //
+    // La rotacion va en --rot y no en el propio 'transform' porque hay cuatro
+    // estados con angulos distintos (normal, impar, expandido, expandidomas) y
+    // 'transform' no se acumula: si cada estado redeclarase el suyo, tendria
+    // que repetir tambien el translate y la posicion se perderia en cuanto una
+    // viñeta se expandiera.
+    --tx: 0px;
+    --ty: 0px;
+    --rot: 2deg;
+    top: 0;
+    left: 0;
+    transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--rot));
+    // Lista explicita en vez de 'all': el destino de la posicion ya no cambia
+    // fotograma a fotograma, asi que conviene decir exactamente que se anima.
+    transition: transform 0.5s ease-out, width 0.5s ease-out, height 0.5s ease-out;
     .boton-expandir {
         top: 0;
         right: 0;
@@ -427,7 +445,7 @@ h6 {
     &:nth-child(2n+1) {
         border-width: 3px 4px 3px 5px;
         border-radius: 4% 95% 6% ~"95%/95%" 4% 92% 5%;
-        transform: rotate(-2deg);
+        --rot: -2deg;
         .container-inner {
             transform: rotate(2deg);
         }
@@ -480,15 +498,19 @@ h6 {
     &.expandido {
         background-color: white;
         border-width: 5px 3px 3px 5px;
-        transition: height 0.5s ease-out, width 0.5s ease-out;
+        // 'transform' TIENE que estar en esta lista. Antes no hacia falta
+        // porque de mover la viñeta expandida se encargaba jQuery.animate();
+        // ahora la posicion vive en el transform, y sin esto una viñeta
+        // expandida saltaria de golpe a su sitio en vez de deslizarse.
+        transition: transform 0.5s ease-out, height 0.5s ease-out, width 0.5s ease-out;
         border-radius: 97% 2% 95% ~"3%/2%" 97% 3% 98%;
-        transform: rotate(1deg);
+        --rot: 1deg;
         .container-inner {
             transform: rotate(-1deg);
         } // border-radius:95% 4% 97% ~"5%/4%" 94% 3% 95%;
         &.expandidomas {
             border-radius: 5px;
-            transform: rotate(0deg);
+            --rot: 0deg;
             .container-inner {
                 transform: rotate(0deg);
             }

@@ -2,7 +2,7 @@
 
 > Documento de análisis, medido sobre **1.0.15** el 2026-08-27.
 > Son mejoras independientes entre sí: cada una se puede hacer y desplegar sola.
-> **Estado:** §3 y §1 hechas (2026-08-27). Quedan §2 (animaciones) y §4 (MDL, con el
+> **Estado:** §3 y §1 hechas (2026-08-27), §2 hecha (2026-08-28). Queda §4 (MDL, con el
 > alcance ya medido y una decisión pendiente: ver el final de esa sección).
 
 Complementa a [`PLAN-REACT.md`](PLAN-REACT.md), que responde a *cómo* se migraría a React.
@@ -85,24 +85,91 @@ la barra de cierre o alterar el orden de los atributos la llevan de 1820/1820 a 
 **Ganancia real: −53 KB gzip** (198 → 145 KB; 840 → 548 KB sin comprimir), más de los 39 KB
 estimados, porque el módulo arrastraba además sus propias tablas de emoji.
 
-## 2. El conflicto de animaciones
+## 2. ~~El conflicto de animaciones~~ — HECHO 2026-08-28
 
-Hoy hay **dos sistemas animando lo mismo a la vez**:
+Había **dos sistemas animando lo mismo a la vez**:
 
-- `entradas/libraryView.js` → `rearrange()` usa `jQuery.animate()` a 400 ms sobre
-  `top`/`left`/`width`/`height`, escribiendo estilos inline fotograma a fotograma.
-- `css/main.less:311` declara `transition: all 0.5s ease-out` sobre `.container`.
+- `rearrange()` usaba `jQuery.animate()` a 400 ms sobre `top`/`left`/`width`/`height`,
+  escribiendo estilos inline fotograma a fotograma.
+- `css/main.less` declaraba `transition: all 0.5s ease-out` sobre `.container`.
 
 O sea: una transición CSS de 500 ms intentando interpolar propiedades que jQuery ya está
 reescribiendo cada 16 ms, y con distinta duración. Además `top`/`left`/`width`/`height` fuerzan
 *layout* en cada fotograma, que es lo más caro que se puede animar.
 
 **Arreglo:** quitar `jQuery.animate()` y dejar solo la transición CSS, moviendo la posición a
-`transform: translate3d(x, y, 0)`, que compone en GPU y no dispara layout. Desaparece de paso el
-parámetro `stop` de `rearrange(stop)`, que existe solo para decir "esta vez no vuelvas a medir".
+`transform: translate3d(x, y, 0)`, que compone en GPU y no dispara layout.
 
-Es el punto que más duele hoy y **no necesita React**: el plan de migración lo da como ventaja de
-React, pero se puede hacer ya.
+**Resultado.** Hecho, pero con tres cosas que este documento no había visto y que cambian la
+receta. La primera es menor: `rearrange()` **no está en `libraryView.js`**, sino en
+`entradas/entradaView.js`. Las dos llamadas a `.animate()` que sí hay en `libraryView.js` son de
+`mostrarComentariosEv`/`ocultarComentariosEv`, que están **muertas** — sus dos entradas de
+`events` llevan comentadas desde antes, y de los comentarios al pasar el ratón ya se encarga el
+CSS. Se dejan como estaban: no son parte de este conflicto.
+
+Las otras dos sí importan:
+
+- **`translate3d` a secas se cargaba la viñeta.** `.container` ya usaba `transform` para la
+  rotación de tebeo, y no con un ángulo sino con **cuatro**: `2deg` normal, `-2deg` en las
+  impares, `1deg` al expandir y `0deg` en `expandidomas`. Como `transform` no se acumula, meter
+  ahí el translate habría obligado a repetirlo en los cuatro sitios, y la posición se habría
+  perdido en cuanto una viñeta cambiara de estado. La posición va en `--tx`/`--ty` y la rotación
+  en `--rot`, con un único `transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--rot))`;
+  cada estado ya solo cambia su variable. Se comprobó que el minificador de producción las
+  respeta: los cuatro `--rot` y el transform compuesto salen intactos en el CSS del build.
+- **`.expandido` redeclaraba `transition: height, width`, sin `transform`.** Antes daba igual
+  porque de mover la viñeta expandida se encargaba jQuery. Si no se añade `transform` a esa
+  lista, una viñeta expandida **salta** de golpe a su sitio en vez de deslizarse. Es el tipo de
+  regresión que no da error y que solo se ve mirando.
+
+De paso, `transition: all` pasa a lista explícita (`transform, width, height`): con el destino ya
+escrito una sola vez, conviene decir exactamente qué se anima.
+
+**El parámetro `stop` sí desaparece**, como decía el plan. Sus dos llamadas, `rearrange(true)`,
+estaban guardadas por otro lado: `contraer()` pone `expandido: false` y `ajustarAlto()` pone
+`ajustado = true` justo después, y `ajustarAlto()` se corta con cualquiera de las dos nada más
+entrar. O sea que `quietoparao` ya no hacía nada en ninguno de los dos casos.
+
+**La trampa: `transitionend` NO sirve aquí.** El callback de `jQuery.animate()` era quien
+disparaba `quietoparao` → `ajustarAlto()`, que mide alturas y por eso tiene que esperar a que la
+viñeta esté quieta. Lo natural sería escuchar `transitionend`, y está mal: **no se emite cuando
+el valor no llega a cambiar**, y "reordenar sin que esta viñeta se mueva" es el caso normal, no
+el raro — medido en el navegador, un `resize` que no cambia el número de columnas deja **cero**
+transiciones vivas en las 17 viñetas. Con `transitionend` ese aviso se perdería para siempre.
+Va con un `setTimeout` de 500 ms, que es lo que hacía jQuery (su callback se llamaba pasara lo
+que pasara). El reloj se cancela en `remove()`, cosa que jQuery daba gratis al vaciar la cola de
+efectos del elemento.
+
+**Verificación.** No hay salida de referencia contra la que comparar, así que se sondeó el
+navegador. Lo que quedó probado:
+
+- Cambiar `--tx` produce una `CSSTransition` real sobre `transform`, de 500 ms — o sea que la
+  cadena variable → `transform` → transición funciona, que era la duda de fondo.
+- Las 17 viñetas quedan con `top: 0; left: 0` y **cero** `top`/`left` inline: la posición es toda
+  del transform. Al expandir, la matriz resultante compone bien translate y rotación.
+- `quietoparao` sigue vivo. Con un `MutationObserver` sobre el atributo `style` se ve la cadena
+  entera: al expandir, `width: 447.2 / height: 672.8` (2 filas) y después **el alto sube a 3
+  filas sin que el ancho cambie**. Cambiar `SQalto` solo, sin tocar `SQancho`, lo hace únicamente
+  `ajustarAlto()`, y a `ajustarAlto()` solo se llega por `quietoparao`.
+- **El área scrollable no se resiente**, que era el riesgo real de mover la posición a
+  `transform`: `#contenidodinamico` tiene alto 0 y todo su scroll sale de hijos posicionados en
+  absoluto. Medido contra el código original con el mismo viewport y la misma carga: `scrollHeight`
+  1415 / 1385 y fondo 1366 en **ambos**. El scroll infinito se probó de verdad (17 → 24 viñetas).
+
+Dos avisos para quien repita las medidas:
+
+- **Comparar con el mismo estado.** La primera medida del área scrollable dio un déficit de
+  ~1000 px y parecía una regresión seria. No lo era: se estaba comparando una página con una
+  viñeta expandida contra otra recién cargada. Es el mismo error de "una sola medida antes" que
+  ya se pagó con el Lighthouse de la portada.
+- **En una pestaña de fondo Chrome congela los temporizadores**, y `requestAnimationFrame` no
+  corre. Un muestreo fotograma a fotograma se queda clavado; en una de las pruebas la cadena de
+  `ajustarAlto` tardó 14 s en completarse. Eso es el estrangulamiento del navegador, no el
+  código. Por eso las pruebas buenas son las que no dependen de relojes propios:
+  `getAnimations()` y `MutationObserver`.
+
+Lo que **no** se ha podido comprobar aquí es lo único que de verdad justifica el cambio: que se
+vea suave. El panel del navegador estaba oculto y sin pintar. Queda para una pasada a ojo.
 
 ## 3. ~~Extraer `pack()` y ponerle el primer test~~ — HECHO 2026-08-27
 
@@ -243,14 +310,17 @@ depende de la decisión sobre React.
 
 1. ~~**§3 (`pack()` + test)**~~ — hecha. Era la red de seguridad de todo lo demás.
 2. ~~**§1 (emojione)**~~ — hecha. La ganancia grande y barata: −53 KB gzip.
-3. **§2 (animaciones)** — el dolor real del día a día, y la siguiente por tamaño.
+3. ~~**§2 (animaciones)**~~ — hecha. El dolor real del día a día.
 4. **§4 (MDL)** — con diferencia la más laboriosa, bastante más de lo que se estimó al escribir
    este documento (ver las mediciones en su sección). Va la última a propósito, sola en su rama,
    y con la decisión sobre las etiquetas flotantes tomada antes de empezar.
 
-Aviso sobre §2, para no repetir el error de §4: es la primera que **no se puede cerrar con un
-test**. Es comportamiento de animación, y comparar estilos computados no captura una transición en
-curso. Se valida leyendo el diff y mirándolo en el navegador.
+El aviso que llevaba aquí sobre §2 —que era la primera que no se podía cerrar con un test— se
+quedó a medias. Es verdad que no hay salida de referencia como en §1 y §3, pero **sí se pudo
+comprobar bastante más que "leyendo el diff"**: sondeando el navegador con `getAnimations()` y un
+`MutationObserver` se prueban la transición, la posición y la cadena de eventos enteras. Lo único
+que de verdad queda para el ojo es que se vea suave. Merece la pena tenerlo en cuenta para §4,
+donde la sección también da por imposible verificar: probablemente tampoco lo sea del todo.
 
 Después de esto tiene sentido volver a `PLAN-REACT.md` y decidir con datos: si el DOM imperativo
 sigue doliendo con dos librerías menos y un arnés de tests montado, la migración parte de un sitio
