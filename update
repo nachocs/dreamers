@@ -21,7 +21,27 @@ cd /home/dreamers/git/dreamers;
 # fichero 'update' (por el bit de ejecucion) y dejo el servidor clavado en un
 # commit antiguo durante dos despliegues seguidos.
 git checkout -- package-lock.json 2>/dev/null;
-git pull;
+# 'protocol.version=0' y el fallo duro NO son manias, los dos salieron del
+# despliegue del 2026-09-01:
+#
+#   - Con el protocolo v2 (el de por defecto desde git 2.26) el GET de
+#     info/refs sale 200 y el POST a git-upload-pack contesta 401 con
+#     www-authenticate: Basic realm="GitHub", asi que git se pone a pedir un
+#     usuario que aqui no hay nadie para teclear. El repositorio es publico y
+#     con v0 se clona sin credenciales. No se ha tocado la config del repo a
+#     mano a proposito: si algun dia hay que reclonar, la solucion tiene que
+#     venir con el script.
+#
+#   - Y el ';' de antes se comia el error. El 2026-09-01 el pull fallo, el
+#     script siguio, reconstruyo el codigo VIEJO y termino diciendo que todo
+#     habia ido bien: el despliegue parecia hecho y en el servidor no habia
+#     cambiado nada. Es el mismo agujero que ya describe el comentario del
+#     'git checkout --' de aqui arriba, y merece morir. Si no se puede traer
+#     el codigo nuevo, no hay nada que desplegar.
+git -c protocol.version=0 pull || {
+    echo "!! El pull ha fallado: NO se construye nada (se quedaria el codigo viejo).";
+    exit 1;
+};
 # Ya NO hace falta --legacy-peer-deps: lo pedia extract-text-webpack-plugin
 # @2.1.2, que exigia webpack ^2.2.0 mientras el proyecto usaba webpack 3, y
 # npm 7+ trata ese choque de peer deps como error fatal (ERESOLVE). Al pasar
