@@ -21,24 +21,31 @@ cd /home/dreamers/git/dreamers;
 # fichero 'update' (por el bit de ejecucion) y dejo el servidor clavado en un
 # commit antiguo durante dos despliegues seguidos.
 git checkout -- package-lock.json 2>/dev/null;
-# 'protocol.version=0' y el fallo duro NO son manias, los dos salieron del
+# 'http.version=HTTP/2' y el fallo duro NO son manias, los dos salieron del
 # despliegue del 2026-09-01:
 #
-#   - Con el protocolo v2 (el de por defecto desde git 2.26) el GET de
-#     info/refs sale 200 y el POST a git-upload-pack contesta 401 con
-#     www-authenticate: Basic realm="GitHub", asi que git se pone a pedir un
-#     usuario que aqui no hay nadie para teclear. El repositorio es publico y
-#     con v0 se clona sin credenciales. No se ha tocado la config del repo a
-#     mano a proposito: si algun dia hay que reclonar, la solucion tiene que
-#     venir con el script.
+#   - GitHub ha empezado a contestar 401 (www-authenticate: Basic realm=
+#     "GitHub") a los POST anonimos de git-upload-pack cuando van por
+#     HTTP/1.1, y a servirlos con normalidad por HTTP/2. El repositorio es
+#     publico, pero git no fuerza HTTP/2 si no se le dice, asi que el pull
+#     moria pidiendo un usuario que aqui no hay nadie para teclear.
+#
+#     Medido el mismo segundo, misma IP, mismo cuerpo, misma URL:
+#       curl --http1.1 ... -> 401
+#       curl --http2   ... -> 200
+#     El GET de info/refs sale 200 en los dos casos, que es lo que despista:
+#     git falla en el POST de despues, no al listar las refs. Y no es la
+#     version del protocolo de git (con v2 y con v0 falla igual): es la del
+#     transporte. libcurl aqui trae nghttp2, asi que basta con pedirlo.
 #
 #   - Y el ';' de antes se comia el error. El 2026-09-01 el pull fallo, el
-#     script siguio, reconstruyo el codigo VIEJO y termino diciendo que todo
-#     habia ido bien: el despliegue parecia hecho y en el servidor no habia
-#     cambiado nada. Es el mismo agujero que ya describe el comentario del
-#     'git checkout --' de aqui arriba, y merece morir. Si no se puede traer
-#     el codigo nuevo, no hay nada que desplegar.
-git -c protocol.version=0 pull || {
+#     script siguio, reconstruyo el codigo VIEJO, copio a produccion y
+#     termino diciendo que todo habia ido bien: el despliegue parecia hecho y
+#     en el servidor no habia cambiado un byte. Es el mismo agujero que ya
+#     describe el comentario del 'git checkout --' de aqui arriba, que lo
+#     documentaba para otro caso y lo dejaba abierto para este. Si no se
+#     puede traer el codigo nuevo, no hay nada que desplegar.
+git -c http.version=HTTP/2 pull || {
     echo "!! El pull ha fallado: NO se construye nada (se quedaria el codigo viejo).";
     exit 1;
 };
