@@ -11,6 +11,7 @@ import userModel from '../models/userModel';
 import MsgFormView from '../msgs/msgFormView';
 import PreviousMsgView from './previousMsgView';
 import ModalView from '../msgs/modalView';
+import { resumen } from '../util/resumen.mjs';
 
 // Tiene que coincidir con la transicion de '.container' en css/main.less.
 // Es la unica constante duplicada entre el CSS y el JS, y esta aqui a mano y no
@@ -44,10 +45,16 @@ export default Backbone.View.extend({
     });
 
     this.listenTo(userModel, 'change', this.renderIfExpanded.bind(this));
-    if (typeof this.model.get('encabezamiento') !== 'undefined' && this.model.get('encabezamiento') !== null) {
-      this.model.set('cabeza', this.model.get('encabezamiento'));
+    // La condicion de antes preguntaba por undefined/null, pero entradaModel
+    // declara `encabezamiento: ''` en sus defaults, asi que Backbone SIEMPRE
+    // devuelve una cadena y la rama del resumen no llegaba a ejecutarse nunca.
+    // El registro sin encabezamiento acababa con cabeza vacia, y la plantilla
+    // (`obj.cabeza || obj.comments`) pintaba el articulo entero en crudo.
+    const encabezamiento = this.model.get('encabezamiento');
+    if (encabezamiento) {
+      this.model.set('cabeza', encabezamiento);
     } else if (this.model.get('comments')) {
-      this.model.set('cabeza', this.model.get('comments').substring(0, 240));
+      this.model.set('cabeza', resumen(this.model.get('comments')));
     }
   },
   template: _.template(template),
