@@ -12,6 +12,7 @@ import MsgFormView from '../msgs/msgFormView';
 import PreviousMsgView from './previousMsgView';
 import ModalView from '../msgs/modalView';
 import { resumen } from '../util/resumen.mjs';
+import { agruparParrafos } from '../util/parrafos.mjs';
 
 // Tiene que coincidir con la transicion de '.container' en css/main.less.
 // Es la unica constante duplicada entre el CSS y el JS, y esta aqui a mano y no
@@ -305,7 +306,14 @@ export default Backbone.View.extend({
         this.mostrarComentarios();
       }
     });
-
+    // El cuerpo llega del motor Perl como una sopa plana de <br><br> sin un
+    // solo <p>. Se agrupa aqui para poder limitar el ancho del texto sin
+    // encoger las fotos, y para distinguir los titulillos de las negritas
+    // sueltas. Ver util/parrafos.mjs.
+    if (this.model.get('expandido')) {
+      const cuerpo = this.el.querySelector('.comments');
+      if (cuerpo) { agruparParrafos(cuerpo); }
+    }
   },
   serializer() {
     const model = this.model.toJSON();

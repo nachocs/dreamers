@@ -1129,6 +1129,67 @@ h6 {
     margin: 10px;
 }
 
+// --------------------------------------------------------------------------
+// El cuerpo del articulo
+//
+// Los parrafos y los titulillos los crea util/parrafos.mjs despues de pintar:
+// el motor Perl manda una sopa plana de <br><br> sin un solo <p>. Sin ellos
+// no se puede acotar el ancho del texto sin encoger tambien las fotos.
+// --------------------------------------------------------------------------
+.basico-container .comments p {
+    // OJO: hay un 'p { font-size: 14px }' suelto (de MDL) que estos parrafos
+    // nuevos heredarian. Antes el cuerpo era texto pelado dentro del div y se
+    // quedaba en los 12px del contenedor; al envolverlo en <p> se iba a 14 y
+    // el articulo cambiaba de aspecto sin que nadie lo hubiera pedido. Se
+    // hereda a proposito para que quede EXACTAMENTE igual que antes.
+    font-size: inherit;
+    line-height: inherit;
+    // el hueco entre parrafos lo daban dos <br> seguidos, o sea dos veces el
+    // interlineado: se conserva para que no cambie el ritmo de lectura
+    margin: 0 0 20px;
+}
+
+// Un titulillo es un parrafo cuyo unico contenido es un <b>. Importa
+// distinguirlo porque Laffayette Comic Pro SOLO trae el peso 400: la negrita
+// la finge el navegador engordando el trazo, y a 12px eso no destaca de nada.
+// La jerarquia hay que darla con tamano y aire, no con el peso.
+.basico-container .comments p.titulillo {
+    font-size: 15px;
+    line-height: 1.35;
+    margin: 32px 0 10px;
+    letter-spacing: 0.02em;
+}
+.basico-container .comments p.titulillo:first-child {
+    margin-top: 0;
+}
+
+.basico-container .comments .figura {
+    margin: 20px 0;
+    text-align: center;
+}
+
+// --------------------------------------------------------------------------
+// Fase 3 (expandidomas): la vineta ocupa todo el ancho
+//
+// Ahi el cuerpo se iba a 92 caracteres por linea -y en algun estado hasta
+// 163-, cuando lo comodo son 45-75. Se acota el TEXTO y se dejan las fotos a
+// todo lo ancho, que es justo para lo que sirve esta fase.
+// 34em a 12px son unos 68 caracteres con esta fuente.
+// --------------------------------------------------------------------------
+.container.expandidomas {
+    .basico-container .comments p {
+        max-width: 34em;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .basico-container .comments .figura {
+        max-width: none;
+    }
+    .basico-container .comments .figura img {
+        max-width: 100%;
+    }
+}
+
 .clearfix:after,
 .clearfix:before {
     content: " ";
