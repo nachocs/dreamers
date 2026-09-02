@@ -95,4 +95,57 @@ export function agruparParrafos(contenedor) {
   return n;
 }
 
+
+// --------------------------------------------------------------------------
+// La portada repetida de los blogs
+//
+// El lector de RSS (rsscron.cgi) coge la primera imagen del post y la guarda
+// como IMAGEN1_URL para la vineta. Pero la deja tambien dentro del cuerpo, asi
+// que al desplegar se ve DOS veces: la de basicoTemplate (.main-image) y la
+// del propio texto. Medido sobre 50 entradas de blog: en las 49 que llevan
+// imagen, la URL es identica byte a byte.
+//
+// Se quita la del cuerpo y se conserva la de arriba, que es la que usa el
+// resto del sitio. Si la del cuerpo iba dentro de un enlace -Blogger enlaza a
+// la version grande-, se devuelve ese href para no perder el "pinchar para
+// verla grande".
+export function quitarPortadaRepetida(contenedor, urlPortada) {
+  if (!contenedor || !urlPortada) { return null; }
+
+  const mismas = (a, b) => {
+    if (!a || !b) { return false; }
+    if (a === b) { return true; }
+    // por si alguna entrada antigua cambia solo el trozo del tamano
+    const hoja = u => u.replace(/[?#].*$/, '').split('/').filter(Boolean).pop();
+    return hoja(a) === hoja(b);
+  };
+
+  const img = Array.prototype.slice.call(contenedor.querySelectorAll('img'))
+    .find(i => mismas(i.getAttribute('src'), urlPortada) || mismas(i.src, urlPortada));
+  if (!img) { return null; }
+
+  const enlace = img.closest('a');
+  const href = enlace ? enlace.getAttribute('href') : null;
+
+  // subir mientras el padre no tenga mas contenido que esta imagen, para
+  // llevarse tambien el <div class="separator"> de Blogger y no dejar un
+  // hueco vacio donde estaba
+  let quitar = img;
+  while (quitar.parentElement
+         && quitar.parentElement !== contenedor
+         && !(quitar.parentElement.textContent || '').trim()
+         && quitar.parentElement.querySelectorAll('img').length === 1) {
+    quitar = quitar.parentElement;
+  }
+  quitar.remove();
+
+  // si el parrafo que la contenia se ha quedado sin nada, fuera tambien
+  Array.prototype.slice.call(contenedor.querySelectorAll('p, .figura'))
+    .forEach((e) => {
+      if (!(e.textContent || '').trim() && !e.querySelector('img')) { e.remove(); }
+    });
+
+  return href;
+}
+
 export default agruparParrafos;

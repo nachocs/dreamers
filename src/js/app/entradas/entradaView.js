@@ -12,7 +12,7 @@ import MsgFormView from '../msgs/msgFormView';
 import PreviousMsgView from './previousMsgView';
 import ModalView from '../msgs/modalView';
 import { resumen } from '../util/resumen.mjs';
-import { agruparParrafos } from '../util/parrafos.mjs';
+import { agruparParrafos, quitarPortadaRepetida } from '../util/parrafos.mjs';
 
 // Tiene que coincidir con la transicion de '.container' en css/main.less.
 // Es la unica constante duplicada entre el CSS y el JS, y esta aqui a mano y no
@@ -312,7 +312,24 @@ export default Backbone.View.extend({
     // sueltas. Ver util/parrafos.mjs.
     if (this.model.get('expandido')) {
       const cuerpo = this.el.querySelector('.comments');
-      if (cuerpo) { agruparParrafos(cuerpo); }
+      if (cuerpo) {
+        agruparParrafos(cuerpo);
+        // Los blogs traen la portada tambien dentro del texto, asi que al
+        // desplegar se veia dos veces. Se quita la del cuerpo y, si iba
+        // enlazada a la version grande, ese enlace se pasa a la de arriba.
+        const portada = this.el.querySelector('.main-image img');
+        if (portada) {
+          const href = quitarPortadaRepetida(cuerpo, portada.getAttribute('src'));
+          if (href && !portada.closest('a')) {
+            const a = document.createElement('a');
+            a.href = href;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            portada.parentNode.insertBefore(a, portada);
+            a.appendChild(portada);
+          }
+        }
+      }
     }
   },
   serializer() {
