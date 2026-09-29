@@ -4,29 +4,11 @@ import template from './msgView.html';
 import userModel from '../models/userModel';
 import Util from '../util/util';
 import MolaView from './molaView';
-import Autolinker from 'autolinker';
+import { autolink, isReady, loadAutolinker, mayHaveLinks } from '../util/autolink';
 import $ from 'jquery';
 import ModalView from './modalView';
 import lazyImages from '../util/lazyImages';
 
-const youtube_parser = url => {
-  const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/,
-    match = url.match(regExp);
-  return (match && match[7].length === 11) ? match[7] : false;
-};
-
-const autolinker = new Autolinker({
-  replaceFn (match) {
-    if (match.getType() === 'url') {
-      if ((match.getUrl().indexOf('youtube.com') > 0) || (match.getUrl().indexOf('youtu.be') > 0)) {
-        const youtubeId = youtube_parser(match.getUrl());
-        return `<div class="videodelimitador"><div class="videocontenedor"><iframe src="//www.youtube.com/embed/${youtubeId}" frameborder="0" allowfullscreen=""></iframe></div></div>`;
-      }
-    } else {
-      return;
-    }
-  },
-});
 export default Backbone.View.extend({
   template: _.template(template),
   className: 'msg',
@@ -156,16 +138,28 @@ export default Backbone.View.extend({
     };
 
     string = string.replace(/\-\:SPOILER\[([^\]\[]+)\]SPOILER\:\-/ig, replacer);
-    return autolinker.link(string);
+    return autolink(string);
   },
   render(){
     this.$el.html(this.template(this.serializer()));
+    this.relinkWhenReady();
     this.$('.mola-view').first().replaceWith(this.molaView.render().el);
     if (this.afterRender && typeof this.afterRender === 'function') {
       this.afterRender();
     }
 
     return this;
+  },
+  // El chunk de autolinker puede no haber llegado al primer pintado: se pinta
+  // el comentario sin enlazar y, cuando llega, se repinta una sola vez.
+  relinkWhenReady() {
+    const comments = this.model.get('comments');
+    if (isReady() || !comments || !mayHaveLinks(comments)) {
+      return;
+    }
+    loadAutolinker().then(() => {
+      this.render();
+    }).catch(() => {});
   },
   afterRender() {
     this.loadLazyImages();

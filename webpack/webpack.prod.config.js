@@ -86,6 +86,16 @@ const config = {
       },
     ],
   },
+  // El aviso por defecto de webpack salta a 244 KiB SIN comprimir. El bundle
+  // real son ~142 KB gzip (MEJORAS.md) y ya se le quitaron emojione y MDL; lo
+  // que queda es jQuery + lodash + Backbone + autolinker, entretejidos con
+  // codigo sincrono. autolinker ya va en su chunk (util/autolink.js). En vez de
+  // silenciar el aviso, se fija un presupuesto un poco por encima de lo actual
+  // (~490 KiB el entrypoint): si el bundle crece de verdad, vuelve a avisar.
+  performance: {
+    maxAssetSize: 500 * 1024,
+    maxEntrypointSize: 500 * 1024,
+  },
   optimization: {
     moduleIds: 'deterministic',
     minimize: true,
